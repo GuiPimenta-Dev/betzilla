@@ -1,8 +1,8 @@
+import { MakeMartingaleBetCommand } from "../commands/make-martingale-bet";
+import { VerifyMartingaleCommand } from "../commands/verify-martingale";
+import { MartingaleVerifiedEvent } from "../events/martingale-verified";
 import { Broker } from "../ports/brokers/broker";
 import { Handler } from "./handler";
-import { MakeMartingaleBetCommand } from "../commands/make-martingale-bet";
-import { MartingaleVerifiedEvent } from "../events/martingale-verified";
-import { VerifyMartingaleCommand } from "../commands/verify-martingale";
 
 type Dependencies = {
   broker: Broker;
@@ -18,8 +18,19 @@ export class MartingaleVerifiedHandler implements Handler {
 
   async handle(input: MartingaleVerifiedEvent): Promise<void> {
     const { payload } = input;
-    if (payload.status === "pending") this.broker.schedule(new VerifyMartingaleCommand({ id: payload.betId }));
-    if (payload.status !== "pending")
-      this.broker.publish(new MakeMartingaleBetCommand({ id: payload.betId, playerId: payload.playerId }));
+    if (payload.status === "pending") await this.scheduleVerifyMartingaleCommand(payload);
+    if (payload.status !== "pending") await this.publishMakeMartingaleBetCommand(payload);
+  }
+
+  private async scheduleVerifyMartingaleCommand(payload: MartingaleVerifiedEvent["payload"]) {
+    const commandPayload = { id: payload.betId };
+    const command = new VerifyMartingaleCommand(commandPayload);
+    await this.broker.schedule(command);
+  }
+
+  private async publishMakeMartingaleBetCommand(payload: MartingaleVerifiedEvent["payload"]) {
+    const commandPayload = { id: payload.betId, playerId: payload.playerId };
+    const command = new MakeMartingaleBetCommand(commandPayload);
+    await this.broker.publish(command);
   }
 }
