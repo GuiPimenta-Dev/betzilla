@@ -1,7 +1,7 @@
 import { Command } from "./command";
 
 export class VerifyMartingaleCommand extends Command {
-  constructor(payload: { id: string }) {
+  constructor(payload: { martingaleId: string }) {
     super("verify-martingale", payload);
   }
 }

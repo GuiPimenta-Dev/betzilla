@@ -30,13 +30,22 @@ export class StartMartingale {
   }
 
   async execute(input: Input): Promise<{ martingaleId: string }> {
-    const player = await this.playerRepository.findById(input.playerId);
-    if (player.account.balance < input.initialBet) throw new Error("Insufficient Funds");
+    if (input.rounds < 1) throw new Error("There must be at least one round");
+    await this.validatePlayerBalance(input);
     const martingale = new Martingale({ id: uuid(), ...input });
     await this.martingaleRepository.create(martingale);
-    const commandPayload = { id: martingale.id, playerId: input.playerId, betValue: input.initialBet };
+    await this.publishMakeMartingaleBetCommand(martingale);
+    return { martingaleId: martingale.id };
+  }
+
+  private async validatePlayerBalance(input: Input) {
+    const player = await this.playerRepository.findById(input.playerId);
+    if (player.account.balance < input.initialBet) throw new Error("Insufficient Funds");
+  }
+
+  private async publishMakeMartingaleBetCommand(martingale: Martingale) {
+    const commandPayload = { martingaleId: martingale.id, playerId: martingale.playerId };
     const command = new MakeMartingaleBetCommand(commandPayload);
     await this.broker.publish(command);
-    return { martingaleId: martingale.id };
   }
 }

@@ -1,7 +1,7 @@
-import { Broker } from "../../application/ports/brokers/broker";
 import { Command } from "../../application/commands/command";
 import { Event } from "../../application/events/event";
 import { Handler } from "../../application/handlers/handler";
+import { Broker } from "../../application/ports/brokers/broker";
 
 export class InMemoryBroker implements Broker {
   handlers: Handler[];

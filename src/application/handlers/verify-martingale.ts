@@ -28,12 +28,12 @@ export class VerifyMartingaleHandler implements Handler {
 
   async handle(input: VerifyMartingaleCommand) {
     const { payload } = input;
-    const martingale = await this.martingaleRepository.findById(payload.id);
-    const bet = await this.betGateway.consultBet(payload.betId);
+    const martingale = await this.martingaleRepository.findById(payload.martingaleId);
+    const bet = await this.betGateway.consultBet(payload.martingaleId);
     if (bet.status === "won") await this.handleWon(martingale, bet);
     if (bet.status === "lost") await this.handleLost(martingale);
     if (bet.status !== "pending") await this.martingaleRepository.update(martingale);
-    const eventPayload = { betId: martingale.id, status: bet.status, playerId: martingale.playerId };
+    const eventPayload = { martingaleId: martingale.id, status: bet.status, playerId: martingale.playerId };
     const event = new MartingaleVerifiedEvent(eventPayload);
     await this.broker.publish(event);
   }

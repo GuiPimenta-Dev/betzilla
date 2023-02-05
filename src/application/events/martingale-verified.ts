@@ -2,7 +2,7 @@ import { Bet } from "../ports/gateways/bet";
 import { Event } from "./event";
 
 type Payload = {
-  betId: string;
+  martingaleId: string;
   playerId: string;
   status: Bet["status"];
 };

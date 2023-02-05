@@ -26,7 +26,7 @@ test("It should emit the events in the correct order", async () => {
   const handler1 = new MakeMartingaleBetHandler({ martingaleRepository, broker: brokerSpy });
   const handler2 = new MakeBetHandler({ playerRepository, betGateway: betGatewayMock, broker: brokerSpy });
   const handler3 = new VerifyMartingaleHandler({ betGateway: betGatewayMock, martingaleRepository, broker: brokerSpy });
-  const handler4 = new MartingaleVerifiedHandler({ broker: brokerSpy });
+  const handler4 = new MartingaleVerifiedHandler({ broker: brokerSpy, martingaleRepository });
   brokerSpy.register(handler1);
   brokerSpy.register(handler2);
   brokerSpy.register(handler3);
@@ -38,7 +38,7 @@ test("It should emit the events in the correct order", async () => {
 
   await new Promise((res) => setTimeout(res));
   expect(brokerSpy.events).toHaveLength(4);
-  expect(brokerSpy.commands).toHaveLength(4);
+  expect(brokerSpy.commands).toHaveLength(3);
   expect(brokerSpy.scheduledCommands).toHaveLength(2);
   expect(brokerSpy.actions).toEqual([
     "make-martingale-bet",
@@ -49,7 +49,6 @@ test("It should emit the events in the correct order", async () => {
     "verify-martingale",
     "credit-player-account",
     "martingale-verified",
-    "make-martingale-bet",
     "martingale-finished",
   ]);
 });
@@ -70,7 +69,7 @@ test("It should calculate the correct balance and history after martingale is fi
   const handler1 = new MakeMartingaleBetHandler({ martingaleRepository, broker });
   const handler2 = new MakeBetHandler({ playerRepository, betGateway: betGatewayMock, broker });
   const handler3 = new VerifyMartingaleHandler({ betGateway: betGatewayMock, martingaleRepository, broker });
-  const handler4 = new MartingaleVerifiedHandler({ broker });
+  const handler4 = new MartingaleVerifiedHandler({ broker, martingaleRepository });
   const handler5 = new CreditPlayerAccountHandler({ playerRepository });
   broker.register(handler1);
   broker.register(handler2);
@@ -99,18 +98,35 @@ test("It should send a report after martingale is finished", async () => {
   const playerRepository = new InMemoryPlayerRepository();
   playerRepository.createDefaultPlayer();
   const martingaleRepository = new InMemoryMartingaleRepository();
+  const betGatewayMock = new BetGatewayMock();
   const mailerSpy = new MailerSpy();
   const handler1 = new MakeMartingaleBetHandler({ martingaleRepository, broker });
-  const handler2 = new MartingaleFinishedHandler({ playerRepository, martingaleRepository, mailer: mailerSpy });
+  const handler2 = new MakeBetHandler({ playerRepository, betGateway: betGatewayMock, broker });
+  const handler3 = new MartingaleVerifiedHandler({ martingaleRepository, broker });
+  const handler4 = new MartingaleFinishedHandler({ playerRepository, martingaleRepository, mailer: mailerSpy });
+  const handler5 = new VerifyMartingaleHandler({ betGateway: betGatewayMock, martingaleRepository, broker });
   broker.register(handler1);
   broker.register(handler2);
+  broker.register(handler3);
+  broker.register(handler4);
+  broker.register(handler5);
 
   const sut = new StartMartingale({ broker, martingaleRepository, playerRepository });
-  const input = { playerId: "default", initialBet: 10, rounds: 0, multiplier: 2 };
+  const input = { playerId: "default", initialBet: 10, rounds: 1, multiplier: 2 };
   await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
   expect(mailerSpy.to).toBe("default@test.com");
   expect(mailerSpy.subject).toBe("Martingale Finished");
   expect(mailerSpy.body).toBeDefined();
+});
+
+test("It should throw an error if there isnt at least one round", async () => {
+  const broker = new InMemoryBroker();
+  const playerRepository = new InMemoryPlayerRepository();
+  const martingaleRepository = new InMemoryMartingaleRepository();
+
+  const sut = new StartMartingale({ broker, martingaleRepository, playerRepository });
+  const input = { playerId: "default", initialBet: 10, rounds: 0, multiplier: 2 };
+  await expect(sut.execute(input)).rejects.toThrow("There must be at least one round");
 });

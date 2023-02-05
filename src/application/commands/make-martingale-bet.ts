@@ -1,7 +1,7 @@
 import { Command } from "./command";
 
 type Payload = {
-  id: string;
+  martingaleId: string;
   playerId: string;
 };
 

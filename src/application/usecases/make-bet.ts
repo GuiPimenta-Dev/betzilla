@@ -1,6 +1,6 @@
-import { BetGateway } from "../ports/gateways/bet";
 import { BetMadeEvent } from "../events/bet-made";
 import { Broker } from "../ports/brokers/broker";
+import { BetGateway } from "../ports/gateways/bet";
 import { PlayerRepository } from "../ports/repositories/player";
 
 type Dependencies = {
