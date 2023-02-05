@@ -5,5 +5,6 @@ import { Handler } from "../../handlers/handler";
 export interface Broker {
   handlers: any[];
   register(handler: Handler): void;
-  publish(command: Command | Event): Promise<void>;
+  publish(action: Command | Event): Promise<void>;
+  scheduleCommand(command: Command): Promise<void>;
 }

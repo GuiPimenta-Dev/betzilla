@@ -3,5 +3,5 @@ import { Event } from "../events/event";
 
 export interface Handler {
   name: string;
-  handle(command: Command | Event): Promise<void>;
+  handle(input: Command | Event): Promise<void>;
 }

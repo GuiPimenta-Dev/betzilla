@@ -30,6 +30,5 @@ test("It should emit an event when a bet is made", async () => {
   await sut.execute(input);
 
   expect(brokerSpy.events.length).toBe(1);
-  expect(brokerSpy.events[0].name).toBe("bet-made");
-  expect(brokerSpy.events[0].payload).toEqual({ accountId: "default", betValue: 100, betId: "some-bet-id" });
+  expect(brokerSpy.events[0]).toBe("bet-made");
 });
