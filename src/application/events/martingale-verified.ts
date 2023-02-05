@@ -3,7 +3,7 @@ import { Event } from "./event";
 
 type Payload = {
   betId: string;
-  accountId: string;
+  playerId: string;
   status: Bet["status"];
 };
 

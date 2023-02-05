@@ -1,6 +1,6 @@
 type Input = {
   id: string;
-  accountId: string;
+  playerId: string;
   initialBet: number;
   rounds: number;
   multiplier: number;
@@ -8,7 +8,7 @@ type Input = {
 
 export class Martingale {
   readonly id: string;
-  readonly accountId: string;
+  readonly playerId: string;
   readonly initialBet: number;
   readonly multiplier: number;
   private rounds: number;
@@ -16,7 +16,7 @@ export class Martingale {
 
   constructor(input: Input) {
     this.id = input.id;
-    this.accountId = input.accountId;
+    this.playerId = input.playerId;
     this.initialBet = input.initialBet;
     this.rounds = input.rounds;
     this.multiplier = input.multiplier;
@@ -33,7 +33,7 @@ export class Martingale {
     this.bet *= this.multiplier;
   }
 
-  nextBet() {
+  getBet() {
     return this.bet;
   }
 

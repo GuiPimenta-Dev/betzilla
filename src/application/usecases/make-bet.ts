@@ -1,36 +1,36 @@
-import { AccountRepository } from "../ports/repositories/account";
 import { BetGateway } from "../ports/gateways/bet";
 import { BetMadeEvent } from "../events/bet-made";
 import { Broker } from "../ports/brokers/broker";
+import { PlayerRepository } from "../ports/repositories/player";
 
 type Dependencies = {
-  accountRepository: AccountRepository;
+  playerRepository: PlayerRepository;
   betGateway: BetGateway;
   broker: Broker;
 };
 
 type Input = {
-  accountId: string;
+  playerId: string;
   betValue: number;
   betId: string;
 };
 
 export class MakeBet {
-  private accountRepository: AccountRepository;
+  private playerRepository: PlayerRepository;
   private betGateway: BetGateway;
   private broker: Broker;
 
   constructor(input: Dependencies) {
-    this.accountRepository = input.accountRepository;
+    this.playerRepository = input.playerRepository;
     this.betGateway = input.betGateway;
     this.broker = input.broker;
   }
 
   async execute(input: Input): Promise<void> {
-    const account = await this.accountRepository.findById(input.accountId);
+    const player = await this.playerRepository.findById(input.playerId);
     await this.betGateway.makeBet(input.betValue);
-    account.debit(input.betValue);
-    await this.accountRepository.update(account);
+    player.account.debit(input.betValue);
+    await this.playerRepository.update(player);
     const event = new BetMadeEvent({ ...input });
     await this.broker.publish(event);
   }

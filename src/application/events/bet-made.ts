@@ -1,7 +1,7 @@
 import { Event } from "./event";
 
 type Payload = {
-  accountId: string;
+  playerId: string;
   betValue: number;
   betId: string;
 };

@@ -1,11 +1,11 @@
-import { AccountRepository } from "../ports/repositories/account";
 import { BetGateway } from "../ports/gateways/bet";
 import { Broker } from "../ports/brokers/broker";
 import { MakeBet } from "../usecases/make-bet";
 import { MakeBetCommand } from "../commands/make-bet";
+import { PlayerRepository } from "../ports/repositories/player";
 
 type Dependencies = {
-  accountRepository: AccountRepository;
+  playerRepository: PlayerRepository;
   betGateway: BetGateway;
   broker: Broker;
 };
@@ -13,11 +13,11 @@ type Dependencies = {
 export class MakeBetHandler {
   name = "make-bet";
   private broker: Broker;
-  private accountRepository: AccountRepository;
+  private playerRepository: PlayerRepository;
   private betGateway: BetGateway;
 
   constructor(input: Dependencies) {
-    this.accountRepository = input.accountRepository;
+    this.playerRepository = input.playerRepository;
     this.betGateway = input.betGateway;
     this.broker = input.broker;
   }
@@ -25,7 +25,7 @@ export class MakeBetHandler {
   async handle(input: MakeBetCommand) {
     const { payload } = input;
     const usecase = new MakeBet({
-      accountRepository: this.accountRepository,
+      playerRepository: this.playerRepository,
       betGateway: this.betGateway,
       broker: this.broker,
     });

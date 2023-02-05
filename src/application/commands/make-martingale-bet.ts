@@ -2,7 +2,7 @@ import { Command } from "./command";
 
 type Payload = {
   id: string;
-  accountId: string;
+  playerId: string;
 };
 
 export class MakeMartingaleBetCommand extends Command {

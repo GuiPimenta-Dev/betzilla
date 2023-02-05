@@ -1,14 +1,7 @@
-type Input = {
-  id: string;
-  balance: number;
-};
-
 export class Account {
-  id: string;
   balance: number;
 
-  constructor(input: Input) {
-    this.id = input.id;
+  constructor(input: { balance: number }) {
     this.balance = input.balance;
   }
 

@@ -3,7 +3,7 @@ import { Martingale } from "../../../src/domain/martingale";
 test("The bet value should be the same as the start when winning on martingle", () => {
   const input = {
     id: "some-id",
-    accountId: "account-id",
+    playerId: "account-id",
     initialBet: 10,
     rounds: 10,
     multiplier: 2,
@@ -11,13 +11,13 @@ test("The bet value should be the same as the start when winning on martingle", 
   const martingale = new Martingale(input);
   martingale.win();
 
-  expect(martingale.nextBet()).toBe(10);
+  expect(martingale.getBet()).toBe(10);
 });
 
 test("It should thrown an error if the rounds are exceeded", () => {
   const input = {
     id: "some-id",
-    accountId: "account-id",
+    playerId: "account-id",
     initialBet: 10,
     rounds: 1,
     multiplier: 2,
@@ -31,7 +31,7 @@ test("It should thrown an error if the rounds are exceeded", () => {
 test("It should multiply the bet when losing", () => {
   const input = {
     id: "some-id",
-    accountId: "account-id",
+    playerId: "account-id",
     initialBet: 10,
     rounds: 10,
     multiplier: 2.5,
@@ -39,5 +39,5 @@ test("It should multiply the bet when losing", () => {
   const martingale = new Martingale(input);
   martingale.lose();
 
-  expect(martingale.nextBet()).toBe(25);
+  expect(martingale.getBet()).toBe(25);
 });

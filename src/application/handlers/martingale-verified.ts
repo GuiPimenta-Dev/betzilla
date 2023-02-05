@@ -18,8 +18,8 @@ export class MartingaleVerifiedHandler implements Handler {
 
   async handle(input: MartingaleVerifiedEvent): Promise<void> {
     const { payload } = input;
-    if (payload.status === "pending") this.broker.schedule(new VerifyMartingaleCommand({ id: payload.id }));
+    if (payload.status === "pending") this.broker.schedule(new VerifyMartingaleCommand({ id: payload.betId }));
     if (payload.status !== "pending")
-      this.broker.publish(new MakeMartingaleBetCommand({ id: payload.betId, accountId: payload.accountId }));
+      this.broker.publish(new MakeMartingaleBetCommand({ id: payload.betId, playerId: payload.playerId }));
   }
 }

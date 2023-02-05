@@ -25,7 +25,7 @@ export class MakeMartingaleBetHandler {
     const { payload } = input;
     const martingale = await this.martingaleRepository.findById(payload.id);
     if (martingale.isFinished()) {
-      const event = new MartingaleFinishedEvent({ id: martingale.id });
+      const event = new MartingaleFinishedEvent({ martingaleId: martingale.id, playerId: martingale.playerId });
       return await this.broker.publish(event);
     }
     await this.publishMakeBetCommand(martingale);
@@ -33,7 +33,7 @@ export class MakeMartingaleBetHandler {
   }
 
   private async publishMakeBetCommand(martingale: Martingale) {
-    const commandPayload = { betId: martingale.id, accountId: martingale.accountId, betValue: martingale.nextBet() };
+    const commandPayload = { betId: martingale.id, playerId: martingale.playerId, betValue: martingale.getBet() };
     const command = new MakeBetCommand(commandPayload);
     await this.broker.publish(command);
   }
