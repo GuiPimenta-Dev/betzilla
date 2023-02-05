@@ -6,9 +6,10 @@ import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
 
 export class BrokerSpy implements Broker {
   handlers: Handler[] = [];
-  events: string[] = [];
-  commands: string[] = [];
-  scheduledCommands: string[] = [];
+  events: Event[] = [];
+  commands: Command[] = [];
+  scheduledCommands: Command[] = [];
+  actions: string[] = [];
   broker: Broker;
 
   constructor(broker: Broker = new InMemoryBroker()) {
@@ -20,13 +21,15 @@ export class BrokerSpy implements Broker {
   }
 
   async publish(input: Event | Command): Promise<void> {
-    if (input instanceof Event) this.events.push(input.name);
-    if (input instanceof Command) this.commands.push(input.name);
+    if (input instanceof Event) this.events.push(input);
+    if (input instanceof Command) this.commands.push(input);
+    this.actions.push(input.name);
     await this.broker.publish(input);
   }
 
-  async scheduleCommand(command: Command): Promise<void> {
-    this.scheduledCommands.push(command.name);
-    await this.broker.scheduleCommand(command);
+  async schedule(command: Command): Promise<void> {
+    this.scheduledCommands.push(command);
+    this.actions.push(command.name);
+    await this.broker.schedule(command);
   }
 }

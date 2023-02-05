@@ -1,6 +1,6 @@
-export type BetStatus = "pending" | "won" | "lost";
+export type Bet = { status: "pending" | "won" | "lost"; amount: number };
 
 export interface BetGateway {
   makeBet(value: number): Promise<void>;
-  verifyBetStatus(id: string): Promise<BetStatus>;
+  verifyBet(id: string): Promise<Bet>;
 }

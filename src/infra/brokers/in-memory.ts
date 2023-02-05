@@ -22,7 +22,7 @@ export class InMemoryBroker implements Broker {
     });
   }
 
-  async scheduleCommand(command: Command): Promise<void> {
+  async schedule(command: Command): Promise<void> {
     await this.publish(command);
   }
 }

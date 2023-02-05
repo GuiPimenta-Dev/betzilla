@@ -6,5 +6,5 @@ export interface Broker {
   handlers: any[];
   register(handler: Handler): void;
   publish(action: Command | Event): Promise<void>;
-  scheduleCommand(command: Command): Promise<void>;
+  schedule(command: Command): Promise<void>;
 }

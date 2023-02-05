@@ -41,6 +41,6 @@ export class MakeMartingaleBetHandler {
   private async publishVerifyMartingaleCommand(martingale: Martingale) {
     const commandPayload = { id: martingale.id };
     const command = new VerifyMartingaleCommand(commandPayload);
-    await this.broker.scheduleCommand(command);
+    await this.broker.schedule(command);
   }
 }

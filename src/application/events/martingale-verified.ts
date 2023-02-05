@@ -1,10 +1,10 @@
-import { BetStatus } from "../ports/gateways/bet";
+import { Bet } from "../ports/gateways/bet";
 import { Event } from "./event";
 
 type Payload = {
   betId: string;
   accountId: string;
-  status: BetStatus;
+  status: Bet["status"];
 };
 
 export class MartingaleVerifiedEvent extends Event {
