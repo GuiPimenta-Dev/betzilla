@@ -13,7 +13,7 @@ export class Account {
   }
 
   debit(amount: number) {
-    if (this.balance < amount) throw new Error("Insufficient balance");
+    if (this.balance < amount) throw new Error("Insufficient funds");
     this.balance -= amount;
   }
 

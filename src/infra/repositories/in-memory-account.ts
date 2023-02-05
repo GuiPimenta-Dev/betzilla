@@ -19,7 +19,7 @@ export class InMemoryAccountRepository implements AccountRepository {
     this.accounts.push(account);
   }
 
-  async createDefaultAccount(): Promise<void> {
+  createDefaultAccount(): void {
     const account = new Account({ id: "default", balance: 1000 });
     this.accounts.push(account);
   }

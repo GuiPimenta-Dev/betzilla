@@ -1,7 +1,8 @@
 import { AccountRepository } from "../ports/repositories/account";
 import { BetGateway } from "../ports/gateways/bet";
 import { Broker } from "../ports/brokers/broker";
-import { StartMartingale } from "../commands/start-martingale";
+import { MakeBet } from "../usecases/make-bet";
+import { MakeBetCommand } from "../commands/make-bet";
 
 type Dependencies = {
   accountRepository: AccountRepository;
@@ -9,11 +10,11 @@ type Dependencies = {
   broker: Broker;
 };
 
-export class StartMartingaleHandler {
-  name = "start-martingale";
+export class MakeBetHandler {
+  name = "make-bet";
+  private broker: Broker;
   private accountRepository: AccountRepository;
   private betGateway: BetGateway;
-  private broker: Broker;
 
   constructor(input: Dependencies) {
     this.accountRepository = input.accountRepository;
@@ -21,10 +22,13 @@ export class StartMartingaleHandler {
     this.broker = input.broker;
   }
 
-  async handle(command: StartMartingale) {
-    const { payload } = command;
-    const account = await this.accountRepository.findById(payload.accountId);
-    account.debit(command.payload.initialBet);
-    await this.accountRepository.update(account);
+  async handle(input: MakeBetCommand) {
+    const { payload } = input;
+    const usecase = new MakeBet({
+      accountRepository: this.accountRepository,
+      betGateway: this.betGateway,
+      broker: this.broker,
+    });
+    await usecase.execute(payload);
   }
 }

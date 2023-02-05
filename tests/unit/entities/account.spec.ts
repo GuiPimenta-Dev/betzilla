@@ -8,7 +8,7 @@ test("It should be able to debit from an account", async () => {
 
 test("It should not be able to debit from an account if the balance is insufficient", async () => {
   const account = new Account({ id: "1", balance: 100 });
-  expect(() => account.debit(1000)).toThrowError("Insufficient balance");
+  expect(() => account.debit(1000)).toThrowError("Insufficient funds");
 });
 
 test("It should be able to credit to an account", async () => {

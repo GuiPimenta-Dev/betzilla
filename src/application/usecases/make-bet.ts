@@ -1,6 +1,6 @@
 import { AccountRepository } from "../ports/repositories/account";
 import { BetGateway } from "../ports/gateways/bet";
-import { BetMadeEvent as BetMade } from "../events/bet-made";
+import { BetMadeEvent } from "../events/bet-made";
 import { Broker } from "../ports/brokers/broker";
 
 type Dependencies = {
@@ -31,7 +31,7 @@ export class MakeBet {
     await this.betGateway.makeBet(input.betValue);
     account.debit(input.betValue);
     await this.accountRepository.update(account);
-    const event = new BetMade(input.accountId, input.betValue, input.betId);
-    this.broker.publish(event);
+    const event = new BetMadeEvent({ ...input });
+    await this.broker.publish(event);
   }
 }
