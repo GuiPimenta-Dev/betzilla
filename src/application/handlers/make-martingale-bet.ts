@@ -24,11 +24,8 @@ export class MakeMartingaleBetHandler {
   async handle(input: MakeMartingaleBetCommand) {
     const { payload } = input;
     const martingale = await this.martingaleRepository.findById(payload.id);
-    const command = new MakeBetCommand({
-      betId: martingale.id,
-      accountId: payload.accountId,
-      betValue: martingale.nextBet(),
-    });
+    const commandPayload = { betId: martingale.id, accountId: payload.accountId, betValue: martingale.nextBet() };
+    const command = new MakeBetCommand(commandPayload);
     await this.broker.publish(command);
   }
 }
