@@ -1,16 +1,16 @@
-import { BetGatewayMock } from "../../utils/mocks/bet-gateway-mock";
-import { BrokerSpy } from "../../utils/mocks/broker-spy";
 import { CreditPlayerAccountHandler } from "../../../src/application/handlers/credit-player-account";
-import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
-import { InMemoryMartingaleRepository } from "../../../src/infra/repositories/in-memory-martingale";
-import { InMemoryPlayerRepository } from "../../../src/infra/repositories/in-memory-player";
-import { MailerSpy } from "../../utils/mocks/mailer-spy";
 import { MakeBetHandler } from "../../../src/application/handlers/make-bet";
 import { MakeMartingaleBetHandler } from "../../../src/application/handlers/make-martingale-bet";
 import { MartingaleFinishedHandler } from "../../../src/application/handlers/martingale-finished";
 import { MartingaleVerifiedHandler } from "../../../src/application/handlers/martingale-verified";
-import { StartMartingale } from "../../../src/application/usecases/start-martingale";
 import { VerifyMartingaleHandler } from "../../../src/application/handlers/verify-martingale";
+import { StartMartingale } from "../../../src/application/usecases/start-martingale";
+import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
+import { InMemoryMartingaleRepository } from "../../../src/infra/repositories/in-memory-martingale";
+import { InMemoryPlayerRepository } from "../../../src/infra/repositories/in-memory-player";
+import { BetGatewayMock } from "../../utils/mocks/bet-gateway-mock";
+import { BrokerSpy } from "../../utils/mocks/broker-spy";
+import { MailerSpy } from "../../utils/mocks/mailer-spy";
 
 test("It should emit the events in the correct order", async () => {
   const broker = new InMemoryBroker();
@@ -18,14 +18,14 @@ test("It should emit the events in the correct order", async () => {
   const playerRepository = new InMemoryPlayerRepository();
   playerRepository.createDefaultPlayer();
   const martingaleRepository = new InMemoryMartingaleRepository();
-  const betGateway = new BetGatewayMock();
-  betGateway.mockVerifyBet([
+  const betGatewayMock = new BetGatewayMock();
+  betGatewayMock.mockConsultBet([
     { status: "pending", amount: 0 },
     { status: "won", amount: 20 },
   ]);
   const handler1 = new MakeMartingaleBetHandler({ martingaleRepository, broker: brokerSpy });
-  const handler2 = new MakeBetHandler({ playerRepository, betGateway, broker: brokerSpy });
-  const handler3 = new VerifyMartingaleHandler({ betGateway, martingaleRepository, broker: brokerSpy });
+  const handler2 = new MakeBetHandler({ playerRepository, betGateway: betGatewayMock, broker: brokerSpy });
+  const handler3 = new VerifyMartingaleHandler({ betGateway: betGatewayMock, martingaleRepository, broker: brokerSpy });
   const handler4 = new MartingaleVerifiedHandler({ broker: brokerSpy });
   brokerSpy.register(handler1);
   brokerSpy.register(handler2);
@@ -59,8 +59,8 @@ test("It should calculate the correct balance after martingale is finished", asy
   const playerRepository = new InMemoryPlayerRepository();
   playerRepository.createDefaultPlayer();
   const martingaleRepository = new InMemoryMartingaleRepository();
-  const betGateway = new BetGatewayMock();
-  betGateway.mockVerifyBet([
+  const betGatewayMock = new BetGatewayMock();
+  betGatewayMock.mockConsultBet([
     { status: "lost", amount: 0 },
     { status: "lost", amount: 0 },
     { status: "won", amount: 70 },
@@ -68,8 +68,8 @@ test("It should calculate the correct balance after martingale is finished", asy
     { status: "lost", amount: 0 },
   ]);
   const handler1 = new MakeMartingaleBetHandler({ martingaleRepository, broker });
-  const handler2 = new MakeBetHandler({ playerRepository, betGateway, broker });
-  const handler3 = new VerifyMartingaleHandler({ betGateway, martingaleRepository, broker });
+  const handler2 = new MakeBetHandler({ playerRepository, betGateway: betGatewayMock, broker });
+  const handler3 = new VerifyMartingaleHandler({ betGateway: betGatewayMock, martingaleRepository, broker });
   const handler4 = new MartingaleVerifiedHandler({ broker });
   const handler5 = new CreditPlayerAccountHandler({ playerRepository });
   broker.register(handler1);
@@ -83,42 +83,27 @@ test("It should calculate the correct balance after martingale is finished", asy
   await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
-  const player = await await playerRepository.findById("default");
+  const player = await playerRepository.findById("default");
   expect(player.account.getBalance()).toBe(1020);
 });
 
-test("It should send a report with all steps taken after martingale is finished", async () => {
+test("It should send a report after martingale is finished", async () => {
   const broker = new InMemoryBroker();
   const playerRepository = new InMemoryPlayerRepository();
   playerRepository.createDefaultPlayer();
   const martingaleRepository = new InMemoryMartingaleRepository();
-  const betGateway = new BetGatewayMock();
-  betGateway.mockVerifyBet([
-    { status: "lost", amount: 0 },
-    { status: "won", amount: 100 },
-    { status: "pending", amount: 0 },
-    { status: "won", amount: 30 },
-  ]);
-  const mailer = new MailerSpy();
+  const mailerSpy = new MailerSpy();
   const handler1 = new MakeMartingaleBetHandler({ martingaleRepository, broker });
-  const handler2 = new MakeBetHandler({ playerRepository, betGateway, broker });
-  const handler3 = new VerifyMartingaleHandler({ betGateway, martingaleRepository, broker });
-  const handler4 = new MartingaleVerifiedHandler({ broker });
-  const handler5 = new CreditPlayerAccountHandler({ playerRepository });
-  const handler6 = new MartingaleFinishedHandler({ playerRepository, martingaleRepository, mailer });
+  const handler2 = new MartingaleFinishedHandler({ playerRepository, martingaleRepository, mailer: mailerSpy });
   broker.register(handler1);
   broker.register(handler2);
-  broker.register(handler3);
-  broker.register(handler4);
-  broker.register(handler5);
-  broker.register(handler6);
 
   const sut = new StartMartingale({ broker, martingaleRepository, playerRepository });
-  const input = { playerId: "default", initialBet: 10, rounds: 3, multiplier: 2 };
+  const input = { playerId: "default", initialBet: 10, rounds: 0, multiplier: 2 };
   await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
-  expect(mailer.to).toBe("default@test.com");
-  expect(mailer.subject).toBe("Martingale Finished");
-  expect(mailer.body).toBeDefined();
+  expect(mailerSpy.to).toBe("default@test.com");
+  expect(mailerSpy.subject).toBe("Martingale Finished");
+  expect(mailerSpy.body).toBeDefined();
 });

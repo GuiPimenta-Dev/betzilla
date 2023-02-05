@@ -2,20 +2,20 @@ import { Bet, BetGateway } from "../../../src/application/ports/gateways/bet";
 
 export class BetGatewayMock implements BetGateway {
   betValue: number;
-  status: Bet[];
-  statusIndex: number = 0;
+  bets: Bet[];
+  betIndex: number = 0;
 
   async makeBet(value: number) {
     this.betValue = value;
   }
 
-  async verifyBet(): Promise<Bet> {
-    const response = this.status[this.statusIndex];
-    this.statusIndex++;
+  async consultBet(): Promise<Bet> {
+    const response = this.bets[this.betIndex];
+    this.betIndex++;
     return response;
   }
 
-  mockVerifyBet(status: Bet[]) {
-    this.status = status;
+  mockConsultBet(bets: Bet[]) {
+    this.bets = bets;
   }
 }

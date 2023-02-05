@@ -20,11 +20,11 @@ export class BrokerSpy implements Broker {
     this.broker.register(handler);
   }
 
-  async publish(input: Event | Command): Promise<void> {
-    if (input instanceof Event) this.events.push(input);
-    if (input instanceof Command) this.commands.push(input);
-    this.actions.push(input.name);
-    await this.broker.publish(input);
+  async publish(action: Event | Command): Promise<void> {
+    if (action instanceof Event) this.events.push(action);
+    if (action instanceof Command) this.commands.push(action);
+    this.actions.push(action.name);
+    await this.broker.publish(action);
   }
 
   async schedule(command: Command): Promise<void> {

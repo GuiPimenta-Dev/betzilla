@@ -1,10 +1,12 @@
-import { BetGateway } from "../ports/gateways/bet";
-import { Broker } from "../ports/brokers/broker";
+import { Bet, BetGateway } from "../ports/gateways/bet";
+
+import { Martingale } from "../../domain/martingale";
 import { CreditPlayerAccountCommand } from "../commands/credit-player-account";
-import { Handler } from "./handler";
-import { MartingaleRepository } from "../ports/repositories/martingale";
-import { MartingaleVerifiedEvent } from "../events/martingale-verified";
 import { VerifyMartingaleCommand } from "../commands/verify-martingale";
+import { MartingaleVerifiedEvent } from "../events/martingale-verified";
+import { Broker } from "../ports/brokers/broker";
+import { MartingaleRepository } from "../ports/repositories/martingale";
+import { Handler } from "./handler";
 
 type Dependencies = {
   betGateway: BetGateway;
@@ -27,29 +29,38 @@ export class VerifyMartingaleHandler implements Handler {
   async handle(input: VerifyMartingaleCommand) {
     const { payload } = input;
     const martingale = await this.martingaleRepository.findById(payload.id);
-    const bet = await this.betGateway.verifyBet(payload.betId);
-    const investiment = martingale.getBet();
-    if (bet.status === "won") {
-      const history = {
-        id: martingale.id,
-        winner: true,
-        investiment,
-        outcome: bet.amount,
-        profit: bet.amount - investiment,
-      };
-      await this.martingaleRepository.saveHistory(history);
-      martingale.win();
-      const command = new CreditPlayerAccountCommand({ playerId: martingale.playerId, amount: bet.amount });
-      await this.broker.publish(command);
-    }
-    if (bet.status === "lost") {
-      const history = { id: martingale.id, winner: false, investiment, outcome: 0, profit: -investiment };
-      await this.martingaleRepository.saveHistory(history);
-      martingale.lose();
-    }
+    const bet = await this.betGateway.consultBet(payload.betId);
+    if (bet.status === "won") await this.handleWon(martingale, bet);
+    if (bet.status === "lost") await this.handleLost(martingale);
     if (bet.status !== "pending") await this.martingaleRepository.update(martingale);
     const eventPayload = { betId: martingale.id, status: bet.status, playerId: martingale.playerId };
     const event = new MartingaleVerifiedEvent(eventPayload);
     await this.broker.publish(event);
+  }
+
+  private async handleWon(martingale: Martingale, bet: Bet) {
+    const history = {
+      id: martingale.id,
+      winner: true,
+      investiment: martingale.getBet(),
+      outcome: bet.amount,
+      profit: bet.amount - martingale.getBet(),
+    };
+    await this.martingaleRepository.saveHistory(history);
+    martingale.win();
+    const command = new CreditPlayerAccountCommand({ playerId: martingale.playerId, amount: bet.amount });
+    await this.broker.publish(command);
+  }
+
+  private async handleLost(martingale: Martingale) {
+    const history = {
+      id: martingale.id,
+      winner: false,
+      investiment: martingale.getBet(),
+      outcome: 0,
+      profit: -martingale.getBet(),
+    };
+    await this.martingaleRepository.saveHistory(history);
+    martingale.lose();
   }
 }
