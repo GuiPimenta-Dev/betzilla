@@ -54,7 +54,7 @@ test("It should emit the events in the correct order", async () => {
   ]);
 });
 
-test("It should calculate the correct balance after martingale is finished", async () => {
+test("It should calculate the correct balance and history after martingale is finished", async () => {
   const broker = new InMemoryBroker();
   const playerRepository = new InMemoryPlayerRepository();
   playerRepository.createDefaultPlayer();
@@ -80,11 +80,18 @@ test("It should calculate the correct balance after martingale is finished", asy
 
   const sut = new StartMartingale({ broker, martingaleRepository, playerRepository });
   const input = { playerId: "default", initialBet: 10, rounds: 5, multiplier: 2 };
-  await sut.execute(input);
+  const { martingaleId } = await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
   const player = await playerRepository.findById("default");
+  const history = await martingaleRepository.findHistory(martingaleId);
   expect(player.account.getBalance()).toBe(1020);
+  expect(history).toHaveLength(5);
+  expect(history[0]).toMatchObject({ winner: false, investiment: 10, outcome: 0, profit: -10 });
+  expect(history[1]).toMatchObject({ winner: false, investiment: 20, outcome: 0, profit: -20 });
+  expect(history[2]).toMatchObject({ winner: true, investiment: 40, outcome: 70, profit: 30 });
+  expect(history[3]).toMatchObject({ winner: true, investiment: 10, outcome: 40, profit: 30 });
+  expect(history[4]).toMatchObject({ winner: false, investiment: 10, outcome: 0, profit: -10 });
 });
 
 test("It should send a report after martingale is finished", async () => {
