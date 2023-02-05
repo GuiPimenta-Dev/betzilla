@@ -38,7 +38,7 @@ export class Martingale {
   }
 
   isFinished() {
-    return this.rounds === 0;
+    return this.rounds <= 0;
   }
 
   private decreaseOneRound() {
