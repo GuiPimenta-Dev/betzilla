@@ -2,7 +2,7 @@ import { config } from "../../config";
 import { HttpSuccess } from "../../utils/http-status/http-success";
 import { Success } from "../../utils/http-status/success";
 import { HttpInput } from "../ports/http/http-input";
-import GetMartingaleHistory from "../usecases/get-martingale-history";
+import { GetMartingaleHistory } from "../usecases/get-martingale-history";
 import { StartMartingale } from "../usecases/start-martingale";
 
 export class MartingaleController {

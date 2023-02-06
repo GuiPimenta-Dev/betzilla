@@ -2,8 +2,9 @@ import { MartingaleFinishedEvent } from "../events/martingale-finished";
 import { Mailer } from "../ports/gateways/mailer";
 import { MartingaleRepository } from "../ports/repositories/martingale";
 import { PlayerRepository } from "../ports/repositories/player";
-import GetMartingaleHistory from "../usecases/get-martingale-history";
+import { GetMartingaleHistory } from "../usecases/get-martingale-history";
 import { Handler } from "./handler";
+import  from "../usecases/get-martingale-history";
 
 type Dependencies = {
   playerRepository: PlayerRepository;

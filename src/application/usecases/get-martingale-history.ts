@@ -4,7 +4,7 @@ type Dependencies = {
   martingaleRepository: MartingaleRepository;
 };
 
-export default class GetMartingaleHistory {
+export class GetMartingaleHistory {
   martingaleRepository: MartingaleRepository;
 
   constructor(input: Dependencies) {
