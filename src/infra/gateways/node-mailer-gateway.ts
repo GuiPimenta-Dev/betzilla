@@ -15,7 +15,7 @@ export class NodeMailerGateway implements Mailer {
   async sendMail(to: string, subject: string, body: string): Promise<void> {
     var mailOptions = {
       from: {
-        name: "Dandeliun",
+        name: "BotFair",
         address: "guilherme@goentri.com",
       },
       to,

@@ -1,4 +1,4 @@
-import { MartingaleRepository } from "../ports/repositories/martingale";
+import { History, MartingaleRepository } from "../ports/repositories/martingale";
 
 type Dependencies = {
   martingaleRepository: MartingaleRepository;
@@ -11,9 +11,14 @@ export default class GetMartingaleHistory {
     this.martingaleRepository = input.martingaleRepository;
   }
 
-  async execute(martingaleId: string) {
+  async execute(martingaleId: string): Promise<Output> {
     const history = await this.martingaleRepository.findHistory(martingaleId);
     const balance = Math.round(history.reduce((acc, curr) => acc + curr.profit, 0));
     return { history, balance };
   }
 }
+
+type Output = {
+  history: History[];
+  balance: number;
+};

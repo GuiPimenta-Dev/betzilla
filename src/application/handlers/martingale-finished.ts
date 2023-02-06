@@ -1,8 +1,9 @@
-import { Handler } from "./handler";
-import { Mailer } from "../ports/gateways/mailer";
 import { MartingaleFinishedEvent } from "../events/martingale-finished";
+import { Mailer } from "../ports/gateways/mailer";
 import { MartingaleRepository } from "../ports/repositories/martingale";
 import { PlayerRepository } from "../ports/repositories/player";
+import GetMartingaleHistory from "../usecases/get-martingale-history";
+import { Handler } from "./handler";
 
 type Dependencies = {
   playerRepository: PlayerRepository;
@@ -25,8 +26,8 @@ export class MartingaleFinishedHandler implements Handler {
   async handle(event: MartingaleFinishedEvent): Promise<void> {
     const { payload } = event;
     const player = await this.playerRepository.findById(payload.playerId);
-    const history = await this.martingaleRepository.findHistory(payload.martingaleId);
-    const balance = history.reduce((acc, curr) => acc + curr.profit, 0);
-    await this.mailer.sendMail(player.email, "Martingale Finished", JSON.stringify({ history, balance }));
+    const usecase = new GetMartingaleHistory({ martingaleRepository: this.martingaleRepository });
+    const history = await usecase.execute(payload.martingaleId);
+    await this.mailer.sendMail(player.email, "Martingale Finished", JSON.stringify(history));
   }
 }
