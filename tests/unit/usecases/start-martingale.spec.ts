@@ -116,7 +116,7 @@ test("It should send a report after martingale is finished", async () => {
   await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
-  expect(mailerSpy.to).toBe("default@test.com");
+  expect(mailerSpy.to).toBeDefined();
   expect(mailerSpy.subject).toBe("Martingale Finished");
   expect(mailerSpy.body).toBeDefined();
 });
@@ -129,4 +129,15 @@ test("It should throw an error if there isnt at least one round", async () => {
   const sut = new StartMartingale({ broker, martingaleRepository, playerRepository });
   const input = { playerId: "default", initialBet: 10, rounds: 0, multiplier: 2 };
   await expect(sut.execute(input)).rejects.toThrow("There must be at least one round");
+});
+
+test("It should throw an error if user does not have enough balance", async () => {
+  const broker = new InMemoryBroker();
+  const playerRepository = new InMemoryPlayerRepository();
+  playerRepository.createDefaultPlayer();
+  const martingaleRepository = new InMemoryMartingaleRepository();
+
+  const sut = new StartMartingale({ broker, martingaleRepository, playerRepository });
+  const input = { playerId: "default", initialBet: 2000, rounds: 1, multiplier: 2 };
+  await expect(sut.execute(input)).rejects.toThrow("Insufficient Funds");
 });

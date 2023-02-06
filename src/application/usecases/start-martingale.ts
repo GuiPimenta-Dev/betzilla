@@ -1,5 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { Martingale } from "../../domain/martingale";
+import { BadRequest } from "../../utils/http-status/bad-request";
 import { MakeMartingaleBetCommand } from "../commands/make-martingale-bet";
 import { Broker } from "../ports/brokers/broker";
 import { MartingaleRepository } from "../ports/repositories/martingale";
@@ -30,7 +31,7 @@ export class StartMartingale {
   }
 
   async execute(input: Input): Promise<{ martingaleId: string }> {
-    if (input.rounds < 1) throw new Error("There must be at least one round");
+    if (input.rounds < 1) throw new BadRequest("There must be at least one round");
     await this.validatePlayerBalance(input);
     const martingale = new Martingale({ id: uuid(), ...input });
     await this.martingaleRepository.create(martingale);
@@ -40,7 +41,7 @@ export class StartMartingale {
 
   private async validatePlayerBalance(input: Input) {
     const player = await this.playerRepository.findById(input.playerId);
-    if (player.account.balance < input.initialBet) throw new Error("Insufficient Funds");
+    if (player.account.balance < input.initialBet) throw new BadRequest("Insufficient Funds");
   }
 
   private async publishMakeMartingaleBetCommand(martingale: Martingale) {

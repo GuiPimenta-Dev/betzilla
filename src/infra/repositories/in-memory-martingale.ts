@@ -1,6 +1,7 @@
 import { History, MartingaleRepository } from "../../application/ports/repositories/martingale";
 
 import { Martingale } from "../../domain/martingale";
+import { NotFound } from "../../utils/http-status/not-found";
 
 export class InMemoryMartingaleRepository implements MartingaleRepository {
   private readonly martingales: Martingale[] = [];
@@ -8,7 +9,7 @@ export class InMemoryMartingaleRepository implements MartingaleRepository {
 
   async findById(id: string): Promise<Martingale> {
     const bet = this.martingales.find((bet) => bet.id === id);
-    if (!bet) throw new Error("Bet not found");
+    if (!bet) throw new NotFound("Bet not found");
     return bet;
   }
 
@@ -18,7 +19,7 @@ export class InMemoryMartingaleRepository implements MartingaleRepository {
 
   async update(martingale: Martingale): Promise<void> {
     const index = this.martingales.findIndex((bet) => bet.id === martingale.id);
-    if (index === -1) throw new Error("Martingale not found");
+    if (index === -1) throw new NotFound("Martingale not found");
     this.martingales[index] = martingale;
   }
 

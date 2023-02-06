@@ -1,12 +1,13 @@
-import { Player } from "../../domain/player";
 import { PlayerRepository } from "../../application/ports/repositories/player";
+import { Player } from "../../domain/player";
+import { NotFound } from "../../utils/http-status/not-found";
 
 export class InMemoryPlayerRepository implements PlayerRepository {
   players: Player[] = [];
 
   async findById(id: string): Promise<Player> {
     const player = this.players.find((player) => player.id === id);
-    if (!player) throw new Error("Player not found");
+    if (!player) throw new NotFound("Player not found");
     return player;
   }
 
@@ -20,7 +21,7 @@ export class InMemoryPlayerRepository implements PlayerRepository {
   }
 
   createDefaultPlayer(): void {
-    const player = new Player({ id: "default", email: "default@test.com", balance: 1000 });
+    const player = new Player({ id: "default", email: "guialvespimenta27@gmail.com", balance: 1000 });
     this.players.push(player);
   }
 }

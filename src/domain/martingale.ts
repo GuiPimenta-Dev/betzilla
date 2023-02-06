@@ -1,3 +1,5 @@
+import { BadRequest } from "../utils/http-status/bad-request";
+
 type Input = {
   id: string;
   playerId: string;
@@ -43,6 +45,6 @@ export class Martingale {
 
   private decreaseOneRound() {
     this.rounds -= 1;
-    if (this.rounds < 0) throw new Error("Martingale Rounds Exceeded");
+    if (this.rounds < 0) throw new BadRequest("Martingale Rounds Exceeded");
   }
 }
