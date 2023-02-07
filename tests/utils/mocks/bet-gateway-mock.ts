@@ -4,10 +4,11 @@ export class BetGatewayMock implements BetGateway {
   betValue: number;
   bets: Bet[] = [{ status: "lost", amount: 0 }];
   betIndex: number = 0;
+  betWasMade: boolean = true;
 
   async makeBet(value: number): Promise<boolean> {
     this.betValue = value;
-    return true;
+    return this.betWasMade;
   }
 
   async consultBet(): Promise<Bet> {
@@ -16,7 +17,11 @@ export class BetGatewayMock implements BetGateway {
     return response;
   }
 
-  mockConsultBet(bets: Bet[]) {
+  mockMakeBetResponse(betWasMade: boolean) {
+    this.betWasMade = betWasMade;
+  }
+
+  mockConsultBetResponse(bets: Bet[]) {
     this.bets = bets;
   }
 }

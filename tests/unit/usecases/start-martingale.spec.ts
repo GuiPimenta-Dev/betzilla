@@ -1,17 +1,14 @@
 import { StartMartingale } from "../../../src/application/usecases/start-martingale";
-import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
-import { InMemoryMartingaleRepository } from "../../../src/infra/repositories/in-memory-martingale";
-import { InMemoryPlayerRepository } from "../../../src/infra/repositories/in-memory-player";
 import { TestConfigFactory } from "../../utils/test-config-factory";
 
 test("It should emit the events in the correct order", async () => {
   const config = new TestConfigFactory().create();
-  config.betGateway.mockConsultBet([
+  config.betGateway.mockConsultBetResponse([
     { status: "pending", amount: 0 },
     { status: "won", amount: 20 },
   ]);
 
-  const sut = new StartMartingale({ ...config });
+  const sut = new StartMartingale(config);
   const input = { playerId: "default", initialBet: 10, rounds: 1, multiplier: 2 };
   await sut.execute(input);
 
@@ -36,14 +33,15 @@ test("It should emit the events in the correct order", async () => {
 
 test("It should calculate the correct balance and history after martingale is finished", async () => {
   const config = new TestConfigFactory().create();
-  config.betGateway.mockConsultBet([
+  config.betGateway.mockConsultBetResponse([
     { status: "lost", amount: 0 },
     { status: "lost", amount: 0 },
     { status: "won", amount: 70 },
     { status: "won", amount: 40 },
     { status: "lost", amount: 0 },
   ]);
-  const sut = new StartMartingale({ ...config });
+
+  const sut = new StartMartingale(config);
   const input = { playerId: "default", initialBet: 10, rounds: 5, multiplier: 2 };
   const { martingaleId } = await sut.execute(input);
 
@@ -62,7 +60,7 @@ test("It should calculate the correct balance and history after martingale is fi
 test("It should send a report after martingale is finished", async () => {
   const config = new TestConfigFactory().create();
 
-  const sut = new StartMartingale({ ...config });
+  const sut = new StartMartingale(config);
   const input = { playerId: "default", initialBet: 10, rounds: 1, multiplier: 2 };
   await sut.execute(input);
 
@@ -73,22 +71,17 @@ test("It should send a report after martingale is finished", async () => {
 });
 
 test("It should throw an error if there isnt at least one round", async () => {
-  const broker = new InMemoryBroker();
-  const playerRepository = new InMemoryPlayerRepository();
-  const martingaleRepository = new InMemoryMartingaleRepository();
+  const config = new TestConfigFactory().create();
 
-  const sut = new StartMartingale({ broker, martingaleRepository, playerRepository });
+  const sut = new StartMartingale(config);
   const input = { playerId: "default", initialBet: 10, rounds: 0, multiplier: 2 };
   await expect(sut.execute(input)).rejects.toThrow("There must be at least one round");
 });
 
 test("It should throw an error if user does not have enough balance", async () => {
-  const broker = new InMemoryBroker();
-  const playerRepository = new InMemoryPlayerRepository();
-  playerRepository.createDefaultPlayer();
-  const martingaleRepository = new InMemoryMartingaleRepository();
+  const config = new TestConfigFactory().create();
 
-  const sut = new StartMartingale({ broker, martingaleRepository, playerRepository });
+  const sut = new StartMartingale(config);
   const input = { playerId: "default", initialBet: 2000, rounds: 1, multiplier: 2 };
   await expect(sut.execute(input)).rejects.toThrow("Insufficient Funds");
 });

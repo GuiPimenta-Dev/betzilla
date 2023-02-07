@@ -21,13 +21,13 @@ type Dependencies = {
 
 export function registerHandlers(dependencies: Dependencies) {
   const handlers = [
-    new MakeMartingaleBetHandler({ ...dependencies }),
-    new MakeBetHandler({ ...dependencies }),
-    new DebitPlayerAccountHandler({ ...dependencies }),
-    new VerifyMartingaleHandler({ ...dependencies }),
-    new MartingaleVerifiedHandler({ ...dependencies }),
-    new MartingaleFinishedHandler({ ...dependencies }),
-    new CreditPlayerAccountHandler({ ...dependencies }),
+    new MakeMartingaleBetHandler(dependencies),
+    new MakeBetHandler(dependencies),
+    new DebitPlayerAccountHandler(dependencies),
+    new VerifyMartingaleHandler(dependencies),
+    new MartingaleVerifiedHandler(dependencies),
+    new MartingaleFinishedHandler(dependencies),
+    new CreditPlayerAccountHandler(dependencies),
   ];
   handlers.forEach((handler) => dependencies.broker.register(handler));
 }
