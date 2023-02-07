@@ -3,6 +3,7 @@ import { Mailer } from "../../application/ports/gateways/mailer";
 
 export class NodeMailerGateway implements Mailer {
   transporter: nodemailer.Transporter;
+
   constructor() {
     this.transporter = nodemailer.createTransport({
       service: "gmail",
@@ -12,6 +13,7 @@ export class NodeMailerGateway implements Mailer {
       },
     });
   }
+
   async sendMail(to: string, subject: string, body: string): Promise<void> {
     var mailOptions = {
       from: {

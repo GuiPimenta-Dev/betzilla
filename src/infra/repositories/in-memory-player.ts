@@ -21,7 +21,7 @@ export class InMemoryPlayerRepository implements PlayerRepository {
   }
 
   createDefaultPlayer(): void {
-    const player = new Player({ id: "default", email: "guialvespimenta27@gmail.com", balance: 1000 });
+    const player = new Player({ id: "default", email: "guialvespimenta27@gmail.com", balance: Infinity });
     this.players.push(player);
   }
 }
