@@ -5,8 +5,9 @@ export class BetGatewayMock implements BetGateway {
   bets: Bet[] = [{ status: "lost", amount: 0 }];
   betIndex: number = 0;
 
-  async makeBet(value: number) {
+  async makeBet(value: number): Promise<boolean> {
     this.betValue = value;
+    return true;
   }
 
   async consultBet(): Promise<Bet> {

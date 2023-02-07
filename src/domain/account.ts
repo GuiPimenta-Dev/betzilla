@@ -1,5 +1,3 @@
-import { BadRequest } from "../utils/http-status/bad-request";
-
 export class Account {
   balance: number;
 
@@ -8,7 +6,7 @@ export class Account {
   }
 
   debit(amount: number) {
-    if (this.balance < amount) throw new BadRequest("Insufficient funds");
+    if (this.balance < amount) throw new Error("Insufficient funds");
     this.balance -= amount;
   }
 

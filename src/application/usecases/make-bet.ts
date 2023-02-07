@@ -1,4 +1,5 @@
-import { BetMadeEvent } from "../events/bet-made";
+import { BadRequest } from "../../utils/http-status/bad-request";
+import { DebitPlayerAccountCommand } from "../commands/debit-player-account";
 import { Broker } from "../ports/brokers/broker";
 import { BetGateway } from "../ports/gateways/bet";
 import { PlayerRepository } from "../ports/repositories/player";
@@ -16,22 +17,18 @@ type Input = {
 };
 
 export class MakeBet {
-  private playerRepository: PlayerRepository;
   private betGateway: BetGateway;
   private broker: Broker;
 
   constructor(input: Dependencies) {
-    this.playerRepository = input.playerRepository;
     this.betGateway = input.betGateway;
     this.broker = input.broker;
   }
 
   async execute(input: Input): Promise<void> {
-    const player = await this.playerRepository.findById(input.playerId);
-    await this.betGateway.makeBet(input.betValue);
-    player.account.debit(input.betValue);
-    await this.playerRepository.update(player);
-    const event = new BetMadeEvent({ ...input });
+    const betWasMade = await this.betGateway.makeBet(input.betValue);
+    if (!betWasMade) throw new BadRequest("Bet was not made");
+    const event = new DebitPlayerAccountCommand({ playerId: input.playerId, amount: input.betValue });
     await this.broker.publish(event);
   }
 }
