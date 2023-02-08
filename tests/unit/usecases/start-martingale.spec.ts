@@ -101,7 +101,7 @@ test("It should send a report after martingale is finished", async () => {
   await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
-  expect(mailerSpy.to).toBeDefined();
+  expect(mailerSpy.to).toBe("default@test.com");
   expect(mailerSpy.subject).toBe("Martingale Finished");
   expect(mailerSpy.body).toBeDefined();
 });

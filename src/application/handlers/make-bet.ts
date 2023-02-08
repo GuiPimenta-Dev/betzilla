@@ -20,10 +20,7 @@ export class MakeBetHandler {
 
   async handle(input: MakeBetCommand) {
     const { payload } = input;
-    const usecase = new MakeBet({
-      betGateway: this.betGateway,
-      broker: this.broker,
-    });
+    const usecase = new MakeBet({ betGateway: this.betGateway, broker: this.broker });
     await usecase.execute(payload);
   }
 }
