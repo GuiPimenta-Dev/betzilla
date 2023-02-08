@@ -1,8 +1,7 @@
-import { Broker } from "../../../src/application/ports/brokers/broker";
 import { Command } from "../../../src/application/commands/command";
 import { Event } from "../../../src/application/events/event";
 import { Handler } from "../../../src/application/handlers/handler";
-import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
+import { Broker } from "../../../src/application/ports/brokers/broker";
 
 export class BrokerSpy implements Broker {
   handlers: Handler[] = [];
@@ -12,7 +11,7 @@ export class BrokerSpy implements Broker {
   actions: string[] = [];
   broker: Broker;
 
-  constructor(broker: Broker = new InMemoryBroker()) {
+  constructor(broker: Broker) {
     this.broker = broker;
   }
 
