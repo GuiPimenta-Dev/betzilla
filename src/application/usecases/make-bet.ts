@@ -1,5 +1,5 @@
 import { BadRequest } from "../../utils/http-status/bad-request";
-import { DebitPlayerAccountCommand } from "../commands/debit-player-account";
+import { BetMadeEvent } from "../events/bet-made";
 import { Broker } from "../ports/brokers/broker";
 import { BetGateway } from "../ports/gateways/bet";
 
@@ -26,7 +26,7 @@ export class MakeBet {
   async execute(input: Input): Promise<void> {
     const betWasMade = await this.betGateway.makeBet(input.betValue);
     if (!betWasMade) throw new BadRequest("Bet was not made");
-    const event = new DebitPlayerAccountCommand({ playerId: input.playerId, amount: input.betValue });
+    const event = new BetMadeEvent({ betId: input.betId, playerId: input.playerId, betValue: input.betValue });
     await this.broker.publish(event);
   }
 }

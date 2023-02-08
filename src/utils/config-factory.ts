@@ -1,4 +1,5 @@
 import { MailerSpy } from "../../tests/utils/mocks/mailer-spy";
+import { BetMadeHandler } from "../application/handlers/bet-made";
 import { CreditPlayerAccountHandler } from "../application/handlers/credit-player-account";
 import { DebitPlayerAccountHandler } from "../application/handlers/debit-player-account";
 import { MakeBetHandler } from "../application/handlers/make-bet";
@@ -30,6 +31,7 @@ export class ConfigFactory {
     const handlers = [
       new MakeMartingaleBetHandler(this.dependencies),
       new MakeBetHandler(this.dependencies),
+      new BetMadeHandler(this.dependencies),
       new DebitPlayerAccountHandler(this.dependencies),
       new VerifyMartingaleHandler(this.dependencies),
       new MartingaleVerifiedHandler(this.dependencies),

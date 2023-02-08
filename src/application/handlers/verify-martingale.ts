@@ -1,6 +1,7 @@
 import { Bet, BetGateway } from "../ports/gateways/bet";
 
 import { Martingale } from "../../domain/martingale";
+import { BadRequest } from "../../utils/http-status/bad-request";
 import { CreditPlayerAccountCommand } from "../commands/credit-player-account";
 import { VerifyMartingaleCommand } from "../commands/verify-martingale";
 import { MartingaleVerifiedEvent } from "../events/martingale-verified";
@@ -12,6 +13,13 @@ type Dependencies = {
   betGateway: BetGateway;
   martingaleRepository: MartingaleRepository;
   broker: Broker;
+};
+
+type UpdatedHistoryItem = {
+  martingaleId: string;
+  winner: boolean;
+  outcome: number;
+  profit: number;
 };
 
 export class VerifyMartingaleHandler implements Handler {
@@ -39,28 +47,27 @@ export class VerifyMartingaleHandler implements Handler {
   }
 
   private async handleWon(martingale: Martingale, bet: Bet) {
-    const history = {
-      id: martingale.id,
-      winner: true,
-      investiment: martingale.getBet(),
-      outcome: bet.amount,
-      profit: bet.amount - martingale.getBet(),
-    };
-    await this.martingaleRepository.saveHistory(history);
+    const profit = bet.amount - martingale.getBet();
+    const updatedItem = { martingaleId: martingale.id, winner: true, outcome: bet.amount, profit };
+    await this.updatePendingHistoryItem(updatedItem);
     martingale.win();
     const command = new CreditPlayerAccountCommand({ playerId: martingale.playerId, amount: bet.amount });
     await this.broker.publish(command);
   }
 
   private async handleLost(martingale: Martingale) {
-    const history = {
-      id: martingale.id,
-      winner: false,
-      investiment: martingale.getBet(),
-      outcome: 0,
-      profit: -martingale.getBet(),
-    };
-    await this.martingaleRepository.saveHistory(history);
+    const updatedItem = { martingaleId: martingale.id, winner: false, outcome: 0, profit: -martingale.getBet() };
+    await this.updatePendingHistoryItem(updatedItem);
     martingale.lose();
+  }
+
+  private async updatePendingHistoryItem(input: UpdatedHistoryItem) {
+    const history = await this.martingaleRepository.findHistory(input.martingaleId);
+    const historyItem = history.find((item) => item.winner === "pending");
+    if (!historyItem) throw new BadRequest("Pending history item not found");
+    historyItem.winner = input.winner;
+    historyItem.outcome = input.outcome;
+    historyItem.profit = input.profit;
+    await this.martingaleRepository.updateHistory(historyItem);
   }
 }

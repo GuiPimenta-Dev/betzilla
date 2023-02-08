@@ -1,3 +1,4 @@
+import { BetMadeHandler } from "../../../src/application/handlers/bet-made";
 import { CreditPlayerAccountHandler } from "../../../src/application/handlers/credit-player-account";
 import { DebitPlayerAccountHandler } from "../../../src/application/handlers/debit-player-account";
 import { MakeBetHandler } from "../../../src/application/handlers/make-bet";
@@ -12,24 +13,32 @@ import { InMemoryPlayerRepository } from "../../../src/infra/repositories/in-mem
 import { BetGatewayMock } from "../../utils/mocks/bet-gateway-mock";
 import { BrokerSpy } from "../../utils/mocks/broker-spy";
 import { MailerSpy } from "../../utils/mocks/mailer-spy";
+import { MartingaleRepositorySpy } from "../../utils/mocks/martingale-repository-spy";
 
 let brokerSpy: BrokerSpy;
 let playerRepository: InMemoryPlayerRepository;
 let martingaleRepository: InMemoryMartingaleRepository;
+let martingaleRepositorySpy: MartingaleRepositorySpy;
 let betGatewayMock: BetGatewayMock;
 let mailerSpy: MailerSpy;
 
 beforeEach(() => {
   brokerSpy = new BrokerSpy(new InMemoryBroker());
   martingaleRepository = new InMemoryMartingaleRepository();
+  martingaleRepositorySpy = new MartingaleRepositorySpy(martingaleRepository);
   playerRepository = new InMemoryPlayerRepository();
   betGatewayMock = new BetGatewayMock();
   mailerSpy = new MailerSpy();
   const handlers = [
     new MakeMartingaleBetHandler({ broker: brokerSpy, martingaleRepository }),
     new MakeBetHandler({ broker: brokerSpy, betGateway: betGatewayMock }),
+    new BetMadeHandler({ broker: brokerSpy, martingaleRepository: martingaleRepositorySpy }),
     new DebitPlayerAccountHandler({ broker: brokerSpy, playerRepository }),
-    new VerifyMartingaleHandler({ broker: brokerSpy, martingaleRepository, betGateway: betGatewayMock }),
+    new VerifyMartingaleHandler({
+      broker: brokerSpy,
+      martingaleRepository: martingaleRepositorySpy,
+      betGateway: betGatewayMock,
+    }),
     new MartingaleVerifiedHandler({ broker: brokerSpy, martingaleRepository }),
     new MartingaleFinishedHandler({ playerRepository, martingaleRepository, mailer: mailerSpy }),
     new CreditPlayerAccountHandler({ broker: brokerSpy, playerRepository }),
@@ -49,15 +58,16 @@ test("It should emit all the events in the correct order", async () => {
   await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
-  expect(brokerSpy.events).toHaveLength(5);
+  expect(brokerSpy.events).toHaveLength(6);
   expect(brokerSpy.commands).toHaveLength(4);
   expect(brokerSpy.scheduledCommands).toHaveLength(2);
   expect(brokerSpy.actions).toEqual([
     "make-martingale-bet",
     "make-bet",
+    "bet-made",
     "debit-player-account",
-    "debit-made",
     "verify-martingale",
+    "debit-made",
     "martingale-verified",
     "verify-martingale",
     "credit-player-account",
@@ -91,6 +101,28 @@ test("It should calculate the correct balance and history after martingale is fi
   expect(history[2]).toMatchObject({ winner: true, investiment: 40, outcome: 70, profit: 30 });
   expect(history[3]).toMatchObject({ winner: true, investiment: 10, outcome: 40, profit: 30 });
   expect(history[4]).toMatchObject({ winner: false, investiment: 10, outcome: 0, profit: -10 });
+});
+
+test("It should update a pending bet in history", async () => {
+  playerRepository.createDefaultPlayer();
+  betGatewayMock.mockConsultBetResponse([
+    { status: "pending", amount: 0 },
+    { status: "won", amount: 20 },
+  ]);
+
+  const dependencies = { broker: brokerSpy, martingaleRepository, playerRepository };
+  const sut = new StartMartingale(dependencies);
+  const input = { playerId: "default", initialBet: 10, rounds: 1, multiplier: 2 };
+  const { martingaleId } = await sut.execute(input);
+
+  await new Promise((res) => setTimeout(res));
+  const history = await martingaleRepository.findHistory(martingaleId);
+  const { itemSaved: itemSaved, itemUpdated: itemUpdated } = martingaleRepositorySpy;
+  expect(history).toHaveLength(1);
+  expect(history[0]).toMatchObject({ winner: true, investiment: 10, outcome: 20, profit: 10 });
+  expect(itemSaved).toMatchObject({ winner: "pending", investiment: 10 });
+  expect(itemUpdated).toMatchObject({ winner: true, outcome: 20, profit: 10 });
+  expect(itemSaved.itemId).toBe(itemUpdated.itemId);
 });
 
 test("It should send a report after martingale is finished", async () => {

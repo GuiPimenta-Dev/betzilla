@@ -1,6 +1,8 @@
+import { BetMadeHandler } from "../../../src/application/handlers/bet-made";
 import { DebitPlayerAccountHandler } from "../../../src/application/handlers/debit-player-account";
 import { MakeBet } from "../../../src/application/usecases/make-bet";
 import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
+import { InMemoryMartingaleRepository } from "../../../src/infra/repositories/in-memory-martingale";
 import { InMemoryPlayerRepository } from "../../../src/infra/repositories/in-memory-player";
 import { BetGatewayMock } from "../../utils/mocks/bet-gateway-mock";
 import { BrokerSpy } from "../../utils/mocks/broker-spy";
@@ -10,10 +12,14 @@ let playerRepository: InMemoryPlayerRepository;
 let brokerSpy: BrokerSpy;
 beforeEach(() => {
   brokerSpy = new BrokerSpy(new InMemoryBroker());
+  const martingaleRepository = new InMemoryMartingaleRepository();
   playerRepository = new InMemoryPlayerRepository();
   playerRepository.createDefaultPlayer();
   betGatewayMock = new BetGatewayMock();
-  const handlers = [new DebitPlayerAccountHandler({ playerRepository, broker: brokerSpy })];
+  const handlers = [
+    new BetMadeHandler({ martingaleRepository, broker: brokerSpy }),
+    new DebitPlayerAccountHandler({ playerRepository, broker: brokerSpy }),
+  ];
   handlers.forEach((handler) => brokerSpy.register(handler));
 });
 

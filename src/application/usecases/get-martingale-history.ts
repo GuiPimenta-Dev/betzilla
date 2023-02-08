@@ -1,4 +1,4 @@
-import { History, MartingaleRepository } from "../ports/repositories/martingale";
+import { HistoryItem, MartingaleRepository } from "../ports/repositories/martingale";
 
 type Dependencies = {
   martingaleRepository: MartingaleRepository;
@@ -19,6 +19,6 @@ export class GetMartingaleHistory {
 }
 
 type Output = {
-  history: History[];
+  history: HistoryItem[];
   balance: number;
 };
