@@ -2,10 +2,8 @@ import { BadRequest } from "../../utils/http-status/bad-request";
 import { DebitPlayerAccountCommand } from "../commands/debit-player-account";
 import { Broker } from "../ports/brokers/broker";
 import { BetGateway } from "../ports/gateways/bet";
-import { PlayerRepository } from "../ports/repositories/player";
 
 type Dependencies = {
-  playerRepository: PlayerRepository;
   betGateway: BetGateway;
   broker: Broker;
 };

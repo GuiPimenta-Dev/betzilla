@@ -1,22 +1,58 @@
+import { CreditPlayerAccountHandler } from "../../../src/application/handlers/credit-player-account";
+import { DebitPlayerAccountHandler } from "../../../src/application/handlers/debit-player-account";
+import { MakeBetHandler } from "../../../src/application/handlers/make-bet";
+import { MakeMartingaleBetHandler } from "../../../src/application/handlers/make-martingale-bet";
+import { MartingaleFinishedHandler } from "../../../src/application/handlers/martingale-finished";
+import { MartingaleVerifiedHandler } from "../../../src/application/handlers/martingale-verified";
+import { VerifyMartingaleHandler } from "../../../src/application/handlers/verify-martingale";
 import { StartMartingale } from "../../../src/application/usecases/start-martingale";
-import { TestConfigFactory } from "../../utils/test-config-factory";
+import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
+import { InMemoryMartingaleRepository } from "../../../src/infra/repositories/in-memory-martingale";
+import { InMemoryPlayerRepository } from "../../../src/infra/repositories/in-memory-player";
+import { BetGatewayMock } from "../../utils/mocks/bet-gateway-mock";
+import { BrokerSpy } from "../../utils/mocks/broker-spy";
+import { MailerSpy } from "../../utils/mocks/mailer-spy";
 
-test("It should emit the events in the correct order", async () => {
-  const config = new TestConfigFactory().create();
-  config.betGateway.mockConsultBetResponse([
+let brokerSpy: BrokerSpy;
+let playerRepository: InMemoryPlayerRepository;
+let martingaleRepository: InMemoryMartingaleRepository;
+let betGatewayMock: BetGatewayMock;
+let mailerSpy: MailerSpy;
+
+beforeEach(() => {
+  brokerSpy = new BrokerSpy(new InMemoryBroker());
+  martingaleRepository = new InMemoryMartingaleRepository();
+  playerRepository = new InMemoryPlayerRepository();
+  betGatewayMock = new BetGatewayMock();
+  mailerSpy = new MailerSpy();
+  const handlers = [
+    new MakeMartingaleBetHandler({ broker: brokerSpy, martingaleRepository }),
+    new MakeBetHandler({ broker: brokerSpy, betGateway: betGatewayMock }),
+    new DebitPlayerAccountHandler({ broker: brokerSpy, playerRepository }),
+    new VerifyMartingaleHandler({ broker: brokerSpy, martingaleRepository, betGateway: betGatewayMock }),
+    new MartingaleVerifiedHandler({ broker: brokerSpy, martingaleRepository }),
+    new MartingaleFinishedHandler({ playerRepository, martingaleRepository, mailer: mailerSpy }),
+    new CreditPlayerAccountHandler({ broker: brokerSpy, playerRepository }),
+  ];
+  handlers.forEach((handler) => brokerSpy.register(handler));
+});
+
+test("It should emit all the events in the correct order", async () => {
+  playerRepository.createDefaultPlayer();
+  betGatewayMock.mockConsultBetResponse([
     { status: "pending", amount: 0 },
     { status: "won", amount: 20 },
   ]);
 
-  const sut = new StartMartingale(config);
+  const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository, playerRepository });
   const input = { playerId: "default", initialBet: 10, rounds: 1, multiplier: 2 };
   await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
-  expect(config.broker.events).toHaveLength(5);
-  expect(config.broker.commands).toHaveLength(4);
-  expect(config.broker.scheduledCommands).toHaveLength(2);
-  expect(config.broker.actions).toEqual([
+  expect(brokerSpy.events).toHaveLength(5);
+  expect(brokerSpy.commands).toHaveLength(4);
+  expect(brokerSpy.scheduledCommands).toHaveLength(2);
+  expect(brokerSpy.actions).toEqual([
     "make-martingale-bet",
     "make-bet",
     "debit-player-account",
@@ -32,8 +68,8 @@ test("It should emit the events in the correct order", async () => {
 });
 
 test("It should calculate the correct balance and history after martingale is finished", async () => {
-  const config = new TestConfigFactory().create();
-  config.betGateway.mockConsultBetResponse([
+  playerRepository.createDefaultPlayer();
+  betGatewayMock.mockConsultBetResponse([
     { status: "lost", amount: 0 },
     { status: "lost", amount: 0 },
     { status: "won", amount: 70 },
@@ -41,13 +77,13 @@ test("It should calculate the correct balance and history after martingale is fi
     { status: "lost", amount: 0 },
   ]);
 
-  const sut = new StartMartingale(config);
+  const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository, playerRepository });
   const input = { playerId: "default", initialBet: 10, rounds: 5, multiplier: 2 };
   const { martingaleId } = await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
-  const player = await config.playerRepository.findById("default");
-  const history = await config.martingaleRepository.findHistory(martingaleId);
+  const player = await playerRepository.findById("default");
+  const history = await martingaleRepository.findHistory(martingaleId);
   expect(player.account.getBalance()).toBe(1020);
   expect(history).toHaveLength(5);
   expect(history[0]).toMatchObject({ winner: false, investiment: 10, outcome: 0, profit: -10 });
@@ -58,30 +94,30 @@ test("It should calculate the correct balance and history after martingale is fi
 });
 
 test("It should send a report after martingale is finished", async () => {
-  const config = new TestConfigFactory().create();
+  playerRepository.createDefaultPlayer();
 
-  const sut = new StartMartingale(config);
+  const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository, playerRepository });
   const input = { playerId: "default", initialBet: 10, rounds: 1, multiplier: 2 };
   await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
-  expect(config.mailer.to).toBeDefined();
-  expect(config.mailer.subject).toBe("Martingale Finished");
-  expect(config.mailer.body).toBeDefined();
+  expect(mailerSpy.to).toBeDefined();
+  expect(mailerSpy.subject).toBe("Martingale Finished");
+  expect(mailerSpy.body).toBeDefined();
 });
 
 test("It should throw an error if there isnt at least one round", async () => {
-  const config = new TestConfigFactory().create();
+  playerRepository.createDefaultPlayer();
 
-  const sut = new StartMartingale(config);
+  const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository, playerRepository });
   const input = { playerId: "default", initialBet: 10, rounds: 0, multiplier: 2 };
   await expect(sut.execute(input)).rejects.toThrow("There must be at least one round");
 });
 
 test("It should throw an error if user does not have enough balance", async () => {
-  const config = new TestConfigFactory().create();
+  playerRepository.createDefaultPlayer();
 
-  const sut = new StartMartingale(config);
+  const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository, playerRepository });
   const input = { playerId: "default", initialBet: 2000, rounds: 1, multiplier: 2 };
   await expect(sut.execute(input)).rejects.toThrow("Insufficient Funds");
 });
