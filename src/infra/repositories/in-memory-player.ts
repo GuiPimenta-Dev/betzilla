@@ -11,6 +11,12 @@ export class InMemoryPlayerRepository implements PlayerRepository {
     return player;
   }
 
+  async findByBetId(betId: string): Promise<Player> {
+    const player = this.players.find((player) => player.getBets().includes(betId));
+    if (!player) throw new NotFound("Player not found");
+    return player;
+  }
+
   async update(player: Player): Promise<void> {
     const index = this.players.findIndex((a) => a.id === player.id);
     this.players[index] = player;

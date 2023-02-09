@@ -17,14 +17,14 @@ beforeEach(() => {
   playerRepository.createDefaultPlayer();
   betGatewayMock = new BetGatewayMock();
   const handlers = [
-    new BetMadeHandler({ martingaleRepository, broker: brokerSpy }),
+    new BetMadeHandler({ martingaleRepository }),
     new DebitAccountHandler({ playerRepository, broker: brokerSpy }),
   ];
   handlers.forEach((handler) => brokerSpy.register(handler));
 });
 
 test("It should be able to make a bet and debit from player account", async () => {
-  const sut = new MakeBet({ broker: brokerSpy, betGateway: betGatewayMock });
+  const sut = new MakeBet({ broker: brokerSpy, betGateway: betGatewayMock, playerRepository });
   const input = { playerId: "default", betValue: 100, betId: "some-bet-id" };
   await sut.execute(input);
 
@@ -34,18 +34,17 @@ test("It should be able to make a bet and debit from player account", async () =
 });
 
 test("It should emit an event when a bet is made", async () => {
-  const sut = new MakeBet({ broker: brokerSpy, betGateway: betGatewayMock });
+  const sut = new MakeBet({ broker: brokerSpy, betGateway: betGatewayMock, playerRepository });
   const input = { playerId: "default", betValue: 100, betId: "some-bet-id" };
   await sut.execute(input);
 
-  expect(brokerSpy.commands.length).toBe(1);
-  expect(brokerSpy.commands[0].name).toBe("debit-account");
+  expect(brokerSpy.history[0]).toBe("bet-made");
 });
 
 test("It should throw an error if bet was not made", async () => {
   betGatewayMock.mockMakeBetResponse(false);
 
-  const sut = new MakeBet({ broker: brokerSpy, betGateway: betGatewayMock });
+  const sut = new MakeBet({ broker: brokerSpy, betGateway: betGatewayMock, playerRepository });
   const input = { playerId: "default", betValue: 100, betId: "some-bet-id" };
   await expect(sut.execute(input)).rejects.toThrowError("Bet was not made");
 });

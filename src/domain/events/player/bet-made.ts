@@ -1,9 +1,8 @@
 import { Event } from "../event";
 
 type Payload = {
-  playerId: string;
-  betValue: number;
   betId: string;
+  betValue: number;
 };
 
 export class BetMadeEvent extends Event {

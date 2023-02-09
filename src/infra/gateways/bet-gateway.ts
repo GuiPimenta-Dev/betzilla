@@ -3,9 +3,9 @@ import { Bet, BetGateway } from "../../../src/application/ports/gateways/bet";
 export class FakeBetGateway implements BetGateway {
   bet: number;
 
-  async makeBet(bet: number): Promise<boolean> {
+  async makeBet(bet: number): Promise<{ success: true }> {
     this.bet = bet;
-    return true;
+    return { success: true };
   }
 
   async consultBet(): Promise<Bet> {

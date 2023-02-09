@@ -1,4 +1,4 @@
-import { CreditAccountCommand } from "../../../domain/commands/player/credit-account";
+import { BetWonEvent } from "../../../domain/events/player/bet-won";
 import { CreditMadeEvent } from "../../../domain/events/player/credit-made";
 import { Broker } from "../../ports/brokers/broker";
 import { PlayerRepository } from "../../ports/repositories/player";
@@ -10,7 +10,7 @@ type Dependencies = {
 };
 
 export class CreditAccountHandler implements Handler {
-  name = "credit-account";
+  name = "bet-won";
   private playerRepository: PlayerRepository;
   private broker: Broker;
 
@@ -19,9 +19,9 @@ export class CreditAccountHandler implements Handler {
     this.broker = input.broker;
   }
 
-  async handle(input: CreditAccountCommand): Promise<void> {
+  async handle(input: BetWonEvent): Promise<void> {
     const { payload } = input;
-    const player = await this.playerRepository.findById(payload.playerId);
+    const player = await this.playerRepository.findByBetId(payload.betId);
     player.account.credit(payload.amount);
     await this.playerRepository.update(player);
     const event = new CreditMadeEvent({ playerId: player.id, amount: payload.amount });

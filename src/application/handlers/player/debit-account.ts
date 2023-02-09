@@ -1,4 +1,4 @@
-import { DebitAccountCommand } from "../../../domain/commands/player/debit-account";
+import { BetMadeEvent } from "../../../domain/events/player/bet-made";
 import { DebitFailedEvent } from "../../../domain/events/player/debit-failed";
 import { DebitMadeEvent } from "../../../domain/events/player/debit-made";
 import { Broker } from "../../ports/brokers/broker";
@@ -11,7 +11,7 @@ type Dependencies = {
 };
 
 export class DebitAccountHandler implements Handler {
-  name = "debit-account";
+  name = "bet-made";
   private playerRepository: PlayerRepository;
   private broker: Broker;
 
@@ -20,16 +20,16 @@ export class DebitAccountHandler implements Handler {
     this.broker = input.broker;
   }
 
-  async handle(input: DebitAccountCommand): Promise<void> {
+  async handle(input: BetMadeEvent): Promise<void> {
     const { payload } = input;
-    const player = await this.playerRepository.findById(payload.playerId);
+    const player = await this.playerRepository.findByBetId(payload.betId);
     try {
-      player.account.debit(payload.amount);
+      player.account.debit(payload.betValue);
       await this.playerRepository.update(player);
-      const event = new DebitMadeEvent({ playerId: player.id, amount: payload.amount });
+      const event = new DebitMadeEvent({ playerId: player.id, amount: payload.betValue });
       await this.broker.publish(event);
     } catch (error) {
-      const event = new DebitFailedEvent({ playerId: player.id, amount: payload.amount });
+      const event = new DebitFailedEvent({ playerId: player.id, amount: payload.betValue });
       await this.broker.publish(event);
     }
   }
