@@ -8,7 +8,7 @@ export class BrokerSpy implements Broker {
   events: Event[] = [];
   commands: Command[] = [];
   scheduledCommands: Command[] = [];
-  actions: string[] = [];
+  history: string[] = [];
   broker: Broker;
 
   constructor(broker: Broker) {
@@ -22,13 +22,13 @@ export class BrokerSpy implements Broker {
   async publish(input: Event | Command): Promise<void> {
     if (input instanceof Event) this.events.push(input);
     if (input instanceof Command) this.commands.push(input);
-    this.actions.push(input.name);
+    this.history.push(input.name);
     await this.broker.publish(input);
   }
 
   async schedule(input: Command): Promise<void> {
     this.scheduledCommands.push(input);
-    this.actions.push(input.name);
+    this.history.push(input.name);
     await this.broker.schedule(input);
   }
 }

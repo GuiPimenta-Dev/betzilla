@@ -3,10 +3,10 @@ import { CreditPlayerAccountHandler } from "../application/handlers/credit-playe
 import { DebitPlayerAccountHandler } from "../application/handlers/debit-player-account";
 import { MakeBetHandler } from "../application/handlers/make-bet";
 import { BetMadeHandler } from "../application/handlers/martingale/bet-made";
-import { MartingaleVerifiedHandler } from "../application/handlers/martingale/bet-verified";
+import { BetVerifiedHandler } from "../application/handlers/martingale/bet-verified";
 import { MakeMartingaleBetHandler } from "../application/handlers/martingale/make-martingale-bet";
 import { MartingaleFinishedHandler } from "../application/handlers/martingale/martingale-finished";
-import { VerifyBet } from "../application/handlers/verify-bet";
+import { VerifyBetHandler } from "../application/handlers/verify-bet";
 import { InMemoryBroker } from "../infra/brokers/in-memory";
 import { FakeBetGateway } from "../infra/gateways/bet-gateway";
 import { InMemoryMartingaleRepository } from "../infra/repositories/in-memory-martingale";
@@ -33,8 +33,8 @@ export class ConfigFactory {
       new MakeBetHandler(this.dependencies),
       new BetMadeHandler(this.dependencies),
       new DebitPlayerAccountHandler(this.dependencies),
-      new VerifyBet(this.dependencies),
-      new MartingaleVerifiedHandler(this.dependencies),
+      new VerifyBetHandler(this.dependencies),
+      new BetVerifiedHandler(this.dependencies),
       new MartingaleFinishedHandler(this.dependencies),
       new CreditPlayerAccountHandler(this.dependencies),
     ];

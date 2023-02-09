@@ -64,7 +64,7 @@ test("It should emit all the events in the correct order", async () => {
   expect(brokerSpy.events).toHaveLength(10);
   expect(brokerSpy.commands).toHaveLength(9);
   expect(brokerSpy.scheduledCommands).toHaveLength(3);
-  expect(brokerSpy.actions).toEqual([
+  expect(brokerSpy.history).toEqual([
     "make-martingale-bet",
     "make-bet",
     "bet-made",
