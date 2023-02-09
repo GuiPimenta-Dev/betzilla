@@ -14,15 +14,15 @@ export class InMemoryBroker implements Broker {
     this.handlers.push(handler);
   }
 
-  async publish(action: Command | Event): Promise<void> {
+  async publish(input: Command | Event): Promise<void> {
     this.handlers.map(async (handler) => {
-      if (handler.name === action.name) {
-        await handler.handle(action);
+      if (handler.name === input.name) {
+        await handler.handle(input);
       }
     });
   }
 
-  async schedule(command: Command): Promise<void> {
-    await this.publish(command);
+  async schedule(input: Command): Promise<void> {
+    await this.publish(input);
   }
 }

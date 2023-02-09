@@ -3,8 +3,8 @@ import { Event } from "../../events/event";
 import { Handler } from "../../handlers/handler";
 
 export interface Broker {
-  handlers: any[];
+  handlers: Handler[];
   register(handler: Handler): void;
-  publish(action: Command | Event): Promise<void>;
-  schedule(command: Command): Promise<void>;
+  publish(input: Command | Event): Promise<void>;
+  schedule(input: Command): Promise<void>;
 }
