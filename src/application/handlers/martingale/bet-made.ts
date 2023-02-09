@@ -1,9 +1,9 @@
 import { v4 as uuid } from "uuid";
-import { DebitPlayerAccountCommand } from "../commands/debit-player-account";
-import { BetMadeEvent } from "../events/bet-made";
-import { Broker } from "../ports/brokers/broker";
-import { MartingaleRepository } from "../ports/repositories/martingale";
-import { Handler } from "./handler";
+import { DebitPlayerAccountCommand } from "../../commands/debit-player-account";
+import { BetMadeEvent } from "../../events/bet-made";
+import { Broker } from "../../ports/brokers/broker";
+import { MartingaleRepository } from "../../ports/repositories/martingale";
+import { Handler } from "../handler";
 
 type Dependencies = {
   martingaleRepository: MartingaleRepository;

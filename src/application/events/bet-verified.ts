@@ -2,13 +2,12 @@ import { Bet } from "../ports/gateways/bet";
 import { Event } from "./event";
 
 type Payload = {
-  martingaleId: string;
-  playerId: string;
+  betId: string;
   status: Bet["status"];
 };
 
-export class MartingaleVerifiedEvent extends Event {
+export class BetVerifiedEvent extends Event {
   constructor(payload: Payload) {
-    super("martingale-verified", payload);
+    super("bet-verified", payload);
   }
 }

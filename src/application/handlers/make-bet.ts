@@ -21,6 +21,6 @@ export class MakeBetHandler {
   async handle(input: MakeBetCommand) {
     const { payload } = input;
     const usecase = new MakeBet({ betGateway: this.betGateway, broker: this.broker });
-    await usecase.execute({ playerId: payload.playerId, betValue: payload.betValue, betId: payload.martingaleId });
+    await usecase.execute({ playerId: payload.playerId, betValue: payload.betValue, betId: payload.betId });
   }
 }

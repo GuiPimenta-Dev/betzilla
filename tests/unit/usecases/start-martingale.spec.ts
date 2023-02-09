@@ -1,11 +1,14 @@
-import { BetMadeHandler } from "../../../src/application/handlers/bet-made";
 import { CreditPlayerAccountHandler } from "../../../src/application/handlers/credit-player-account";
 import { DebitPlayerAccountHandler } from "../../../src/application/handlers/debit-player-account";
 import { MakeBetHandler } from "../../../src/application/handlers/make-bet";
-import { MakeMartingaleBetHandler } from "../../../src/application/handlers/make-martingale-bet";
-import { MartingaleFinishedHandler } from "../../../src/application/handlers/martingale-finished";
-import { MartingaleVerifiedHandler } from "../../../src/application/handlers/martingale-verified";
-import { VerifyMartingaleHandler } from "../../../src/application/handlers/verify-martingale";
+import { BetLostHandler } from "../../../src/application/handlers/martingale/bet-lost";
+import { BetMadeHandler } from "../../../src/application/handlers/martingale/bet-made";
+import { BetVerifiedHandler } from "../../../src/application/handlers/martingale/bet-verified";
+import { BetWonHandler } from "../../../src/application/handlers/martingale/bet-won";
+import { MakeMartingaleBetHandler } from "../../../src/application/handlers/martingale/make-martingale-bet";
+import { MartingaleFinishedHandler } from "../../../src/application/handlers/martingale/martingale-finished";
+import { UpdateHistoryItemHandler } from "../../../src/application/handlers/martingale/update-history-item";
+import { VerifyBetHandler } from "../../../src/application/handlers/verify-bet";
 import { StartMartingale } from "../../../src/application/usecases/start-martingale";
 import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
 import { InMemoryMartingaleRepository } from "../../../src/infra/repositories/in-memory-martingale";
@@ -33,13 +36,12 @@ beforeEach(() => {
     new MakeMartingaleBetHandler({ broker: brokerSpy, martingaleRepository }),
     new MakeBetHandler({ broker: brokerSpy, betGateway: betGatewayMock }),
     new BetMadeHandler({ broker: brokerSpy, martingaleRepository: martingaleRepositorySpy }),
+    new BetWonHandler({ broker: brokerSpy, martingaleRepository }),
+    new BetLostHandler({ broker: brokerSpy, martingaleRepository }),
+    new UpdateHistoryItemHandler({ martingaleRepository: martingaleRepositorySpy }),
     new DebitPlayerAccountHandler({ broker: brokerSpy, playerRepository }),
-    new VerifyMartingaleHandler({
-      broker: brokerSpy,
-      martingaleRepository: martingaleRepositorySpy,
-      betGateway: betGatewayMock,
-    }),
-    new MartingaleVerifiedHandler({ broker: brokerSpy, martingaleRepository }),
+    new VerifyBetHandler({ broker: brokerSpy, betGateway: betGatewayMock }),
+    new BetVerifiedHandler({ broker: brokerSpy, martingaleRepository }),
     new MartingaleFinishedHandler({ playerRepository, martingaleRepository, mailer: mailerSpy }),
     new CreditPlayerAccountHandler({ broker: brokerSpy, playerRepository }),
   ];
@@ -50,30 +52,41 @@ test("It should emit all the events in the correct order", async () => {
   playerRepository.createDefaultPlayer();
   betGatewayMock.mockConsultBetResponse([
     { status: "pending", amount: 0 },
+    { status: "lost", amount: 0 },
     { status: "won", amount: 20 },
   ]);
 
   const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository, playerRepository });
-  const input = { playerId: "default", initialBet: 10, rounds: 1, multiplier: 2 };
+  const input = { playerId: "default", initialBet: 10, rounds: 2, multiplier: 2 };
   await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
-  expect(brokerSpy.events).toHaveLength(6);
-  expect(brokerSpy.commands).toHaveLength(4);
-  expect(brokerSpy.scheduledCommands).toHaveLength(2);
+  expect(brokerSpy.events).toHaveLength(10);
+  expect(brokerSpy.commands).toHaveLength(9);
+  expect(brokerSpy.scheduledCommands).toHaveLength(3);
   expect(brokerSpy.actions).toEqual([
     "make-martingale-bet",
     "make-bet",
     "bet-made",
     "debit-player-account",
-    "verify-martingale",
+    "verify-bet",
     "debit-made",
-    "martingale-verified",
-    "verify-martingale",
+    "verify-bet",
+    "bet-lost",
+    "update-history-item",
+    "bet-verified",
+    "make-martingale-bet",
+    "make-bet",
+    "bet-made",
+    "debit-player-account",
+    "verify-bet",
+    "debit-made",
+    "bet-won",
+    "update-history-item",
+    "bet-verified",
+    "martingale-finished",
     "credit-player-account",
     "credit-made",
-    "martingale-verified",
-    "martingale-finished",
   ]);
 });
 
@@ -110,14 +123,13 @@ test("It should update a pending bet in history", async () => {
     { status: "won", amount: 20 },
   ]);
 
-  const dependencies = { broker: brokerSpy, martingaleRepository, playerRepository };
-  const sut = new StartMartingale(dependencies);
+  const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository, playerRepository });
   const input = { playerId: "default", initialBet: 10, rounds: 1, multiplier: 2 };
   const { martingaleId } = await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
   const history = await martingaleRepository.findHistory(martingaleId);
-  const { itemSaved: itemSaved, itemUpdated: itemUpdated } = martingaleRepositorySpy;
+  const { itemSaved, itemUpdated } = martingaleRepositorySpy;
   expect(history).toHaveLength(1);
   expect(history[0]).toMatchObject({ winner: true, investiment: 10, outcome: 20, profit: 10 });
   expect(itemSaved).toMatchObject({ winner: "pending", investiment: 10 });

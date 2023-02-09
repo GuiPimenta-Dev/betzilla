@@ -1,5 +1,5 @@
-import { BetMadeHandler } from "../../../src/application/handlers/bet-made";
 import { DebitPlayerAccountHandler } from "../../../src/application/handlers/debit-player-account";
+import { BetMadeHandler } from "../../../src/application/handlers/martingale/bet-made";
 import { MakeBet } from "../../../src/application/usecases/make-bet";
 import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
 import { InMemoryMartingaleRepository } from "../../../src/infra/repositories/in-memory-martingale";
