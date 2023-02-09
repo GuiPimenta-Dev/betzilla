@@ -1,4 +1,4 @@
-import { Martingale } from "../../../domain/martingale";
+import { Martingale } from "../../../domain/entities/martingale/martingale";
 
 export type HistoryItem = {
   itemId: string;

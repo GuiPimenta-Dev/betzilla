@@ -1,6 +1,3 @@
-import { CreditPlayerAccountHandler } from "../../../src/application/handlers/credit-player-account";
-import { DebitPlayerAccountHandler } from "../../../src/application/handlers/debit-player-account";
-import { MakeBetHandler } from "../../../src/application/handlers/make-bet";
 import { BetLostHandler } from "../../../src/application/handlers/martingale/bet-lost";
 import { BetMadeHandler } from "../../../src/application/handlers/martingale/bet-made";
 import { BetVerifiedHandler } from "../../../src/application/handlers/martingale/bet-verified";
@@ -8,8 +5,11 @@ import { BetWonHandler } from "../../../src/application/handlers/martingale/bet-
 import { MakeMartingaleBetHandler } from "../../../src/application/handlers/martingale/make-martingale-bet";
 import { MartingaleFinishedHandler } from "../../../src/application/handlers/martingale/martingale-finished";
 import { UpdateHistoryItemHandler } from "../../../src/application/handlers/martingale/update-history-item";
-import { VerifyBetHandler } from "../../../src/application/handlers/verify-bet";
-import { StartMartingale } from "../../../src/application/usecases/start-martingale";
+import { CreditAccountHandler } from "../../../src/application/handlers/player/credit-account";
+import { DebitAccountHandler } from "../../../src/application/handlers/player/debit-account";
+import { MakeBetHandler } from "../../../src/application/handlers/player/make-bet";
+import { VerifyBetHandler } from "../../../src/application/handlers/player/verify-bet";
+import { StartMartingale } from "../../../src/application/usecases/martingale/start-martingale";
 import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
 import { InMemoryMartingaleRepository } from "../../../src/infra/repositories/in-memory-martingale";
 import { InMemoryPlayerRepository } from "../../../src/infra/repositories/in-memory-player";
@@ -39,11 +39,11 @@ beforeEach(() => {
     new BetWonHandler({ broker: brokerSpy, martingaleRepository }),
     new BetLostHandler({ broker: brokerSpy, martingaleRepository }),
     new UpdateHistoryItemHandler({ martingaleRepository: martingaleRepositorySpy }),
-    new DebitPlayerAccountHandler({ broker: brokerSpy, playerRepository }),
+    new DebitAccountHandler({ broker: brokerSpy, playerRepository }),
     new VerifyBetHandler({ broker: brokerSpy, betGateway: betGatewayMock }),
     new BetVerifiedHandler({ broker: brokerSpy, martingaleRepository }),
     new MartingaleFinishedHandler({ playerRepository, martingaleRepository, mailer: mailerSpy }),
-    new CreditPlayerAccountHandler({ broker: brokerSpy, playerRepository }),
+    new CreditAccountHandler({ broker: brokerSpy, playerRepository }),
   ];
   handlers.forEach((handler) => brokerSpy.register(handler));
 });
@@ -68,7 +68,7 @@ test("It should emit all the events in the correct order", async () => {
     "make-martingale-bet",
     "make-bet",
     "bet-made",
-    "debit-player-account",
+    "debit-account",
     "verify-bet",
     "debit-made",
     "verify-bet",
@@ -78,14 +78,14 @@ test("It should emit all the events in the correct order", async () => {
     "make-martingale-bet",
     "make-bet",
     "bet-made",
-    "debit-player-account",
+    "debit-account",
     "verify-bet",
     "debit-made",
     "bet-won",
     "update-history-item",
     "bet-verified",
     "martingale-finished",
-    "credit-player-account",
+    "credit-account",
     "credit-made",
   ]);
 });

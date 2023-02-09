@@ -1,7 +1,7 @@
-import { MakeBetCommand } from "../commands/make-bet";
-import { Broker } from "../ports/brokers/broker";
-import { BetGateway } from "../ports/gateways/bet";
-import { MakeBet } from "../usecases/make-bet";
+import { MakeBetCommand } from "../../../domain/commands/player/make-bet";
+import { Broker } from "../../ports/brokers/broker";
+import { BetGateway } from "../../ports/gateways/bet";
+import { MakeBet } from "../../usecases/player/make-bet";
 
 type Dependencies = {
   betGateway: BetGateway;

@@ -1,5 +1,5 @@
 import { PlayerRepository } from "../../application/ports/repositories/player";
-import { Player } from "../../domain/player";
+import { Player } from "../../domain/entities/player/player";
 import { NotFound } from "../../utils/http-status/not-found";
 
 export class InMemoryPlayerRepository implements PlayerRepository {

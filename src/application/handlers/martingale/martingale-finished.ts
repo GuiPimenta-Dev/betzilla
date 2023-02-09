@@ -1,8 +1,8 @@
-import { MartingaleFinishedEvent } from "../../events/martingale/martingale-finished";
+import { MartingaleFinishedEvent } from "../../../domain/events/martingale/martingale-finished";
 import { Mailer } from "../../ports/gateways/mailer";
 import { MartingaleRepository } from "../../ports/repositories/martingale";
 import { PlayerRepository } from "../../ports/repositories/player";
-import { GetMartingaleHistory } from "../../usecases/get-martingale-history";
+import { GetMartingaleHistory } from "../../usecases/martingale/get-martingale-history";
 import { Handler } from "../handler";
 
 type Dependencies = {

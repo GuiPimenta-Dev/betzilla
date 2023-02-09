@@ -1,10 +1,10 @@
 import { v4 as uuid } from "uuid";
-import { Martingale } from "../../domain/martingale";
-import { BadRequest } from "../../utils/http-status/bad-request";
-import { MakeMartingaleBetCommand } from "../commands/martingale/make-martingale-bet";
-import { Broker } from "../ports/brokers/broker";
-import { MartingaleRepository } from "../ports/repositories/martingale";
-import { PlayerRepository } from "../ports/repositories/player";
+import { MakeMartingaleBetCommand } from "../../../domain/commands/martingale/make-martingale-bet";
+import { Martingale } from "../../../domain/entities/martingale/martingale";
+import { BadRequest } from "../../../utils/http-status/bad-request";
+import { Broker } from "../../ports/brokers/broker";
+import { MartingaleRepository } from "../../ports/repositories/martingale";
+import { PlayerRepository } from "../../ports/repositories/player";
 
 type Dependencies = {
   playerRepository: PlayerRepository;

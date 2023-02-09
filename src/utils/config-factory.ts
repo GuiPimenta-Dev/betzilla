@@ -1,12 +1,12 @@
 import { MailerSpy } from "../../tests/utils/mocks/mailer-spy";
-import { CreditPlayerAccountHandler } from "../application/handlers/credit-player-account";
-import { DebitPlayerAccountHandler } from "../application/handlers/debit-player-account";
-import { MakeBetHandler } from "../application/handlers/make-bet";
 import { BetMadeHandler } from "../application/handlers/martingale/bet-made";
 import { BetVerifiedHandler } from "../application/handlers/martingale/bet-verified";
 import { MakeMartingaleBetHandler } from "../application/handlers/martingale/make-martingale-bet";
 import { MartingaleFinishedHandler } from "../application/handlers/martingale/martingale-finished";
-import { VerifyBetHandler } from "../application/handlers/verify-bet";
+import { CreditAccountHandler } from "../application/handlers/player/credit-account";
+import { DebitAccountHandler } from "../application/handlers/player/debit-account";
+import { MakeBetHandler } from "../application/handlers/player/make-bet";
+import { VerifyBetHandler } from "../application/handlers/player/verify-bet";
 import { InMemoryBroker } from "../infra/brokers/in-memory";
 import { FakeBetGateway } from "../infra/gateways/bet-gateway";
 import { InMemoryMartingaleRepository } from "../infra/repositories/in-memory-martingale";
@@ -32,11 +32,11 @@ export class ConfigFactory {
       new MakeMartingaleBetHandler(this.dependencies),
       new MakeBetHandler(this.dependencies),
       new BetMadeHandler(this.dependencies),
-      new DebitPlayerAccountHandler(this.dependencies),
+      new DebitAccountHandler(this.dependencies),
       new VerifyBetHandler(this.dependencies),
       new BetVerifiedHandler(this.dependencies),
       new MartingaleFinishedHandler(this.dependencies),
-      new CreditPlayerAccountHandler(this.dependencies),
+      new CreditAccountHandler(this.dependencies),
     ];
     handlers.forEach((handler) => this.dependencies.broker.register(handler));
   }

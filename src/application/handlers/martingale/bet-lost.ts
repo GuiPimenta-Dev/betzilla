@@ -1,6 +1,6 @@
-import { Martingale } from "../../../domain/martingale";
-import { UpdateHistoryItemCommand } from "../../commands/martingale/update-pending-history-item";
-import { BetLostEvent } from "../../events/bet-lost";
+import { UpdateHistoryItemCommand } from "../../../domain/commands/martingale/update-pending-history-item";
+import { Martingale } from "../../../domain/entities/martingale/martingale";
+import { BetLostEvent } from "../../../domain/events/player/bet-lost";
 import { Broker } from "../../ports/brokers/broker";
 import { MartingaleRepository } from "../../ports/repositories/martingale";
 import { Handler } from "../handler";

@@ -1,7 +1,7 @@
-import { BadRequest } from "../../utils/http-status/bad-request";
-import { BetMadeEvent } from "../events/bet-made";
-import { Broker } from "../ports/brokers/broker";
-import { BetGateway } from "../ports/gateways/bet";
+import { BetMadeEvent } from "../../../domain/events/player/bet-made";
+import { BadRequest } from "../../../utils/http-status/bad-request";
+import { Broker } from "../../ports/brokers/broker";
+import { BetGateway } from "../../ports/gateways/bet";
 
 type Dependencies = {
   betGateway: BetGateway;

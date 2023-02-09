@@ -1,4 +1,4 @@
-import { Martingale } from "../../../src/domain/martingale";
+import { Martingale } from "../../../src/domain/entities/martingale/martingale";
 
 test("The bet value should be the same as the start when winning on martingle", () => {
   const input = {

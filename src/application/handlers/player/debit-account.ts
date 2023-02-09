@@ -1,17 +1,17 @@
-import { DebitPlayerAccountCommand } from "../commands/debit-player-account";
-import { DebitFailedEvent } from "../events/debit-failed";
-import { DebitMadeEvent } from "../events/debit-made";
-import { Broker } from "../ports/brokers/broker";
-import { PlayerRepository } from "../ports/repositories/player";
-import { Handler } from "./handler";
+import { DebitAccountCommand } from "../../../domain/commands/player/debit-account";
+import { DebitFailedEvent } from "../../../domain/events/player/debit-failed";
+import { DebitMadeEvent } from "../../../domain/events/player/debit-made";
+import { Broker } from "../../ports/brokers/broker";
+import { PlayerRepository } from "../../ports/repositories/player";
+import { Handler } from "../handler";
 
 type Dependencies = {
   playerRepository: PlayerRepository;
   broker: Broker;
 };
 
-export class DebitPlayerAccountHandler implements Handler {
-  name = "debit-player-account";
+export class DebitAccountHandler implements Handler {
+  name = "debit-account";
   private playerRepository: PlayerRepository;
   private broker: Broker;
 
@@ -20,7 +20,7 @@ export class DebitPlayerAccountHandler implements Handler {
     this.broker = input.broker;
   }
 
-  async handle(input: DebitPlayerAccountCommand): Promise<void> {
+  async handle(input: DebitAccountCommand): Promise<void> {
     const { payload } = input;
     const player = await this.playerRepository.findById(payload.playerId);
     try {

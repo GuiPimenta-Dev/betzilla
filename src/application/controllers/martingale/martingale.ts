@@ -1,9 +1,9 @@
-import { config } from "../../config";
-import { HttpSuccess } from "../../utils/http-status/http-success";
-import { Success } from "../../utils/http-status/success";
-import { HttpInput } from "../ports/http/http-input";
-import { GetMartingaleHistory } from "../usecases/get-martingale-history";
-import { StartMartingale } from "../usecases/start-martingale";
+import { config } from "../../../config";
+import { HttpSuccess } from "../../../utils/http-status/http-success";
+import { Success } from "../../../utils/http-status/success";
+import { HttpInput } from "../../ports/http/http-input";
+import { GetMartingaleHistory } from "../../usecases/martingale/get-martingale-history";
+import { StartMartingale } from "../../usecases/martingale/start-martingale";
 
 export class MartingaleController {
   static async start(input: HttpInput): Promise<HttpSuccess> {

@@ -1,4 +1,4 @@
-import { MartingaleController } from "./application/controllers/martingale";
+import { MartingaleController } from "./application/controllers/martingale/martingale";
 import { ExpressAdapter } from "./infra/http/express-adapter";
 
 const app = ExpressAdapter.create();

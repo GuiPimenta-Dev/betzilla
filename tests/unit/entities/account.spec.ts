@@ -1,4 +1,4 @@
-import { Account } from "../../../src/domain/account";
+import { Account } from "../../../src/domain/entities/player/account";
 
 test("It should be able to debit from an account", async () => {
   const account = new Account({ balance: 1000 });

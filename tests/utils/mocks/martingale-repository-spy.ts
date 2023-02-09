@@ -1,6 +1,6 @@
 import { HistoryItem, MartingaleRepository } from "../../../src/application/ports/repositories/martingale";
 
-import { Martingale } from "../../../src/domain/martingale";
+import { Martingale } from "../../../src/domain/entities/martingale/martingale";
 
 export class MartingaleRepositorySpy implements MartingaleRepository {
   itemSaved: HistoryItem;

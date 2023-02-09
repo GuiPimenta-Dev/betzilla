@@ -1,6 +1,6 @@
 import { HistoryItem, MartingaleRepository } from "../../application/ports/repositories/martingale";
 
-import { Martingale } from "../../domain/martingale";
+import { Martingale } from "../../domain/entities/martingale/martingale";
 import { NotFound } from "../../utils/http-status/not-found";
 
 export class InMemoryMartingaleRepository implements MartingaleRepository {

@@ -1,5 +1,5 @@
+import { UpdateHistoryItemCommand } from "../../../domain/commands/martingale/update-pending-history-item";
 import { BadRequest } from "../../../utils/http-status/bad-request";
-import { UpdateHistoryItemCommand } from "../../commands/martingale/update-pending-history-item";
 import { MartingaleRepository } from "../../ports/repositories/martingale";
 import { Handler } from "../handler";
 

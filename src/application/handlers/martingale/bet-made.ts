@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
-import { DebitPlayerAccountCommand } from "../../commands/debit-player-account";
-import { BetMadeEvent } from "../../events/bet-made";
+import { DebitAccountCommand } from "../../../domain/commands/player/debit-account";
+import { BetMadeEvent } from "../../../domain/events/player/bet-made";
 import { Broker } from "../../ports/brokers/broker";
 import { MartingaleRepository } from "../../ports/repositories/martingale";
 import { Handler } from "../handler";
@@ -24,7 +24,7 @@ export class BetMadeHandler implements Handler {
     const { payload } = input;
     const item = { itemId: uuid(), martingaleId: payload.betId, winner: "pending", investiment: payload.betValue };
     await this.martingaleRepository.saveHistory(item);
-    const command = new DebitPlayerAccountCommand({ playerId: payload.playerId, amount: payload.betValue });
+    const command = new DebitAccountCommand({ playerId: payload.playerId, amount: payload.betValue });
     await this.broker.publish(command);
   }
 }

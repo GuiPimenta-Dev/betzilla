@@ -1,7 +1,7 @@
-import { Command } from "../../../src/application/commands/command";
-import { Event } from "../../../src/application/events/event";
 import { Handler } from "../../../src/application/handlers/handler";
 import { Broker } from "../../../src/application/ports/brokers/broker";
+import { Command } from "../../../src/domain/commands/command";
+import { Event } from "../../../src/domain/events/event";
 
 export class BrokerSpy implements Broker {
   handlers: Handler[] = [];

@@ -1,7 +1,7 @@
-import { Martingale } from "../../../domain/martingale";
-import { MakeMartingaleBetCommand } from "../../commands/martingale/make-martingale-bet";
-import { BetVerifiedEvent } from "../../events/bet-verified";
-import { MartingaleFinishedEvent } from "../../events/martingale/martingale-finished";
+import { MakeMartingaleBetCommand } from "../../../domain/commands/martingale/make-martingale-bet";
+import { Martingale } from "../../../domain/entities/martingale/martingale";
+import { MartingaleFinishedEvent } from "../../../domain/events/martingale/martingale-finished";
+import { BetVerifiedEvent } from "../../../domain/events/player/bet-verified";
 import { Broker } from "../../ports/brokers/broker";
 import { MartingaleRepository } from "../../ports/repositories/martingale";
 import { Handler } from "../handler";

@@ -1,10 +1,10 @@
-import { VerifyBetCommand } from "../commands/verify-bet";
-import { BetLostEvent } from "../events/bet-lost";
-import { BetVerifiedEvent } from "../events/bet-verified";
-import { BetWonEvent } from "../events/bet-won";
-import { Broker } from "../ports/brokers/broker";
-import { BetGateway } from "../ports/gateways/bet";
-import { Handler } from "./handler";
+import { VerifyBetCommand } from "../../../domain/commands/player/verify-bet";
+import { BetLostEvent } from "../../../domain/events/player/bet-lost";
+import { BetVerifiedEvent } from "../../../domain/events/player/bet-verified";
+import { BetWonEvent } from "../../../domain/events/player/bet-won";
+import { Broker } from "../../ports/brokers/broker";
+import { BetGateway } from "../../ports/gateways/bet";
+import { Handler } from "../handler";
 
 type Dependencies = {
   betGateway: BetGateway;

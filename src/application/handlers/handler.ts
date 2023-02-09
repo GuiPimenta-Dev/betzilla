@@ -1,5 +1,5 @@
-import { Command } from "../commands/command";
-import { Event } from "../events/event";
+import { Command } from "../../domain/commands/command";
+import { Event } from "../../domain/events/event";
 
 export interface Handler {
   name: string;

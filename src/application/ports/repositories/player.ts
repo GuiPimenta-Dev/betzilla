@@ -1,4 +1,4 @@
-import { Player } from "../../../domain/player";
+import { Player } from "../../../domain/entities/player/player";
 
 export interface PlayerRepository {
   findById(id: string): Promise<Player>;

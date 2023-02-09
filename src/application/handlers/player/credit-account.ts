@@ -1,16 +1,16 @@
-import { CreditPlayerAccountCommand } from "../commands/credit-player-account";
-import { CreditMadeEvent } from "../events/credit-made";
-import { Broker } from "../ports/brokers/broker";
-import { PlayerRepository } from "../ports/repositories/player";
-import { Handler } from "./handler";
+import { CreditAccountCommand } from "../../../domain/commands/player/credit-account";
+import { CreditMadeEvent } from "../../../domain/events/player/credit-made";
+import { Broker } from "../../ports/brokers/broker";
+import { PlayerRepository } from "../../ports/repositories/player";
+import { Handler } from "../handler";
 
 type Dependencies = {
   playerRepository: PlayerRepository;
   broker: Broker;
 };
 
-export class CreditPlayerAccountHandler implements Handler {
-  name = "credit-player-account";
+export class CreditAccountHandler implements Handler {
+  name = "credit-account";
   private playerRepository: PlayerRepository;
   private broker: Broker;
 
@@ -19,7 +19,7 @@ export class CreditPlayerAccountHandler implements Handler {
     this.broker = input.broker;
   }
 
-  async handle(input: CreditPlayerAccountCommand): Promise<void> {
+  async handle(input: CreditAccountCommand): Promise<void> {
     const { payload } = input;
     const player = await this.playerRepository.findById(payload.playerId);
     player.account.credit(payload.amount);

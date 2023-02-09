@@ -1,4 +1,4 @@
-import { HistoryItem, MartingaleRepository } from "../ports/repositories/martingale";
+import { HistoryItem, MartingaleRepository } from "../../ports/repositories/martingale";
 
 type Dependencies = {
   martingaleRepository: MartingaleRepository;

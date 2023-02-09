@@ -1,5 +1,5 @@
-import { Bet } from "../ports/gateways/bet";
-import { Event } from "./event";
+import { Bet } from "../../../application/ports/gateways/bet";
+import { Event } from "../event";
 
 type Payload = {
   betId: string;

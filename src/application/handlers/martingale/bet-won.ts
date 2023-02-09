@@ -1,7 +1,7 @@
-import { Martingale } from "../../../domain/martingale";
-import { CreditPlayerAccountCommand } from "../../commands/credit-player-account";
-import { UpdateHistoryItemCommand } from "../../commands/martingale/update-pending-history-item";
-import { BetWonEvent } from "../../events/bet-won";
+import { UpdateHistoryItemCommand } from "../../../domain/commands/martingale/update-pending-history-item";
+import { CreditAccountCommand } from "../../../domain/commands/player/credit-account";
+import { Martingale } from "../../../domain/entities/martingale/martingale";
+import { BetWonEvent } from "../../../domain/events/player/bet-won";
 import { Broker } from "../../ports/brokers/broker";
 import { MartingaleRepository } from "../../ports/repositories/martingale";
 import { Handler } from "../handler";
@@ -38,6 +38,6 @@ export class BetWonHandler implements Handler {
 
   private async publishCreditPlayerAccountCommand(martingale: Martingale, amount: number) {
     const commandPayload = { playerId: martingale.playerId, amount };
-    await this.broker.publish(new CreditPlayerAccountCommand(commandPayload));
+    await this.broker.publish(new CreditAccountCommand(commandPayload));
   }
 }
