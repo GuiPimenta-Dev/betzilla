@@ -1,6 +1,7 @@
 import { MakeBet } from "../../domain/commands/make-bet";
 import { MakeMartingaleBet } from "../../domain/commands/make-martingale-bet";
 import { VerifyBet } from "../../domain/commands/verify-bet";
+import { Bet } from "../../domain/entities/bet";
 import { Broker } from "../ports/brokers/broker";
 import { MartingaleRepository } from "../ports/repositories/martingale";
 
@@ -22,9 +23,8 @@ export class MakeMartingaleBetHandler {
   async handle(input: MakeMartingaleBet) {
     const { payload } = input;
     const martingale = await this.martingaleRepository.findById(payload.martingaleId);
-    await this.broker.publish(
-      new MakeBet({ playerId: payload.playerId, betId: martingale.id, betValue: martingale.getBet() })
-    );
-    await this.broker.schedule(new VerifyBet({ betId: payload.martingaleId }));
+    const bet = new Bet({ ...payload, value: martingale.getBet(), playerId: martingale.playerId });
+    await this.broker.publish(new MakeBet(bet));
+    await this.broker.schedule(new VerifyBet(bet));
   }
 }

@@ -16,11 +16,12 @@ export class UpdateHistoryOnBetWonHandler implements Handler {
 
   async handle(event: BetWon): Promise<void> {
     const { payload } = event;
-    const history = await this.martingaleRepository.findHistory(payload.betId);
-    const historyItem = history.find((item) => item.winner === "pending");
-    historyItem.winner = true;
-    historyItem.outcome = payload.amount;
-    historyItem.profit = payload.amount - historyItem.investiment;
-    await this.martingaleRepository.updateHistory(historyItem);
+    const history = await this.martingaleRepository.findHistory(payload.strategy.id);
+    const historyItem = history.find((item) => item.itemId === payload.id);
+    const item = { ...historyItem };
+    item.winner = true;
+    item.outcome = payload.outcome;
+    item.profit = payload.outcome - item.investiment;
+    await this.martingaleRepository.updateHistory(item);
   }
 }

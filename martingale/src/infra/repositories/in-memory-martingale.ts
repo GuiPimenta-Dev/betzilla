@@ -4,8 +4,13 @@ import { Martingale } from "../../domain/entities/martingale";
 import { NotFound } from "../http/status/not-found";
 
 export class InMemoryMartingaleRepository implements MartingaleRepository {
-  private readonly martingales: Martingale[] = [];
-  private readonly history: HistoryItem[] = [];
+  private readonly martingales: Martingale[];
+  private readonly history: HistoryItem[];
+
+  constructor() {
+    this.martingales = [];
+    this.history = [];
+  }
 
   async findById(id: string): Promise<Martingale> {
     const bet = this.martingales.find((bet) => bet.id === id);
@@ -29,8 +34,7 @@ export class InMemoryMartingaleRepository implements MartingaleRepository {
 
   async updateHistory(history: HistoryItem): Promise<void> {
     const index = this.history.findIndex((historyItem) => historyItem.itemId === history.itemId);
-    if (index === -1) throw new NotFound("History item not found");
-    this.history[index] = history;
+    this.history.splice(index, 1, history);
   }
 
   async findHistory(id: string): Promise<HistoryItem[]> {

@@ -3,7 +3,10 @@ import { Player } from "../../domain/entities/player";
 import { NotFound } from "../http/status/not-found";
 
 export class InMemoryPlayerRepository implements PlayerRepository {
-  players: Player[] = [];
+  players: Player[];
+  constructor() {
+    this.players = [new Player({ id: "default", email: "default@test.com", balance: 1000 })];
+  }
 
   async findById(id: string): Promise<Player> {
     const player = this.players.find((player) => player.id === id);

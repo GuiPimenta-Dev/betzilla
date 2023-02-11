@@ -1,4 +1,3 @@
-import { v4 as uuid } from "uuid";
 import { BetMade } from "../../domain/events/bet-made";
 import { MartingaleRepository } from "../ports/repositories/martingale";
 import { Handler } from "./handler";
@@ -17,7 +16,13 @@ export class BetMadeHandler implements Handler {
 
   async handle(input: BetMade): Promise<void> {
     const { payload } = input;
-    const item = { itemId: uuid(), martingaleId: payload.betId, winner: "pending", investiment: payload.betValue };
+    const item = {
+      itemId: payload.id,
+      martingaleId: payload.strategy.id,
+      winner: "pending",
+      investiment: payload.value,
+      outcome: 0,
+    };
     await this.martingaleRepository.saveHistory(item);
   }
 }

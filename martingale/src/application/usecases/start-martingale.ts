@@ -32,7 +32,7 @@ export class StartMartingale {
     const martingale = new Martingale({ id: input.martingaleId, ...input });
     await this.martingaleRepository.create(martingale);
     await this.broker.publish(new MartingaleStarted({ martingaleId: martingale.id, playerId: input.playerId }));
-    await this.broker.publish(new MakeMartingaleBet({ martingaleId: martingale.id, playerId: input.playerId }));
+    await this.broker.publish(new MakeMartingaleBet({ martingaleId: martingale.id }));
     return { martingaleId: martingale.id };
   }
 }

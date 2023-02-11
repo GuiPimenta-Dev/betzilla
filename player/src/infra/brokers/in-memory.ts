@@ -10,6 +10,10 @@ export class InMemoryBroker implements Broker {
     this.handlers = [];
   }
 
+  async connect(): Promise<void> {}
+
+  async close(): Promise<void> {}
+
   register(handler: Handler) {
     this.handlers.push(handler);
   }

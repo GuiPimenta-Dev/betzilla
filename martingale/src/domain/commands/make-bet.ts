@@ -1,13 +1,8 @@
+import { Bet } from "../entities/bet";
 import { Command } from "./command";
 
-type Payload = {
-  betId: string;
-  betValue: number;
-  playerId: string;
-};
-
 export class MakeBet extends Command {
-  constructor(payload: Payload) {
+  constructor(payload: Bet) {
     super("make-bet", payload);
   }
 }

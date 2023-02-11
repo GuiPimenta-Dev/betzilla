@@ -23,8 +23,8 @@ export class MakeBetHandler {
 
   async handle(input: MakeBet) {
     const { payload } = input;
-    const { success } = await this.betGateway.makeBet(payload.betValue);
+    const { success } = await this.betGateway.makeBet(payload.value);
     if (!success) throw new BadRequest("Bet was not made");
-    await this.broker.publish(new BetMade({ ...payload }));
+    await this.broker.publish(new BetMade(payload));
   }
 }

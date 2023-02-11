@@ -1,5 +1,3 @@
-import { MakeBetFake } from "../tests/utils/mocks/make-bet-fake";
-import { VerifyBetFake } from "../tests/utils/mocks/verify-bet-fake";
 import { BetLostHandler } from "./application/handlers/bet-lost";
 import { BetMadeHandler } from "./application/handlers/bet-made";
 import { BetVerifiedHandler } from "./application/handlers/bet-verified";
@@ -8,10 +6,18 @@ import { MakeMartingaleBetHandler } from "./application/handlers/make-martingale
 import { MartingaleFinishedHandler } from "./application/handlers/martingale-finished";
 import { UpdateHistoryOnBetLostHandler } from "./application/handlers/update-history-on-bet-lost";
 import { UpdateHistoryOnBetWonHandler } from "./application/handlers/update-history-on-bet-won";
-import { InMemoryBroker } from "./infra/brokers/in-memory";
+import { RabbitMQAdapter } from "./infra/brokers/rabbitmq-adapter";
+import MartingaleConsumer from "./infra/consumer/martingale-consumer";
 import { InMemoryMartingaleRepository } from "./infra/repositories/in-memory-martingale";
 
-function registerHandlers(dependencies) {
+let config;
+async function init() {
+  const broker = new RabbitMQAdapter();
+  await broker.connect();
+  const dependencies = {
+    broker,
+    martingaleRepository: new InMemoryMartingaleRepository(),
+  };
   const handlers = [
     new BetLostHandler(dependencies),
     new BetWonHandler(dependencies),
@@ -22,17 +28,12 @@ function registerHandlers(dependencies) {
     new UpdateHistoryOnBetLostHandler(dependencies),
     new UpdateHistoryOnBetWonHandler(dependencies),
     new MartingaleFinishedHandler(dependencies),
-    new VerifyBetFake(dependencies),
-    new MakeBetFake(dependencies),
+    // new VerifyBetFake(dependencies),
+    // new MakeBetFake(dependencies),
   ];
-  handlers.forEach((handler) => dependencies.broker.register(handler));
+  new MartingaleConsumer(broker, handlers);
+  config = dependencies;
 }
 
-const dependencies = {
-  broker: new InMemoryBroker(),
-  martingaleRepository: new InMemoryMartingaleRepository(),
-};
-
-registerHandlers(dependencies);
-
-export const config = dependencies;
+init();
+export { config };

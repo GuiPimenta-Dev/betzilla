@@ -23,16 +23,16 @@ export class VerifyBetHandler implements Handler {
 
   async handle(input: VerifyBet) {
     const { payload } = input;
-    const bet = await this.betGateway.consultBet(payload.martingaleId);
+    const bet = await this.betGateway.consultBet(payload.strategy.id);
     if (bet.status === "won") {
-      await this.broker.publish(new BetWon({ betId: payload.betId, outcome: bet.outcome }));
+      await this.broker.publish(new BetWon({ ...payload, outcome: bet.outcome }));
     }
     if (bet.status === "lost") {
-      await this.broker.publish(new BetLost({ betId: payload.betId }));
+      await this.broker.publish(new BetLost({ ...payload }));
     }
     if (bet.status === "pending") {
-      return await this.broker.schedule(new VerifyBet({ betId: payload.betId }));
+      return await this.broker.schedule(new VerifyBet(payload));
     }
-    await this.broker.publish(new BetVerified({ betId: payload.betId, status: bet.status }));
+    await this.broker.publish(new BetVerified(payload));
   }
 }

@@ -13,7 +13,7 @@ export class GetMartingaleHistory {
 
   async execute(martingaleId: string): Promise<Output> {
     const history = await this.martingaleRepository.findHistory(martingaleId);
-    const balance = Math.round(history.reduce((acc, curr) => acc + curr.profit, 0));
+    const balance = Math.round(history.reduce((acc, curr) => (curr.profit ? acc + curr.profit : acc), 0));
     return { history, balance };
   }
 }

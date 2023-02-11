@@ -22,11 +22,11 @@ export class BetVerifiedHandler implements Handler {
 
   async handle(input: BetVerified): Promise<void> {
     const { payload } = input;
-    const martingale = await this.martingaleRepository.findById(payload.betId);
+    const martingale = await this.martingaleRepository.findById(payload.strategy.id);
     if (martingale.isFinished()) {
       return await this.broker.publish(new MartingaleFinished({ martingaleId: martingale.id }));
     }
-    const command = new MakeMartingaleBet({ martingaleId: martingale.id, playerId: martingale.playerId });
+    const command = new MakeMartingaleBet({ martingaleId: martingale.id });
     await this.broker.publish(command);
   }
 }

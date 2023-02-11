@@ -17,12 +17,13 @@ export class UpdateHistoryOnBetLostHandler implements Handler {
 
   async handle(event: BetLost): Promise<void> {
     const { payload } = event;
-    const history = await this.martingaleRepository.findHistory(payload.betId);
-    const historyItem = history.find((item) => item.winner === "pending");
+    const history = await this.martingaleRepository.findHistory(payload.strategy.id);
+    const historyItem = history.find((item) => item.itemId === payload.id);
     if (!historyItem) throw new BadRequest("Pending history item not found");
-    historyItem.winner = false;
-    historyItem.outcome = 0;
-    historyItem.profit = -historyItem.investiment;
-    await this.martingaleRepository.updateHistory(historyItem);
+    const item = { ...historyItem };
+    item.winner = false;
+    item.outcome = 0;
+    item.profit = -historyItem.investiment;
+    await this.martingaleRepository.updateHistory(item);
   }
 }

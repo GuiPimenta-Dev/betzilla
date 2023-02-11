@@ -16,7 +16,7 @@ export class BetWonHandler implements Handler {
 
   async handle(event: BetWon): Promise<void> {
     const { payload } = event;
-    const martingale = await this.martingaleRepository.findById(payload.betId);
+    const martingale = await this.martingaleRepository.findById(payload.strategy.id);
     martingale.win();
     await this.martingaleRepository.update(martingale);
   }
