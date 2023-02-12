@@ -24,7 +24,7 @@ export class BetVerifiedHandler implements Handler {
     const { payload } = input;
     const martingale = await this.martingaleRepository.findById(payload.strategy.id);
     if (martingale.isFinished()) {
-      return await this.broker.publish(new MartingaleFinished({ martingaleId: martingale.id }));
+      return await this.broker.publish(new MartingaleFinished({ martingaleId: martingale.id, reason: "finished" }));
     }
     const command = new MakeMartingaleBet({ martingaleId: martingale.id });
     await this.broker.publish(command);

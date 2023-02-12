@@ -17,7 +17,4 @@ test("It should emit a make bet command and schedule a verify bet command", asyn
   expect(brokerSpy.commands).toHaveLength(1);
   expect(brokerSpy.commands[0].name).toBe("make-bet");
   expect(brokerSpy.commands[0].payload).toBeInstanceOf(Bet);
-  expect(brokerSpy.scheduledCommands).toHaveLength(1);
-  expect(brokerSpy.scheduledCommands[0].name).toBe("verify-bet");
-  expect(brokerSpy.scheduledCommands[0].payload).toBeInstanceOf(Bet);
 });

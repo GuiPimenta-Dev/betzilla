@@ -10,7 +10,7 @@ test("It should emit a send email command when martingale is finished", async ()
   martingaleRepository.createDefaultMartingale();
 
   const sut = new MartingaleFinishedHandler({ broker: brokerSpy, martingaleRepository });
-  const martingaleFinished = new MartingaleFinished({ martingaleId: "default" });
+  const martingaleFinished = new MartingaleFinished({ martingaleId: "default", reason: "finished" });
   await sut.handle(martingaleFinished);
 
   expect(brokerSpy.commands).toHaveLength(1);

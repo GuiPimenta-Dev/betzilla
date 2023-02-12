@@ -6,11 +6,11 @@ import { HistoryItemBuilder } from "../../utils/builders/history-item";
 
 test("It should update the history when a bet is won", async () => {
   const martingaleRepository = new InMemoryMartingaleRepository();
-  const bet = BetBuilder.aBet().build();
+  const bet = BetBuilder.aBet().withOutcome(100).build();
   const pending = HistoryItemBuilder.aPending().withBetId(bet.id).build();
   martingaleRepository.createHistoryItem(pending);
 
-  const betWon = new BetWon({ ...bet, outcome: 100 });
+  const betWon = new BetWon(bet);
   const sut = new UpdateHistoryOnBetWonHandler({ martingaleRepository });
   await sut.handle(betWon);
 

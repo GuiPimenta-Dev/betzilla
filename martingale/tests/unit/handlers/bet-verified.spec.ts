@@ -36,5 +36,5 @@ test("It should emit a martingale finished event when a martingale is finished",
   expect(brokerSpy.commands.length).toBe(0);
   expect(brokerSpy.events.length).toBe(1);
   expect(brokerSpy.events[0].name).toBe("martingale-finished");
-  expect(brokerSpy.events[0].payload).toEqual({ martingaleId: "default" });
+  expect(brokerSpy.events[0].payload).toEqual({ martingaleId: "default", reason: "finished" });
 });

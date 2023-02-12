@@ -7,8 +7,8 @@ test("It should win a martingale when a bet is won", async () => {
   const martingaleRepository = new InMemoryMartingaleRepository();
   martingaleRepository.createDefaultMartingale();
 
-  const bet = BetBuilder.aBet().build();
-  const betWon = new BetWon({ ...bet, outcome: 100 });
+  const bet = BetBuilder.aBet().withOutcome(100).build();
+  const betWon = new BetWon(bet);
   const sut = new BetWonHandler({ martingaleRepository });
   await sut.handle(betWon);
 
