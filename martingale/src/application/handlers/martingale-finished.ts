@@ -29,7 +29,7 @@ export class MartingaleFinishedHandler implements Handler {
       new SendEmail({
         playerId: martingale.playerId,
         subject: "Martingale Finished",
-        body: JSON.stringify(history),
+        body: JSON.stringify({ ...history, reason: payload.reason }),
       })
     );
   }

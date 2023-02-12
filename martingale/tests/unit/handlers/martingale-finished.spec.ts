@@ -17,5 +17,5 @@ test("It should emit a send email command when martingale is finished", async ()
   expect(brokerSpy.commands[0].name).toBe("send-email");
   expect(brokerSpy.commands[0].payload.playerId).toBe("default");
   expect(brokerSpy.commands[0].payload.subject).toBe("Martingale Finished");
-  expect(brokerSpy.commands[0].payload.body).toBe('{"history":[],"balance":0}');
+  expect(brokerSpy.commands[0].payload.body).toBe('{"history":[],"balance":0,"reason":"finished"}');
 });
