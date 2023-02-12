@@ -5,7 +5,7 @@ import { NotFound } from "../http/status/not-found";
 export class InMemoryPlayerRepository implements PlayerRepository {
   players: Player[];
   constructor() {
-    this.players = [new Player({ id: "default", email: "default@test.com", balance: 1000 })];
+    this.players = [];
   }
 
   async findById(id: string): Promise<Player> {

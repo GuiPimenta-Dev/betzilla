@@ -14,7 +14,7 @@ export class InMemoryBroker implements Broker {
 
   async close(): Promise<void> {}
 
-  register(handler: Handler) {
+  subscribe(handler: Handler) {
     this.handlers.push(handler);
   }
 

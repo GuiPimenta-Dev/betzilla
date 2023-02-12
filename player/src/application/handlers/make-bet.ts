@@ -3,10 +3,8 @@ import { BetMade } from "../../domain/events/bet-made";
 import { BadRequest } from "../../infra/http/status/bad-request";
 import { Broker } from "../ports/brokers/broker";
 import { BetGateway } from "../ports/gateways/bet";
-import { PlayerRepository } from "../ports/repositories/player";
 
 type Dependencies = {
-  playerRepository: PlayerRepository;
   betGateway: BetGateway;
   broker: Broker;
 };

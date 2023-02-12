@@ -24,7 +24,6 @@ export class CreditAccountHandler implements Handler {
     const player = await this.playerRepository.findById(payload.playerId);
     player.account.credit(payload.outcome);
     await this.playerRepository.update(player);
-    const event = new CreditMade({ playerId: player.id, value: payload.outcome });
-    await this.broker.publish(event);
+    await this.broker.publish(new CreditMade({ ...payload, credit: payload.outcome }));
   }
 }

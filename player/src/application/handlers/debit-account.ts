@@ -26,12 +26,9 @@ export class DebitAccountHandler implements Handler {
     try {
       player.account.debit(payload.value);
       await this.playerRepository.update(player);
-      console.log("Debit made");
-      const event = new DebitMade({ playerId: player.id, value: payload.betValue });
-      await this.broker.publish(event);
+      await this.broker.publish(new DebitMade(payload));
     } catch (error) {
-      const event = new DebitFailed({ playerId: player.id, value: payload.betValue });
-      await this.broker.publish(event);
+      await this.broker.publish(new DebitFailed(payload));
     }
   }
 }

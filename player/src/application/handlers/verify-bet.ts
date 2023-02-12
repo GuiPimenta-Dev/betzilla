@@ -28,7 +28,7 @@ export class VerifyBetHandler implements Handler {
       await this.broker.publish(new BetWon({ ...payload, outcome: bet.outcome }));
     }
     if (bet.status === "lost") {
-      await this.broker.publish(new BetLost({ ...payload }));
+      await this.broker.publish(new BetLost(payload));
     }
     if (bet.status === "pending") {
       return await this.broker.schedule(new VerifyBet(payload));

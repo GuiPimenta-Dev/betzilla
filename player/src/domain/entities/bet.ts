@@ -3,11 +3,23 @@ type Strategy = {
   name: string;
 };
 
+type Input = {
+  id: string;
+  playerId: string;
+  strategy: Strategy;
+  value: number;
+};
+
 export class Bet {
-  constructor(
-    public readonly id: string,
-    public readonly playerId: string,
-    public readonly strategy: Strategy,
-    public readonly value: number
-  ) {}
+  id: string;
+  playerId: string;
+  strategy: Strategy;
+  value: number;
+
+  constructor(input: Input) {
+    this.id = input.id;
+    this.playerId = input.playerId;
+    this.strategy = input.strategy;
+    this.value = input.value;
+  }
 }

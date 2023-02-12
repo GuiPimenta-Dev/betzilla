@@ -1,27 +1,22 @@
-import { Bet, BetGateway } from "../../../src/application/ports/gateways/bet";
+import { BetGateway, BetStatus } from "../../../src/application/ports/gateways/bet";
 
 export class BetGatewayMock implements BetGateway {
-  betValue: number;
-  bets: Bet[] = [{ status: "lost", outcome: 0 }];
-  betIndex: number = 0;
-  betWasMade: boolean = true;
+  makeBetResponse: boolean = true;
+  consultBetResponse: BetStatus;
 
-  async makeBet(value: number): Promise<{ success: boolean }> {
-    this.betValue = value;
-    return { success: this.betWasMade };
+  async makeBet(): Promise<{ success: boolean }> {
+    return { success: this.makeBetResponse };
   }
 
-  async consultBet(): Promise<Bet> {
-    const response = this.bets[this.betIndex];
-    this.betIndex++;
-    return response;
+  async consultBet(): Promise<BetStatus> {
+    return this.consultBetResponse;
   }
 
   mockMakeBetResponse(betWasMade: boolean) {
-    this.betWasMade = betWasMade;
+    this.makeBetResponse = betWasMade;
   }
 
-  mockConsultBetResponse(bets: Bet[]) {
-    this.bets = bets;
+  mockConsultBetResponse(bet: BetStatus) {
+    this.consultBetResponse = bet;
   }
 }

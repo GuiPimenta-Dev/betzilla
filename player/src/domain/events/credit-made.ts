@@ -1,12 +1,8 @@
+import { Bet } from "../entities/bet";
 import { Event } from "./event";
 
-type Payload = {
-  playerId: string;
-  value: number;
-};
-
 export class CreditMade extends Event {
-  constructor(payload: Payload) {
+  constructor(payload: Bet & { credit: number }) {
     super("credit-made", payload);
   }
 }

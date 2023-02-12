@@ -15,8 +15,15 @@ export class BrokerSpy implements Broker {
     this.broker = broker;
   }
 
-  register(handler: Handler) {
-    this.broker.register(handler);
+  connect(): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+  close(): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
+  subscribe(handler: Handler): void {
+    this.broker.subscribe(handler, jest.fn());
   }
 
   async publish(input: Event | Command): Promise<void> {
