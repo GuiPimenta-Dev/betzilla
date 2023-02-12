@@ -5,16 +5,10 @@ import { Command } from "../../domain/commands/command";
 import { Event } from "../../domain/events/event";
 
 export class RabbitMQAdapter implements Broker {
-  handlers: Handler[];
-
   connection: any;
 
   async connect(): Promise<void> {
     this.connection = await amqplib.connect("amqp://localhost");
-  }
-
-  async close(): Promise<void> {
-    await this.connection.close();
   }
 
   async subscribe(handler: Handler, callback: Function): Promise<void> {
@@ -43,9 +37,5 @@ export class RabbitMQAdapter implements Broker {
   async schedule(input: Command): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     await this.publish(input);
-  }
-
-  register(handler: Handler): void {
-    throw new Error("Method not implemented.");
   }
 }
