@@ -10,7 +10,7 @@ export class RabbitMQAdapter implements Broker {
   connection: any;
 
   async connect(): Promise<void> {
-    this.connection = await amqplib.connect("amqp://localhost");
+    this.connection = await amqplib.connect("amqp://rabbitmq:5672");
   }
 
   async close(): Promise<void> {

@@ -1,5 +1,29 @@
 version: "3.2"
 services:
+  player:
+    build: ./player
+    container_name: "player"
+    ports:
+      - 3000:3000
+    volumes:
+      - ./player/:/usr/src/app/
+    networks:
+      - rabbitmq_nodejs
+    depends_on:
+      - rabbitmq
+
+  martingale:
+    build: ./martingale
+    container_name: "martingale"
+    volumes:
+      - ./martingale/:/usr/src/app/
+    ports:
+      - 3001:3001
+    networks:
+      - rabbitmq_nodejs
+    depends_on:
+      - rabbitmq
+
   rabbitmq:
     image: rabbitmq:3.8-management-alpine
     container_name: "rabbitmq"
@@ -11,6 +35,7 @@ services:
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     networks:
       - rabbitmq_nodejs
+
 networks:
   rabbitmq_nodejs:
     driver: bridge
