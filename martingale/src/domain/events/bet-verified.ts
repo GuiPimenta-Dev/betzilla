@@ -1,12 +1,8 @@
+import { Bet } from "../entities/bet";
 import { Event } from "./event";
 
-type Payload = {
-  betId: string;
-  status: "lost" | "won" | "pending";
-};
-
 export class BetVerified extends Event {
-  constructor(payload: Payload) {
+  constructor(payload: Bet) {
     super("bet-verified", payload);
   }
 }

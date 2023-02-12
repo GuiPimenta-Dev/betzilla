@@ -28,16 +28,22 @@ export class InMemoryMartingaleRepository implements MartingaleRepository {
     this.martingales[index] = martingale;
   }
 
-  async saveHistory(history: HistoryItem): Promise<void> {
+  async createHistoryItem(history: HistoryItem): Promise<void> {
     this.history.push(history);
   }
 
   async updateHistory(history: HistoryItem): Promise<void> {
-    const index = this.history.findIndex((historyItem) => historyItem.itemId === history.itemId);
+    const index = this.history.findIndex((historyItem) => historyItem.betId === history.betId);
     this.history.splice(index, 1, history);
   }
 
   async findHistory(id: string): Promise<HistoryItem[]> {
     return this.history.filter((history) => history.martingaleId === id);
+  }
+
+  createDefaultMartingale() {
+    const settings = { id: "default", playerId: "default", initialBet: 10, rounds: 1, multiplier: 2 };
+    const martingale = new Martingale(settings);
+    this.create(martingale);
   }
 }

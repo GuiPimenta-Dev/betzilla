@@ -2,7 +2,7 @@ import { SendEmail } from "../../domain/commands/send-email";
 import { MartingaleFinished } from "../../domain/events/martingale-finished";
 import { Broker } from "../ports/brokers/broker";
 import { MartingaleRepository } from "../ports/repositories/martingale";
-import { GetMartingaleHistory } from "../usecases/get-martingale-history";
+import { GetHistory } from "../usecases/get-history";
 import { Handler } from "./handler";
 
 type Dependencies = {
@@ -23,7 +23,7 @@ export class MartingaleFinishedHandler implements Handler {
   async handle(event: MartingaleFinished): Promise<void> {
     const { payload } = event;
     const martingale = await this.martingaleRepository.findById(payload.martingaleId);
-    const usecase = new GetMartingaleHistory({ martingaleRepository: this.martingaleRepository });
+    const usecase = new GetHistory({ martingaleRepository: this.martingaleRepository });
     const history = await usecase.execute(payload.martingaleId);
     await this.broker.publish(
       new SendEmail({

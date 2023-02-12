@@ -13,6 +13,7 @@ import { BetMade } from "../../../src/domain/events/bet-made";
 import { BetWon } from "../../../src/domain/events/bet-won";
 import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
 import { InMemoryMartingaleRepository } from "../../../src/infra/repositories/in-memory-martingale";
+import { BetBuilder } from "../../utils/builders/bet";
 import { BrokerSpy } from "../../utils/mocks/broker-spy";
 import { MakeBetStub } from "../../utils/mocks/make-bet-stub";
 import { VerifyBetStub } from "../../utils/mocks/verify-bet-stub";
@@ -41,18 +42,16 @@ beforeEach(() => {
     makeBetStub,
     verifyBetStub,
   ];
-  handlers.forEach((handler) => brokerSpy.register(handler));
+  handlers.forEach((handler) => brokerSpy.subscribe(handler));
 });
 
 test("It should emit all the events in the correct order", async () => {
-  makeBetStub.setEvents([
-    new BetMade({ betId: "martingale", betValue: 10 }),
-    new BetMade({ betId: "martingale", betValue: 10 }),
-  ]);
-  verifyBetStub.setEvents([new BetWon({ betId: "martingale", amount: 10 }), new BetLost({ betId: "martingale" })]);
+  const bet = BetBuilder.aBet().build();
+  makeBetStub.setEvents([new BetMade(bet), new BetMade(bet)]);
+  verifyBetStub.setEvents([new BetWon({ ...bet, outcome: 100 }), new BetLost(bet)]);
 
   const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository });
-  const input = { martingaleId: "martingale", playerId: "1", initialBet: 10, rounds: 2, multiplier: 2 };
+  const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 2, multiplier: 2 };
   await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
@@ -78,19 +77,18 @@ test("It should emit all the events in the correct order", async () => {
 });
 
 test("It should create a correct martingale history", async () => {
-  makeBetStub.setEvents([
-    new BetMade({ betId: "martingale", betValue: 10 }),
-    new BetMade({ betId: "martingale", betValue: 10 }),
-    new BetMade({ betId: "martingale", betValue: 20 }),
-  ]);
-  verifyBetStub.setEvents([new BetWon({ betId: "martingale", amount: 70 }), new BetLost({ betId: "martingale" })]);
+  const bet1 = BetBuilder.aBet().build();
+  const bet2 = BetBuilder.aBet().build();
+  const bet3 = BetBuilder.aBet().withValue(20).build();
+  makeBetStub.setEvents([new BetMade(bet1), new BetMade(bet2), new BetMade(bet3)]);
+  verifyBetStub.setEvents([new BetWon({ ...bet1, outcome: 70 }), new BetLost(bet2)]);
 
   const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository });
-  const input = { martingaleId: "martingale", playerId: "1", initialBet: 10, rounds: 3, multiplier: 2 };
+  const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 3, multiplier: 2 };
   await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
-  const history = await martingaleRepository.findHistory("martingale");
+  const history = await martingaleRepository.findHistory("default");
   expect(history).toHaveLength(3);
   expect(history[0]).toMatchObject({ winner: true, investiment: 10, outcome: 70, profit: 60 });
   expect(history[1]).toMatchObject({ winner: false, investiment: 10, outcome: 0, profit: -10 });
@@ -99,6 +97,6 @@ test("It should create a correct martingale history", async () => {
 
 test("It should throw an error if there isnt at least one round", async () => {
   const sut = new StartMartingale({ broker, martingaleRepository });
-  const input = { martingaleId: "martingale", playerId: "1", initialBet: 10, rounds: 0, multiplier: 2 };
+  const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 0, multiplier: 2 };
   await expect(sut.execute(input)).rejects.toThrow("There must be at least one round");
 });

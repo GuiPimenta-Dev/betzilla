@@ -15,8 +15,10 @@ export class BrokerSpy implements Broker {
     this.broker = broker;
   }
 
-  register(handler: Handler) {
-    this.broker.register(handler);
+  async connect(): Promise<void> {}
+
+  async subscribe(handler: Handler): Promise<void> {
+    this.broker.subscribe(handler, jest.fn());
   }
 
   async publish(input: Event | Command): Promise<void> {

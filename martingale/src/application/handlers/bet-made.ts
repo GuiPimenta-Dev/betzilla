@@ -16,13 +16,13 @@ export class BetMadeHandler implements Handler {
 
   async handle(input: BetMade): Promise<void> {
     const { payload } = input;
-    const item = {
-      itemId: payload.id,
+    await this.martingaleRepository.createHistoryItem({
+      betId: payload.id,
       martingaleId: payload.strategy.id,
       winner: "pending",
       investiment: payload.value,
-      outcome: 0,
-    };
-    await this.martingaleRepository.saveHistory(item);
+      outcome: null,
+      profit: null,
+    });
   }
 }

@@ -7,33 +7,32 @@ import { MartingaleFinishedHandler } from "./application/handlers/martingale-fin
 import { UpdateHistoryOnBetLostHandler } from "./application/handlers/update-history-on-bet-lost";
 import { UpdateHistoryOnBetWonHandler } from "./application/handlers/update-history-on-bet-won";
 import { RabbitMQAdapter } from "./infra/brokers/rabbitmq-adapter";
-import MartingaleConsumer from "./infra/consumer/martingale-consumer";
 import { InMemoryMartingaleRepository } from "./infra/repositories/in-memory-martingale";
 
 let config;
 async function init() {
-  const broker = new RabbitMQAdapter();
-  await broker.connect();
-  const dependencies = {
-    broker,
+  config = {
+    broker: new RabbitMQAdapter(),
     martingaleRepository: new InMemoryMartingaleRepository(),
   };
+  await config.broker.connect();
   const handlers = [
-    new BetLostHandler(dependencies),
-    new BetWonHandler(dependencies),
-    new BetMadeHandler(dependencies),
-    new BetVerifiedHandler(dependencies),
-    new MakeMartingaleBetHandler(dependencies),
-    new MartingaleFinishedHandler(dependencies),
-    new UpdateHistoryOnBetLostHandler(dependencies),
-    new UpdateHistoryOnBetWonHandler(dependencies),
-    new MartingaleFinishedHandler(dependencies),
-    // new VerifyBetFake(dependencies),
-    // new MakeBetFake(dependencies),
+    new BetLostHandler(config),
+    new BetWonHandler(config),
+    new BetMadeHandler(config),
+    new BetVerifiedHandler(config),
+    new MakeMartingaleBetHandler(config),
+    new MartingaleFinishedHandler(config),
+    new UpdateHistoryOnBetLostHandler(config),
+    new UpdateHistoryOnBetWonHandler(config),
+    new MartingaleFinishedHandler(config),
   ];
-  new MartingaleConsumer(broker, handlers);
-  config = dependencies;
+  handlers.map((handler) => {
+    config.broker.subscribe(handler, async function (msg: any) {
+      await handler.handle(msg);
+    });
+  });
 }
-
 init();
+
 export { config };

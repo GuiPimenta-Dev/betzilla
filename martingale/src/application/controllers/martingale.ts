@@ -3,7 +3,7 @@ import { config } from "../../config";
 import { HttpSuccess } from "../../infra/http/status/http-success";
 import { Success } from "../../infra/http/status/success";
 import { HttpInput } from "../ports/http/http-input";
-import { GetMartingaleHistory } from "../usecases/get-martingale-history";
+import { GetHistory } from "../usecases/get-history";
 import { StartMartingale } from "../usecases/start-martingale";
 
 export class MartingaleController {
@@ -16,7 +16,7 @@ export class MartingaleController {
 
   static async history(input: HttpInput): Promise<HttpSuccess> {
     const { path } = input;
-    const usecase = new GetMartingaleHistory(config);
+    const usecase = new GetHistory(config);
     const output = await usecase.execute(path.id);
     return new Success(output);
   }

@@ -21,9 +21,8 @@ export class VerifyBetStub implements Handler {
   async handle(): Promise<void> {
     const event = this.events[this.eventIndex];
     if (!event) return;
-    const status = event instanceof BetWon ? "won" : "lost";
     await this.broker.publish(event);
-    await this.broker.publish(new BetVerified({ betId: event.payload.betId, status }));
+    await this.broker.publish(new BetVerified(event.payload));
     this.eventIndex++;
   }
 
