@@ -66,3 +66,16 @@ test("It should not emit a bet verified event if bet is pending", async () => {
 
   expect(brokerSpy.events.length).toBe(0);
 });
+
+test("It should update de bet oucome when bet is won", async () => {
+  const brokerSpy = new BrokerSpy(new InMemoryBroker());
+  const betGateway = new BetGatewayMock();
+  betGateway.mockConsultBetResponse({ status: "won", outcome: 100 });
+
+  const bet = BetBuilder.aBet().build();
+  const verifyBet = new VerifyBet(bet);
+  const sut = new VerifyBetHandler({ betGateway, broker: brokerSpy });
+  await sut.handle(verifyBet);
+
+  expect(brokerSpy.events[0].payload.outcome).toBe(100)
+})

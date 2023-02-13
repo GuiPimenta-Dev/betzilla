@@ -22,46 +22,6 @@ test("It should emit a make bet command and schedule a verify bet command", asyn
   expect(brokerSpy.commands[0].payload).toBeInstanceOf(Bet);
 });
 
-test("It should not emit martingale finished if user has balance", async () => {
-  const brokerSpy = new BrokerSpy(new InMemoryBroker());
-  const martingaleRepository = new InMemoryMartingaleRepository();
-  const httpClientStub = new HttpClientStub();
-  httpClientStub.mockGetResponse({ statusCode: 200, data: { balance: 1000 } });
-  martingaleRepository.createDefaultMartingale();
 
-  const sut = new MakeMartingaleBetHandler({ broker: brokerSpy, martingaleRepository });
-  const makeMartingaleBet = new MakeMartingaleBet({ martingaleId: "default" });
-  await sut.handle(makeMartingaleBet);
 
-  expect(brokerSpy.events).toHaveLength(0);
-});
 
-test("It should emit a martingale finished event if user has no balance", async () => {
-  const brokerSpy = new BrokerSpy(new InMemoryBroker());
-  const martingaleRepository = new InMemoryMartingaleRepository();
-  const httpClientStub = new HttpClientStub();
-  httpClientStub.mockGetResponse({ statusCode: 200, data: { balance: 0 } });
-  martingaleRepository.createDefaultMartingale();
-
-  const sut = new MakeMartingaleBetHandler({ broker: brokerSpy, martingaleRepository });
-  const makeMartingaleBet = new MakeMartingaleBet({ martingaleId: "default" });
-  await sut.handle(makeMartingaleBet);
-
-  expect(brokerSpy.events).toHaveLength(1);
-  expect(brokerSpy.events[0].name).toBe("martingale-finished");
-  expect(brokerSpy.events[0].payload).toEqual({ martingaleId: "default", reason: "not enough funds" });
-});
-
-test("It should not emit a make bet command if user has no balance", async () => {
-  const brokerSpy = new BrokerSpy(new InMemoryBroker());
-  const martingaleRepository = new InMemoryMartingaleRepository();
-  const httpClientStub = new HttpClientStub();
-  httpClientStub.mockGetResponse({ statusCode: 200, data: { balance: 0 } });
-  martingaleRepository.createDefaultMartingale();
-
-  const sut = new MakeMartingaleBetHandler({ broker: brokerSpy, martingaleRepository });
-  const makeMartingaleBet = new MakeMartingaleBet({ martingaleId: "default" });
-  await sut.handle(makeMartingaleBet);
-
-  expect(brokerSpy.commands).toHaveLength(0);
-});

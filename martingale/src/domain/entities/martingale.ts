@@ -11,6 +11,7 @@ export class Martingale {
   readonly playerId: string;
   readonly initialBet: number;
   readonly multiplier: number;
+  public status: string | null;
   private rounds: number;
   private bet: number;
 
@@ -21,6 +22,7 @@ export class Martingale {
     this.rounds = input.rounds;
     this.multiplier = input.multiplier;
     this.bet = input.initialBet;
+    this.status = "playing";
   }
 
   win() {

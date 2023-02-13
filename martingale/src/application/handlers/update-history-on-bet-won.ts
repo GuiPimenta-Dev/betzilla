@@ -18,10 +18,9 @@ export class UpdateHistoryOnBetWonHandler implements Handler {
     const { payload } = event;
     const history = await this.martingaleRepository.findHistory(payload.strategy.id);
     const historyItem = history.find((item) => item.betId === payload.id);
-    const item = { ...historyItem };
-    item.winner = true;
-    item.outcome = payload.outcome;
-    item.profit = payload.outcome - item.investiment;
-    await this.martingaleRepository.updateHistory(item);
+    historyItem.winner = true;
+    historyItem.outcome = payload.outcome;
+    historyItem.profit = payload.outcome - historyItem.investiment;
+    await this.martingaleRepository.updateHistory(historyItem);
   }
 }

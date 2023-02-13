@@ -2,7 +2,7 @@ import { Event } from "./event";
 
 type Input = {
   martingaleId: string;
-  reason: string;
+  status: string;
 };
 
 export class MartingaleFinished extends Event {

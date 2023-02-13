@@ -23,13 +23,15 @@ export class MartingaleFinishedHandler implements Handler {
   async handle(event: MartingaleFinished): Promise<void> {
     const { payload } = event;
     const martingale = await this.martingaleRepository.findById(payload.martingaleId);
+    martingale.status = payload.status;
+    await this.martingaleRepository.update(martingale);
     const usecase = new GetHistory({ martingaleRepository: this.martingaleRepository });
     const history = await usecase.execute(payload.martingaleId);
     await this.broker.publish(
       new SendEmail({
         playerId: martingale.playerId,
         subject: "Martingale Finished",
-        body: JSON.stringify({ ...history, reason: payload.reason }),
+        body: JSON.stringify(history),
       })
     );
   }

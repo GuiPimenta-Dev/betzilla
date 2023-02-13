@@ -12,12 +12,13 @@ export class GetHistory {
   }
 
   async execute(martingaleId: string): Promise<Output> {
+    const martingale = await this.martingaleRepository.findById(martingaleId);
     let history = await this.martingaleRepository.findHistory(martingaleId);
     const presentedHistory = history.map((item) => {
       return { winner: item.winner, investiment: item.investiment, outcome: item.outcome, profit: item.profit };
     });
-    const balance = Math.round(history.reduce((acc, curr) => (curr.profit ? acc + curr.profit : acc), 0));
-    return { history: presentedHistory, balance };
+    const profit = Math.round(history.reduce((acc, curr) => (curr.profit ? acc + curr.profit : acc), 0));
+    return { history: presentedHistory, profit, status: martingale.status };
   }
 }
 
@@ -30,5 +31,6 @@ type PresentedHistory = {
 
 type Output = {
   history: PresentedHistory[];
-  balance: number;
+  profit: number;
+  status?: string;
 };

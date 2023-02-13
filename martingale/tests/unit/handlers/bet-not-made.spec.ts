@@ -41,7 +41,7 @@ test("It should emit a martingale finished event if the bet was not made 3 times
 
   expect(brokerSpy.events).toHaveLength(1);
   expect(brokerSpy.events[0].name).toBe("martingale-finished");
-  expect(brokerSpy.events[0].payload).toEqual({ martingaleId: "default", reason: "max attempts reached" });
+  expect(brokerSpy.events[0].payload).toEqual({ martingaleId: "default", status: "max attempts reached" });
 });
 
 test("It should not emit a martingale finished event if the bet was not made less than 3 times", async () => {

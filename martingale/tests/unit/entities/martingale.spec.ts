@@ -69,3 +69,16 @@ test("It should multiply the bet when losing", () => {
 
   expect(martingale.getBet()).toBe(25);
 });
+
+test("It should start with the status 'playing''", () => {
+  const input = {
+    id: "some-id",
+    playerId: "account-id",
+    initialBet: 10,
+    rounds: 10,
+    multiplier: 2.5,
+    };
+    const martingale = new Martingale(input);
+
+    expect(martingale.status).toBe("playing");
+});

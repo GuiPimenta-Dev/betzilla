@@ -26,6 +26,7 @@ let brokerSpy: BrokerSpy;
 let martingaleRepository: InMemoryMartingaleRepository;
 let makeBetStub: MakeBetStub;
 let verifyBetStub: VerifyBetStub;
+let httpClientStub: HttpClientStub;
 
 beforeEach(() => {
   broker = new InMemoryBroker();
@@ -33,14 +34,14 @@ beforeEach(() => {
   martingaleRepository = new InMemoryMartingaleRepository();
   makeBetStub = new MakeBetStub({ broker: brokerSpy });
   verifyBetStub = new VerifyBetStub({ broker: brokerSpy });
-  const httpClientStub = new HttpClientStub();
+  httpClientStub = new HttpClientStub();
   const handlers = [
     new BetLostHandler({ martingaleRepository }),
     new BetWonHandler({ martingaleRepository }),
     new BetMadeHandler({ martingaleRepository, broker: brokerSpy }),
-    new BetVerifiedHandler({ broker: brokerSpy, martingaleRepository }),
+    new BetVerifiedHandler({ broker: brokerSpy, martingaleRepository, httpClient: httpClientStub }),
     new BetNotMadeHandler({ broker: brokerSpy }),
-    new MakeMartingaleBetHandler({ broker: brokerSpy, martingaleRepository, httpClient: httpClientStub }),
+    new MakeMartingaleBetHandler({ broker: brokerSpy, martingaleRepository }),
     new MartingaleFinishedHandler({ broker: brokerSpy, martingaleRepository }),
     new UpdateHistoryOnBetLostHandler({ martingaleRepository }),
     new UpdateHistoryOnBetWonHandler({ martingaleRepository }),
@@ -55,7 +56,7 @@ test("It should emit all the events in the correct order", async () => {
   makeBetStub.setEvents([new BetMade(bet), new BetMade(bet)]);
   verifyBetStub.setEvents([new BetWon(bet), new BetLost(bet)]);
 
-  const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository });
+  const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository, httpClient: httpClientStub });
   const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 2, multiplier: 2 };
   await sut.execute(input);
 
@@ -88,7 +89,7 @@ test("It should create a correct martingale history", async () => {
   makeBetStub.setEvents([new BetMade(bet1), new BetMade(bet2), new BetMade(bet3)]);
   verifyBetStub.setEvents([new BetWon(bet1), new BetLost(bet2)]);
 
-  const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository });
+  const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository, httpClient: httpClientStub });
   const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 3, multiplier: 2 };
   await sut.execute(input);
 
@@ -105,7 +106,7 @@ test("It should retry the bet if it fails", async () => {
   makeBetStub.setEvents([new BetNotMade(bet), new BetMade(bet)]);
   verifyBetStub.setEvents([new BetWon(bet)]);
 
-  const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository });
+  const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository, httpClient: httpClientStub });
   const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 1, multiplier: 2 };
   await sut.execute(input);
 
@@ -132,7 +133,7 @@ test("It should finish the execution if the same bet is not made 4 times", async
   const bet = BetBuilder.aBet().withOutcome(100).build();
   makeBetStub.setEvents([new BetNotMade(bet), new BetNotMade(bet), new BetNotMade(bet), new BetNotMade(bet)]);
 
-  const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository });
+  const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository, httpClient: httpClientStub });
   const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 1, multiplier: 2 };
   await sut.execute(input);
 
@@ -157,7 +158,7 @@ test("It should finish the execution if the same bet is not made 4 times", async
 });
 
 test("It should throw an error if there isnt at least one round", async () => {
-  const sut = new StartMartingale({ broker, martingaleRepository });
+  const sut = new StartMartingale({ broker, martingaleRepository, httpClient: httpClientStub });
   const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 0, multiplier: 2 };
   await expect(sut.execute(input)).rejects.toThrow("There must be at least one round");
 });

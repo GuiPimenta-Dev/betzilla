@@ -28,12 +28,12 @@ export class BetVerifiedHandler implements Handler {
     const { payload } = input;
     const martingale = await this.martingaleRepository.findById(payload.strategy.id);
     if (martingale.isFinished()) {
-      await this.broker.publish(new MartingaleFinished({ martingaleId: martingale.id, reason: "finished" }));
+      await this.broker.publish(new MartingaleFinished({ martingaleId: martingale.id, status: "finished" }));
       return;
     }
     const { data } = await this.httpClient.get(`http://player:3000/player/${martingale.playerId}/balance`);
     if (data.balance < martingale.getBet()) {
-      await this.broker.publish(new MartingaleFinished({ martingaleId: martingale.id, reason: "not enough funds" }));
+      await this.broker.publish(new MartingaleFinished({ martingaleId: martingale.id, status: "not enough funds" }));
       return;
     }
     const command = new MakeMartingaleBet({ martingaleId: martingale.id });
