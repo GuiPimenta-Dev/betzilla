@@ -20,9 +20,10 @@ export class BetNotMadeHandler implements Handler {
     try {
       payload.retry();
     } catch {
-      return await this.broker.publish(
+      await this.broker.publish(
         new MartingaleFinished({ martingaleId: payload.strategy.id, reason: "max attempts reached" })
       );
+      return;
     }
     await this.broker.schedule(new MakeBet(payload));
   }

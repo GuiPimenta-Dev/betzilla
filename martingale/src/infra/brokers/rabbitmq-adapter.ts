@@ -11,6 +11,7 @@ export class RabbitMQAdapter implements Broker {
 
   async connect(): Promise<void> {
     this.connection = await amqplib.connect("amqp://rabbitmq:5672");
+    // this.connection = await amqplib.connect("amqp://localhost:5672");
   }
 
   async close(): Promise<void> {
@@ -27,6 +28,7 @@ export class RabbitMQAdapter implements Broker {
       async function (msg: any) {
         if (msg.content) {
           const input = JSON.parse(msg.content.toString());
+          console.log(input);
           await callback(input);
         }
       },

@@ -10,7 +10,8 @@ services:
     networks:
       - rabbitmq_nodejs
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
 
   martingale:
     build: ./martingale
@@ -22,10 +23,11 @@ services:
     networks:
       - rabbitmq_nodejs
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
 
   rabbitmq:
-    image: rabbitmq:3.8-management-alpine
+    build: .
     container_name: "rabbitmq"
     ports:
       - 5672:5672
@@ -35,7 +37,11 @@ services:
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     networks:
       - rabbitmq_nodejs
-
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:15672"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
 networks:
   rabbitmq_nodejs:
     driver: bridge

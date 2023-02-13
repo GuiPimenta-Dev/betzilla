@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "start": "nodemon",
-    "debug": "tsnd --inspect --respawn --transpile-only --ignore-watch node_modules src/Server.ts"
+    "debug": "tsnd --inspect --respawn --transpile-only --ignore-watch node_modules src/server.ts"
   },
   "author": "",
   "license": "ISC",
@@ -29,8 +29,10 @@
   },
   "dependencies": {
     "@types/amqplib": "^0.10.1",
+    "@types/axios": "^0.14.0",
     "@types/dotenv": "^8.2.0",
     "amqplib": "^0.10.3",
+    "axios": "^1.3.2",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "nodemon": "^2.0.20",

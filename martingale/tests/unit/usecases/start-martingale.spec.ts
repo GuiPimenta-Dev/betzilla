@@ -3,7 +3,6 @@ import { BetMadeHandler } from "../../../src/application/handlers/bet-made";
 import { BetNotMadeHandler } from "../../../src/application/handlers/bet-not-made";
 import { BetVerifiedHandler } from "../../../src/application/handlers/bet-verified";
 import { BetWonHandler } from "../../../src/application/handlers/bet-won";
-import { DebitFailedHandler } from "../../../src/application/handlers/debit-failed";
 import { MakeMartingaleBetHandler } from "../../../src/application/handlers/make-martingale-bet";
 import { MartingaleFinishedHandler } from "../../../src/application/handlers/martingale-finished";
 import { UpdateHistoryOnBetLostHandler } from "../../../src/application/handlers/update-history-on-bet-lost";
@@ -14,11 +13,11 @@ import { BetLost } from "../../../src/domain/events/bet-lost";
 import { BetMade } from "../../../src/domain/events/bet-made";
 import { BetNotMade } from "../../../src/domain/events/bet-not-made";
 import { BetWon } from "../../../src/domain/events/bet-won";
-import { DebitFailed } from "../../../src/domain/events/debit-failed";
 import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
 import { InMemoryMartingaleRepository } from "../../../src/infra/repositories/in-memory-martingale";
 import { BetBuilder } from "../../utils/builders/bet";
 import { BrokerSpy } from "../../utils/mocks/broker-spy";
+import { HttpClientStub } from "../../utils/mocks/http-client-stub";
 import { MakeBetStub } from "../../utils/mocks/make-bet-stub";
 import { VerifyBetStub } from "../../utils/mocks/verify-bet-stub";
 
@@ -34,17 +33,17 @@ beforeEach(() => {
   martingaleRepository = new InMemoryMartingaleRepository();
   makeBetStub = new MakeBetStub({ broker: brokerSpy });
   verifyBetStub = new VerifyBetStub({ broker: brokerSpy });
+  const httpClientStub = new HttpClientStub();
   const handlers = [
     new BetLostHandler({ martingaleRepository }),
     new BetWonHandler({ martingaleRepository }),
     new BetMadeHandler({ martingaleRepository, broker: brokerSpy }),
     new BetVerifiedHandler({ broker: brokerSpy, martingaleRepository }),
     new BetNotMadeHandler({ broker: brokerSpy }),
-    new MakeMartingaleBetHandler({ broker: brokerSpy, martingaleRepository }),
+    new MakeMartingaleBetHandler({ broker: brokerSpy, martingaleRepository, httpClient: httpClientStub }),
     new MartingaleFinishedHandler({ broker: brokerSpy, martingaleRepository }),
     new UpdateHistoryOnBetLostHandler({ martingaleRepository }),
     new UpdateHistoryOnBetWonHandler({ martingaleRepository }),
-    new DebitFailedHandler({ broker: brokerSpy }),
     makeBetStub,
     verifyBetStub,
   ];
@@ -152,28 +151,6 @@ test("It should finish the execution if the same bet is not made 4 times", async
     "bet-not-made",
     "make-bet",
     "bet-not-made",
-    "martingale-finished",
-    "send-email",
-  ]);
-});
-
-test("It should finish the execution if user has no money", async () => {
-  const bet = BetBuilder.aBet().build();
-  makeBetStub.setEvents([new DebitFailed(bet)]);
-
-  const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository });
-  const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 1, multiplier: 2 };
-  await sut.execute(input);
-
-  await new Promise((res) => setTimeout(res));
-  expect(brokerSpy.events).toHaveLength(3);
-  expect(brokerSpy.commands).toHaveLength(3);
-  expect(brokerSpy.scheduledCommands).toHaveLength(0);
-  expect(brokerSpy.history).toEqual([
-    "martingale-started",
-    "make-martingale-bet",
-    "make-bet",
-    "debit-failed",
     "martingale-finished",
     "send-email",
   ]);
