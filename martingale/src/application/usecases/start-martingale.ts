@@ -18,6 +18,7 @@ type Input = {
   initialBet: number;
   rounds: number;
   multiplier: number;
+  resetAfter: number;
 };
 
 export class StartMartingale {

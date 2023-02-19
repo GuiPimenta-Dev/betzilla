@@ -28,7 +28,7 @@ test("It should emit a martingale finished event when a martingale is finished",
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
   const httpClientStub = new HttpClientStub();
   const martingaleRepository = new InMemoryMartingaleRepository();
-  martingaleRepository.create(new Martingale({ id: "default", playerId: "default", initialBet: 10, rounds: 0, multiplier: 2 }));
+  martingaleRepository.create(new Martingale({ id: "default", playerId: "default", initialBet: 10, rounds: 0, multiplier: 2, resetAfter: 1 }));
 
   const bet = BetBuilder.aBet().build();
   const betVerified = new BetVerified(bet);

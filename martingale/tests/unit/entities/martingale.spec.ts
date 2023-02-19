@@ -7,6 +7,8 @@ test("The bet value should be the same as the start when winning on martingle", 
     initialBet: 10,
     rounds: 10,
     multiplier: 2,
+    resetAfter: 3
+
   };
   const martingale = new Martingale(input);
   martingale.win();
@@ -21,6 +23,7 @@ test("It should thrown an error if the rounds are exceeded", () => {
     initialBet: 10,
     rounds: 1,
     multiplier: 2,
+    resetAfter: 3
   };
   const martingale = new Martingale(input);
   martingale.win();
@@ -35,6 +38,7 @@ test("It should decrease one round after winning", () => {
     initialBet: 10,
     rounds: 1,
     multiplier: 2,
+    resetAfter: 3
   };
   const martingale = new Martingale(input);
   martingale.win();
@@ -49,6 +53,7 @@ test("It should decrease one round after losing", () => {
     initialBet: 10,
     rounds: 1,
     multiplier: 2,
+    resetAfter: 3
   };
   const martingale = new Martingale(input);
   martingale.lose();
@@ -63,6 +68,7 @@ test("It should multiply the bet when losing", () => {
     initialBet: 10,
     rounds: 10,
     multiplier: 2.5,
+    resetAfter: 3
   };
   const martingale = new Martingale(input);
   martingale.lose();
@@ -77,8 +83,44 @@ test("It should start with the status 'playing''", () => {
     initialBet: 10,
     rounds: 10,
     multiplier: 2.5,
+    resetAfter: 3
     };
     const martingale = new Martingale(input);
 
     expect(martingale.status).toBe("playing");
+});
+
+test("It should reset the bet value when losing 3 times in a row", () => {
+  const input = {
+    id: "some-id",
+    playerId: "account-id",
+    initialBet: 10,
+    rounds: 10,
+    multiplier: 2.5,
+    resetAfter: 3
+  };
+  const martingale = new Martingale(input);
+  martingale.lose();
+  martingale.lose();
+  martingale.lose();
+
+  expect(martingale.getBet()).toBe(10);
+}
+)
+
+test("It should reset the rounds lost when winning", () => {
+  const input = {
+    id: "some-id",
+    playerId: "account-id",
+    initialBet: 10,
+    rounds: 10,
+    multiplier: 2.5,
+    resetAfter: 3
+  };
+  const martingale = new Martingale(input);
+  martingale.lose();
+  martingale.lose();
+  martingale.win();
+
+  expect(martingale.roundsLost).toBe(0);
 });

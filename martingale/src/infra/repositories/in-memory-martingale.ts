@@ -42,7 +42,7 @@ export class InMemoryMartingaleRepository implements MartingaleRepository {
   }
 
   createDefaultMartingale() {
-    const settings = { id: "default", playerId: "default", initialBet: 10, rounds: 1, multiplier: 2 };
+    const settings = { id: "default", playerId: "default", initialBet: 10, rounds: 1, multiplier: 2, resetAfter: 3 };
     const martingale = new Martingale(settings);
     this.create(martingale);
   }

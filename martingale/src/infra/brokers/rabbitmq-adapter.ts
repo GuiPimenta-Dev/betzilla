@@ -43,7 +43,7 @@ export class RabbitMQAdapter implements Broker {
   }
 
   async schedule(input: Command): Promise<void> {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
     await this.publish(input);
   }
 

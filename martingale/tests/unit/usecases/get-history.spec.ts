@@ -74,7 +74,7 @@ test("It should be able to get the history of a martingale and calculate the bal
   });
 });
 
-test("It should disconsider the balance from a pending bet", async () => {
+test("It should disconsider the profit from a pending bet", async () => {
   const martingaleRepository = new InMemoryMartingaleRepository();
   const win = HistoryItemBuilder.aWin().withOutcome(100).build();
   const loss = HistoryItemBuilder.aLoss().build();

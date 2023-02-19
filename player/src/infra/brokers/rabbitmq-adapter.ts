@@ -16,8 +16,8 @@ export class RabbitMQAdapter implements Broker {
     const channel = await this.connection.createChannel();
     await channel.assertExchange(handler.name, "fanout", { durable: false });
     const queue = await channel.assertQueue("", { exclusive: true });
-    channel.bindQueue(queue.queue, handler.name, "");
-    channel.consume(
+    await channel.bindQueue(queue.queue, handler.name, "");
+    await channel.consume(
       queue.queue,
       async function (msg: any) {
         if (msg.content) {
@@ -37,7 +37,7 @@ export class RabbitMQAdapter implements Broker {
   }
 
   async schedule(input: Command): Promise<void> {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
     await this.publish(input);
   }
 }

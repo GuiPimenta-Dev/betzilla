@@ -57,7 +57,7 @@ test("It should emit all the events in the correct order", async () => {
   verifyBetStub.setEvents([new BetWon(bet), new BetLost(bet)]);
 
   const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository, httpClient: httpClientStub });
-  const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 2, multiplier: 2 };
+  const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 2, multiplier: 2, resetAfter: 3 };
   await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
@@ -90,7 +90,7 @@ test("It should create a correct martingale history", async () => {
   verifyBetStub.setEvents([new BetWon(bet1), new BetLost(bet2)]);
 
   const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository, httpClient: httpClientStub });
-  const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 3, multiplier: 2 };
+  const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 3, multiplier: 2, resetAfter: 3 };
   await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
@@ -107,7 +107,7 @@ test("It should retry the bet if it fails", async () => {
   verifyBetStub.setEvents([new BetWon(bet)]);
 
   const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository, httpClient: httpClientStub });
-  const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 1, multiplier: 2 };
+  const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 1, multiplier: 2, resetAfter: 3 };
   await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
@@ -134,7 +134,7 @@ test("It should finish the execution if the same bet is not made 4 times", async
   makeBetStub.setEvents([new BetNotMade(bet), new BetNotMade(bet), new BetNotMade(bet), new BetNotMade(bet)]);
 
   const sut = new StartMartingale({ broker: brokerSpy, martingaleRepository, httpClient: httpClientStub });
-  const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 1, multiplier: 2 };
+  const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 1, multiplier: 2, resetAfter: 3 };
   await sut.execute(input);
 
   await new Promise((res) => setTimeout(res));
@@ -159,6 +159,6 @@ test("It should finish the execution if the same bet is not made 4 times", async
 
 test("It should throw an error if there isnt at least one round", async () => {
   const sut = new StartMartingale({ broker, martingaleRepository, httpClient: httpClientStub });
-  const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 0, multiplier: 2 };
+  const input = { martingaleId: "default", playerId: "1", initialBet: 10, rounds: 0, multiplier: 2, resetAfter: 3 };
   await expect(sut.execute(input)).rejects.toThrow("There must be at least one round");
 });
