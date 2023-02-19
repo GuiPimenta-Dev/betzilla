@@ -20,7 +20,7 @@ export class RabbitMQAdapter implements Broker {
 
   async subscribe(handler: Handler, callback: Function): Promise<void> {
     const channel = await this.connection.createChannel();
-    await channel.assertExchange(handler.name, "fanout", { durable: false });
+    await channel.assertExchange(handler.name, "fanout", { durable: true });
     const queue = await channel.assertQueue("", { exclusive: true });
     channel.bindQueue(queue.queue, handler.name, "");
     channel.consume(
@@ -38,7 +38,7 @@ export class RabbitMQAdapter implements Broker {
 
   async publish(input: Event | Command): Promise<void> {
     const channel = await this.connection.createChannel();
-    await channel.assertExchange(input.name, "fanout", { durable: false });
+    await channel.assertExchange(input.name, "fanout", { durable: true });
     channel.publish(input.name, "", Buffer.from(JSON.stringify(input)));
   }
 

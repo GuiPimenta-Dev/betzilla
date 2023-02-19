@@ -13,10 +13,10 @@ export class Martingale {
   readonly initialBet: number;
   readonly multiplier: number;
   readonly resetAfter: number;
-  public status: string | null;
+  public status: string;
+  public roundsLost: number;
   private rounds: number;
   private bet: number;
-  roundsLost: number = 0;
 
   constructor(input: Input) {
     this.id = input.id;
@@ -27,6 +27,7 @@ export class Martingale {
     this.resetAfter = input.resetAfter;
     this.bet = input.initialBet;
     this.status = "playing";
+    this.roundsLost = 0;
   }
 
   win() {
