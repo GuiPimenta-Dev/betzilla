@@ -9,6 +9,7 @@ services:
       - ./player/:/usr/src/app/
     networks:
       - rabbitmq_nodejs
+    restart: always
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -22,6 +23,7 @@ services:
       - 3001:3001
     networks:
       - rabbitmq_nodejs
+    restart: always
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -37,6 +39,7 @@ services:
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     networks:
       - rabbitmq_nodejs
+    restart: always
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:15672"]
       interval: 5s

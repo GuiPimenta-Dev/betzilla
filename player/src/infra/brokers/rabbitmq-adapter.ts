@@ -5,19 +5,18 @@ import { Command } from "../../domain/commands/command";
 import { Event } from "../../domain/events/event";
 
 export class RabbitMQAdapter implements Broker {
-  connection: any;
+  channel: any;
 
   async connect(): Promise<void> {
-    this.connection = await amqplib.connect("amqp://rabbitmq:5672");
-    // this.connection = await amqplib.connect("amqp://localhost:5672");
+    const connection = await amqplib.connect("amqp://rabbitmq:5672");
+    this.channel = await connection.createChannel();
   }
 
   async subscribe(handler: Handler, callback: Function): Promise<void> {
-    const channel = await this.connection.createChannel();
-    await channel.assertExchange(handler.name, "fanout", { durable: true });
-    const queue = await channel.assertQueue("", { exclusive: true });
-    await channel.bindQueue(queue.queue, handler.name, "");
-    await channel.consume(
+    await this.channel.assertExchange(handler.name, "fanout", { durable: true });
+    const queue = await this.channel.assertQueue("", { exclusive: true });
+    await this.channel.bindQueue(queue.queue, handler.name, "");
+    await this.channel.consume(
       queue.queue,
       async function (msg: any) {
         if (msg.content) {
@@ -31,9 +30,8 @@ export class RabbitMQAdapter implements Broker {
   }
 
   async publish(input: Event | Command): Promise<void> {
-    const channel = await this.connection.createChannel();
-    await channel.assertExchange(input.name, "fanout", { durable: true });
-    channel.publish(input.name, "", Buffer.from(JSON.stringify(input)));
+    await this.channel.assertExchange(input.name, "fanout", { durable: true });
+    this.channel.publish(input.name, "", Buffer.from(JSON.stringify(input)));
   }
 
   async schedule(input: Command): Promise<void> {
