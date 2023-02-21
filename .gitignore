@@ -1,0 +1,4 @@
+.template
+.env
+node_modules
+setEnvVars.js

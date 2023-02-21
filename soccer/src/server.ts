@@ -2,4 +2,4 @@ require("dotenv/config");
 
 import { app } from "./router";
 
-app.listen(3000);
+app.listen(3002);
