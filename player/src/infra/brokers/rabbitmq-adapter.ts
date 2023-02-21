@@ -39,3 +39,4 @@ export class RabbitMQAdapter implements Broker {
     await this.publish(input);
   }
 }
+
