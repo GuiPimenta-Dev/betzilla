@@ -1,16 +1,13 @@
+import { CustomStrategy, StrategyRepository } from "../ports/repositories/strategy";
+
 import { CustomStrategyStarted } from "../../domain/events/custom-strategy-started";
 import { Broker } from "../ports/brokers/broker";
 
-type Input = {
-  strategyId: string;
-  playerId: string;
-  strategyString: string;
-};
-
 export class StartCustomStrategy {
-  constructor(private broker: Broker) {}
+  constructor(private customStrategyRepository: StrategyRepository, private broker: Broker) {}
 
-  async execute(input: Input): Promise<void> {
+  async execute(input: CustomStrategy): Promise<void> {
+    await this.customStrategyRepository.create(input);
     await this.broker.publish(new CustomStrategyStarted(input));
   }
 }

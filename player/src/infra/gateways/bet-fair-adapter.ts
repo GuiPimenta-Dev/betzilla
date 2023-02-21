@@ -1,7 +1,7 @@
 import { BetGateway, BetStatus, Market, Match, Odd } from "../../application/ports/gateways/bet";
 
-import moment from "moment";
 import { HttpClient } from "../../application/ports/http/http-client";
+import moment from "moment";
 
 export class BetFairAdapter implements BetGateway {
   BASE_URL = "https://api.betfair.com/exchange/betting/rest/v1.0";
@@ -34,15 +34,13 @@ export class BetFairAdapter implements BetGateway {
     throw new Error("Method not implemented.");
   }
 
-  async listTodaysMatches(): Promise<Match[]> {
-    const today = moment();
-    const tomorrow = moment().add(1, "day");
+  async listMatches(from: moment.Moment = moment(), to: moment.Moment = moment().add(1, "day")): Promise<Match[]> {
     const body = {
       filter: {
         eventTypeIds: ["1"],
         marketStartTime: {
-          from: `${today.format("YYYY-MM-DD")}T00:00:00.000Z`,
-          to: `${tomorrow.format("YYYY-MM-DD")}T00:00:00.000Z`,
+          from: `${from.format("YYYY-MM-DD")}T00:00:00.000Z`,
+          to: `${to.format("YYYY-MM-DD")}T00:00:00.000Z`,
         },
       },
       locale: "pt",

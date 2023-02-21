@@ -34,8 +34,9 @@ export class RabbitMQAdapter implements Broker {
     this.channel.publish(input.name, "", Buffer.from(JSON.stringify(input)));
   }
 
-  async schedule(input: Command): Promise<void> {
-    // await new Promise((resolve) => setTimeout(resolve, 1000));
-    await this.publish(input);
+  async schedule(input: Command, date: Date): Promise<void> {
+    await this.channel.assertExchange(input.name, "fanout", { durable: true });
+    const delayInMilliseconds = Math.abs(date.getTime() - new Date().getTime());
+    this.channel.publish(input.name, "", Buffer.from(JSON.stringify(input)), { "x-delay": delayInMilliseconds });
   }
 }

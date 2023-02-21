@@ -32,13 +32,13 @@ export class BetFairProxy implements BetGateway {
     return response;
   }
 
-  async listTodaysMatches(): Promise<Match[]> {
+  async listMatches(): Promise<Match[]> {
     let response: any;
     try {
-      response = await this.betFairAdapter.listTodaysMatches();
+      response = await this.betFairAdapter.listMatches();
     } catch (error) {
       await this.verifyError(error);
-      response = await this.betFairAdapter.listTodaysMatches();
+      response = await this.betFairAdapter.listMatches();
     }
     return response;
   }
