@@ -129,11 +129,9 @@ export class BetFairAdapter implements BetGateway {
       };
     });
 
-    const marketOdds = {
+    return {
       status: data[0].status,
       odds,
     };
-
-    return marketOdds;
   }
 }
