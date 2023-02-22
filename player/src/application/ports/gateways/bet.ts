@@ -1,5 +1,3 @@
-import { Moment } from "moment";
-
 export type BetStatus = { status: "pending" | "won" | "lost"; outcome: number };
 
 export type Match = {
@@ -26,7 +24,7 @@ export type Odd = {
 export interface BetGateway {
   makeBet(value: number): Promise<{ success: boolean }>;
   consultBet(id: string): Promise<BetStatus>;
-  listMatches(from: Moment, to: Moment): Promise<Match[]>;
+  listTodayMatches(): Promise<Match[]>;
   listMatchMarkets(matchId: string): Promise<Market[]>;
   listMarketOdds(marketId: string): Promise<Odd>;
 }

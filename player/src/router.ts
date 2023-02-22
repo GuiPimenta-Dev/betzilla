@@ -1,9 +1,9 @@
-import { ExpressAdapter } from "./infra/http/express-adapter";
 import { PlayerController } from "./application/controllers/player";
+import { ExpressAdapter } from "./infra/http/express-adapter";
 
 const app = ExpressAdapter.create();
 
 app.get("/player/:playerId/balance", ExpressAdapter.route(PlayerController.getBalance));
-app.get("/matches", ExpressAdapter.route(PlayerController.listMatches));
+app.get("/matches/today/upcoming", ExpressAdapter.route(PlayerController.listNotStartedMatchesForToday));
 
 export { app };

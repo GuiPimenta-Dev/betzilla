@@ -12,7 +12,7 @@ export class BetGatewayMock implements BetGateway {
     return this.consultBetResponse;
   }
 
-  listMatches(): Promise<Match[]> {
+  listTodayMatches(): Promise<Match[]> {
     throw new Error("Method not implemented.");
   }
   listMatchMarkets(matchId: string): Promise<Market[]> {

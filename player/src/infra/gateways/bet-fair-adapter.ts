@@ -34,7 +34,9 @@ export class BetFairAdapter implements BetGateway {
     throw new Error("Method not implemented.");
   }
 
-  async listMatches(from: moment.Moment = moment(), to: moment.Moment = moment().add(1, "day")): Promise<Match[]> {
+  async listTodayMatches(): Promise<Match[]> {
+    const from = moment();
+    const to = moment().add(1, "day");
     const body = {
       filter: {
         eventTypeIds: ["1"],
@@ -58,7 +60,6 @@ export class BetFairAdapter implements BetGateway {
         date: match.event.openDate,
       };
     });
-
     return matches;
   }
 

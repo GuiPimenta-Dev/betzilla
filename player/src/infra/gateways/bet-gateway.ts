@@ -1,7 +1,5 @@
 import { BetGateway, BetStatus, Market, Match, Odd } from "../../../src/application/ports/gateways/bet";
 
-import { Moment } from "moment";
-
 export class FakeBetGateway implements BetGateway {
   bet: number;
 
@@ -15,7 +13,7 @@ export class FakeBetGateway implements BetGateway {
     return { status: "lost", outcome: 0 };
   }
 
-  listMatches(from: Moment, to: Moment): Promise<Match[]> {
+  listTodayMatches(): Promise<Match[]> {
     throw new Error("Method not implemented.");
   }
   listMatchMarkets(matchId: string): Promise<Market[]> {
