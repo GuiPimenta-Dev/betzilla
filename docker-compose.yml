@@ -28,6 +28,20 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  custom:
+    build: ./custom
+    container_name: "custom"
+    volumes:
+      - ./custom/:/usr/src/app/
+    ports:
+      - 3002:3002
+    networks:
+      - rabbitmq_nodejs
+    restart: always
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
   rabbitmq:
     build: .
     container_name: "rabbitmq"
@@ -45,6 +59,7 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
+
 networks:
   rabbitmq_nodejs:
     driver: bridge

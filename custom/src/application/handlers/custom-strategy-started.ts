@@ -3,6 +3,12 @@ import { VerifyOdds } from "../../domain/commands/verify-odds";
 import { CustomStrategyStarted } from "../../domain/events/custom-strategy-started";
 import { Broker } from "../ports/brokers/broker";
 import { HttpClient } from "../ports/http/http-client";
+import { Handler } from "./handler";
+
+type Dependencies = {
+  httpClient: HttpClient;
+  broker: Broker;
+};
 
 type Matches = {
   id: string;
@@ -10,8 +16,15 @@ type Matches = {
   date: string;
 };
 
-export class CustomStrategyStartedHandler {
-  constructor(private httpClient: HttpClient, private broker: Broker) {}
+export class CustomStrategyStartedHandler implements Handler {
+  name = "custom-strategy-started";
+  private httpClient: HttpClient;
+  private broker: Broker;
+
+  constructor(input: Dependencies) {
+    this.httpClient = input.httpClient;
+    this.broker = input.broker;
+  }
 
   async handle(event: CustomStrategyStarted): Promise<void> {
     const { payload } = event;

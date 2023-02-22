@@ -1,7 +1,7 @@
 import { BetGateway, BetStatus, Market, Match, Odd } from "../../application/ports/gateways/bet";
 
-import { HttpClient } from "../../application/ports/http/http-client";
 import moment from "moment";
+import { HttpClient } from "../../application/ports/http/http-client";
 
 export class BetFairAdapter implements BetGateway {
   BASE_URL = "https://api.betfair.com/exchange/betting/rest/v1.0";

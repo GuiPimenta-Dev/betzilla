@@ -3,11 +3,22 @@ import { CustomStrategy, StrategyRepository } from "../ports/repositories/strate
 import { CustomStrategyStarted } from "../../domain/events/custom-strategy-started";
 import { Broker } from "../ports/brokers/broker";
 
+type Dependencies = {
+  strategyRepository: StrategyRepository;
+  broker: Broker;
+};
+
 export class StartCustomStrategy {
-  constructor(private customStrategyRepository: StrategyRepository, private broker: Broker) {}
+  private strategyRepository: StrategyRepository;
+  private broker: Broker;
+
+  constructor(input: Dependencies) {
+    this.strategyRepository = input.strategyRepository;
+    this.broker = input.broker;
+  }
 
   async execute(input: CustomStrategy): Promise<void> {
-    await this.customStrategyRepository.create(input);
+    await this.strategyRepository.create(input);
     await this.broker.publish(new CustomStrategyStarted(input));
   }
 }

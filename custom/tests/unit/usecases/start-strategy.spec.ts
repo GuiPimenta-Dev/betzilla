@@ -6,7 +6,7 @@ import { BrokerSpy } from "../../utils/mocks/broker-spy";
 test("It should emit a over 0.5 HT started event", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
   const strategyRepository = new InMemoryStrategyRepository();
-  const sut = new StartCustomStrategy(strategyRepository, brokerSpy);
+  const sut = new StartCustomStrategy({ broker: brokerSpy, strategyRepository });
 
   const input = { id: "id", playerId: "playerId", strategyString: "over-05-ht" };
   await sut.execute(input);

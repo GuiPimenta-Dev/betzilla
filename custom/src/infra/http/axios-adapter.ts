@@ -1,5 +1,5 @@
 import axios from "axios";
-import { HttpClient } from "../../../../player/src/application/ports/http/http-client";
+import { HttpClient } from "../../application/ports/http/http-client";
 import { HttpOutput } from "../../application/ports/http/http-output";
 import { HttpError } from "./status/http-error";
 

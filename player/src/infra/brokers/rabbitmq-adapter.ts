@@ -29,6 +29,30 @@ export class RabbitMQAdapter implements Broker {
     );
   }
 
+  async subscribeDelayed(handler: Handler, callback: Function): Promise<void> {
+    await this.channel.assertExchange(handler.name, "x-delayed-message", {
+      autoDelete: false,
+      durable: true,
+      passive: true,
+      arguments: {
+        "x-delayed-type": "direct",
+      },
+    });
+    const queue = await this.channel.assertQueue("", { exclusive: true });
+    await this.channel.bindQueue(queue.queue, handler.name, "");
+    await this.channel.consume(
+      queue.queue,
+      async function (msg: any) {
+        if (msg.content) {
+          const input = JSON.parse(msg.content.toString());
+          console.log(input);
+          await callback(input);
+        }
+      },
+      { noAck: true }
+    );
+  }
+
   async publish(input: Event | Command): Promise<void> {
     await this.channel.assertExchange(input.name, "fanout", { durable: true });
     this.channel.publish(input.name, "", Buffer.from(JSON.stringify(input)));
@@ -39,4 +63,3 @@ export class RabbitMQAdapter implements Broker {
     await this.publish(input);
   }
 }
-
