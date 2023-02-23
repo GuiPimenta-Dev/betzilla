@@ -3,6 +3,7 @@ import { BetGateway, BetStatus, Market, Match, Odd } from "../../../src/applicat
 export class BetGatewayMock implements BetGateway {
   makeBetResponse: boolean = true;
   consultBetResponse: BetStatus;
+  listMatchesForTodayResponse: Match[];
 
   async makeBet(): Promise<{ success: boolean }> {
     return { success: this.makeBetResponse };
@@ -12,8 +13,8 @@ export class BetGatewayMock implements BetGateway {
     return this.consultBetResponse;
   }
 
-  listTodayMatches(): Promise<Match[]> {
-    throw new Error("Method not implemented.");
+  async listMatchesForToday(): Promise<Match[]> {
+    return this.listMatchesForTodayResponse;
   }
   listMatchMarkets(matchId: string): Promise<Market[]> {
     throw new Error("Method not implemented.");
@@ -28,5 +29,9 @@ export class BetGatewayMock implements BetGateway {
 
   mockConsultBetResponse(bet: BetStatus) {
     this.consultBetResponse = bet;
+  }
+
+  mockListMatchesForTodayResponse(matches: Match[]) {
+    this.listMatchesForTodayResponse = matches;
   }
 }

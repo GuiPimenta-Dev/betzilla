@@ -4,6 +4,6 @@ import { ExpressAdapter } from "./infra/http/express-adapter";
 const app = ExpressAdapter.create();
 
 app.get("/player/:playerId/balance", ExpressAdapter.route(PlayerController.getBalance));
-app.get("/matches/today/upcoming", ExpressAdapter.route(PlayerController.listNotStartedMatchesForToday));
+app.get("/matches/today/upcoming", ExpressAdapter.route(PlayerController.listUpcomingMatchesForToday));
 
 export { app };

@@ -15,7 +15,7 @@ test("It should be able to list events", async () => {
   const betFairAdapter = new BetFairAdapter(httpClient);
   await betFairAdapter.login();
 
-  const events = await betFairAdapter.listTodayMatches();
+  const events = await betFairAdapter.listMatchesForToday();
 
   expect(events).toEqual(
     expect.arrayContaining([
@@ -32,7 +32,7 @@ test("It should retrieve a list of markets for a given match", async () => {
   const httpClient = new AxiosAdapter();
   const betFairAdapter = new BetFairAdapter(httpClient);
   await betFairAdapter.login();
-  const matches = await betFairAdapter.listTodayMatches();
+  const matches = await betFairAdapter.listMatchesForToday();
 
   const markets = await betFairAdapter.listMatchMarkets(matches[0].id);
 
@@ -50,7 +50,7 @@ test("It should retrieve a list of odds for a given market", async () => {
   const httpClient = new AxiosAdapter();
   const betFairAdapter = new BetFairAdapter(httpClient);
   await betFairAdapter.login();
-  const matches = await betFairAdapter.listTodayMatches();
+  const matches = await betFairAdapter.listMatchesForToday();
   const markets = await betFairAdapter.listMatchMarkets(matches[0].id);
 
   const odds = await betFairAdapter.listMarketOdds(markets[0].id);

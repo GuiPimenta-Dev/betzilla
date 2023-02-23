@@ -44,7 +44,7 @@ export class RabbitMQAdapter implements Broker {
       },
     });
     const delayInMilliSeconds = Math.abs(date.getTime() - new Date().getTime());
-    console.log(delayInMilliSeconds);
+    console.log(delayInMilliSeconds, date);
     this.channel.publish(input.name, "", Buffer.from(JSON.stringify(input)), {
       headers: {
         "x-delay": delayInMilliSeconds,

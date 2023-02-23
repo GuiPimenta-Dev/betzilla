@@ -34,7 +34,7 @@ export class BetFairAdapter implements BetGateway {
     throw new Error("Method not implemented.");
   }
 
-  async listTodayMatches(): Promise<Match[]> {
+  async listMatchesForToday(): Promise<Match[]> {
     const from = moment();
     const to = moment().add(1, "day");
     const body = {

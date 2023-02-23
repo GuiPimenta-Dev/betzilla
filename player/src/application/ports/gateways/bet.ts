@@ -24,7 +24,7 @@ export type Odd = {
 export interface BetGateway {
   makeBet(value: number): Promise<{ success: boolean }>;
   consultBet(id: string): Promise<BetStatus>;
-  listTodayMatches(): Promise<Match[]>;
+  listMatchesForToday(): Promise<Match[]>;
   listMatchMarkets(matchId: string): Promise<Market[]>;
   listMarketOdds(marketId: string): Promise<Odd>;
 }

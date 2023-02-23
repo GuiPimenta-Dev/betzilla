@@ -6,16 +6,15 @@ type Dependencies = {
   betGateway: BetGateway;
 };
 
-export class ListTodayUpcomingMatches {
+export class ListUpcomingMatchesForToday {
   private betGateway: BetGateway;
 
   constructor(input: Dependencies) {
     this.betGateway = input.betGateway;
   }
 
-  async execute(): Promise<Match[]> {
-    const now = moment();
-    const matches = await this.betGateway.listTodayMatches();
-    return matches.filter((match: any) => moment(match.date) > now);
+  async execute(date: moment.Moment): Promise<Match[]> {
+    const matches = await this.betGateway.listMatchesForToday();
+    return matches.filter((match: any) => moment(match.date) > date);
   }
 }

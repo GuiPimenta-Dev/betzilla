@@ -13,7 +13,7 @@ export class FakeBetGateway implements BetGateway {
     return { status: "lost", outcome: 0 };
   }
 
-  listTodayMatches(): Promise<Match[]> {
+  listMatchesForToday(): Promise<Match[]> {
     throw new Error("Method not implemented.");
   }
   listMatchMarkets(matchId: string): Promise<Market[]> {
