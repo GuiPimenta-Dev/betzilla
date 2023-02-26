@@ -1,11 +1,15 @@
-import { Strategy } from "./strategy";
+import { ShouldBet, Strategy } from "./strategy";
+
+import { Odd } from "../events/odds-verified";
 
 export class Over05HT implements Strategy {
-  name = "over-05-ht";
+  market = "Over/Under 0.5 Goals";
   private odd = 1.6;
 
-  bet(odd: number): boolean {
-    if (odd >= this.odd) return true;
-    return false;
+  bet(odd: Odd[]): ShouldBet {
+    const { back } = odd[0];
+    const max = Math.max(...back);
+    if (max >= this.odd) return { shouldBet: true, bet: { id: odd[0].id, odd: max } };
+    return { shouldBet: false };
   }
 }

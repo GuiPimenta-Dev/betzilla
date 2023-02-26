@@ -1,13 +1,14 @@
-import { CustomStrategyStartedHandler } from "../../../src/application/handlers/custom-strategy-started";
-import { CustomStrategyStarted } from "../../../src/domain/events/custom-strategy-started";
+import { StrategyStartedHandler } from "../../../src/application/handlers/strategy-started";
+import { StrategyName } from "../../../src/application/ports/repositories/strategy";
+import { StrategyStarted } from "../../../src/domain/events/strategy-started";
 import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
 import { BrokerSpy } from "../../utils/mocks/broker-spy";
-import { HttpClientStub } from "../../utils/mocks/http-client-stub";
+import { FakeHttpClient } from "../../utils/mocks/fake-http-client";
 
 test("It should start a custom strategy", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
-  const httpClientStub = new HttpClientStub();
-  httpClientStub.mockGetResponse({
+  const httpClient = new FakeHttpClient();
+  httpClient.mockGetResponse({
     statusCode: 200,
     data: [
       { id: "1", name: "Real Madrid vs Barcelona", date: "2021-01-01T23:59:00.000Z" },
@@ -16,9 +17,9 @@ test("It should start a custom strategy", async () => {
     ],
   });
 
-  const input = { id: "1", playerId: "1", strategyString: "over-05-ht" };
-  const event = new CustomStrategyStarted(input);
-  const sut = new CustomStrategyStartedHandler({ httpClient: httpClientStub, broker: brokerSpy });
+  const input = { id: "id", playerId: "playerId", name: StrategyName.OVER_05_HT, value: 10 };
+  const event = new StrategyStarted(input);
+  const sut = new StrategyStartedHandler({ httpClient, broker: brokerSpy });
   await sut.handle(event);
 
   expect(brokerSpy.scheduledCommands).toHaveLength(3);

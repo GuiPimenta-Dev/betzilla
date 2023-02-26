@@ -1,13 +1,13 @@
-import { CustomStrategy } from "../../application/ports/repositories/strategy";
+import { StrategyInfo } from "../../application/ports/repositories/strategy";
 import { Command } from "./command";
 
 type Match = {
-  matchId: string;
+  id: string;
   name: string;
 };
 
 export class VerifyOdds extends Command {
-  constructor(strategy: CustomStrategy, match: Match) {
+  constructor(strategy: StrategyInfo, match: Match) {
     super("verify-odds", { strategy, match });
   }
 }

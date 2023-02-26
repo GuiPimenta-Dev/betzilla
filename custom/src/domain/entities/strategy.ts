@@ -1,4 +1,14 @@
+import { Odd } from "../events/odds-verified";
+
+export type ShouldBet = {
+  shouldBet: boolean;
+  bet?: {
+    id: string;
+    odd: number;
+  };
+};
+
 export interface Strategy {
-  name: string;
-  bet(arg: any): boolean;
+  market: string;
+  bet(odd: Odd[]): ShouldBet;
 }
