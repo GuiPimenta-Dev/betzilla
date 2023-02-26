@@ -13,6 +13,6 @@ export class BetBuilder {
   }
 
   build(): Bet {
-    return new Bet({ id: "id", playerId: "default", value: this.value, strategy: { id: "id", name: "name" }, attempts: 1 });
+    return new Bet({ id: "id", playerId: "default", value: this.value, strategy: { id: "id", name: "name" } });
   }
 }
