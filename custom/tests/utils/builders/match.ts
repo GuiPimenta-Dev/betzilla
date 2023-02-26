@@ -22,7 +22,7 @@ export class MatchBuilder {
   }
 
   public build(): Match {
-    const match = new Match({ id: "matchId", name: "A X B", strategyId: "strategyId" });
+    const match = new Match({ id: "matchId", name: "A X B", date: "today", strategyId: "strategyId" });
     if (this.matchStatus === MatchStatus.IN_PROGRESS) {
       match.startGame();
     }

@@ -17,12 +17,14 @@ export enum MatchStatus {
 type Input = {
   id: string;
   name: string;
+  date: string;
   strategyId: string;
 };
 
 export class Match {
   readonly id: string;
   readonly name: string;
+  readonly date: string;
   readonly strategyId: string;
   private _status: MatchStatus;
   private _home: MatchTeam;

@@ -37,7 +37,7 @@ export class StrategyStartedHandler implements Handler {
     const matches = data as Matches[];
     for (const data of matches) {
       const { id, name, date } = data;
-      const match = new Match({ id, name, strategyId: payload.strategyId });
+      const match = new Match({ id, name, date, strategyId: payload.strategyId });
       await this.matchRepository.create(match);
       const fiveMinutesBeforeGameStart = moment(date).subtract(5, "minutes").toDate();
       await this.broker.schedule(new VerifyOdds(payload, { id, name }), fiveMinutesBeforeGameStart);
