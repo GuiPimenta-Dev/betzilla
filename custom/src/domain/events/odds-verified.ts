@@ -12,7 +12,6 @@ type Match = {
 };
 
 type Payload = {
-  strategyId: string;
   match: Match;
   odds: Odd[];
 };
