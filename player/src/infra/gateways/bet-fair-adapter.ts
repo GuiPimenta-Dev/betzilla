@@ -45,7 +45,6 @@ export class BetFairAdapter implements BetGateway {
           to: `${to.format("YYYY-MM-DD")}T00:00:00.000Z`,
         },
       },
-      locale: "pt",
     };
     const { data } = await this.httpClient.post(`${this.BASE_URL}/listEvents/`, body, {
       "X-Authentication": this.TOKEN,
@@ -73,7 +72,6 @@ export class BetFairAdapter implements BetGateway {
         },
         sort: "FIRST_TO_START",
         maxResults: 100,
-        locale: "pt",
       },
       {
         "X-Authentication": this.TOKEN,
@@ -100,7 +98,6 @@ export class BetFairAdapter implements BetGateway {
         priceProjection: {
           priceData: ["EX_BEST_OFFERS"],
         },
-        locale: "pt",
       },
       {
         "X-Authentication": this.TOKEN,
@@ -122,15 +119,11 @@ export class BetFairAdapter implements BetGateway {
 
       return {
         id: runner.selectionId,
-        status: runner.status,
         back,
         lay,
       };
     });
 
-    return {
-      status: data[0].status,
-      odds,
-    };
+    return odds;
   }
 }

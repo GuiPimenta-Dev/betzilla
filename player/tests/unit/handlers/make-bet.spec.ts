@@ -2,11 +2,11 @@ import { MakeBetHandler } from "../../../src/application/handlers/make-bet";
 import { MakeBet } from "../../../src/domain/commands/make-bet";
 import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
 import { BetBuilder } from "../../utils/builders/bet";
-import { BetGatewayMock } from "../../utils/mocks/bet-gateway-mock";
 import { BrokerSpy } from "../../utils/mocks/broker-spy";
+import { FakeBetGateway } from "../../utils/mocks/fake-bet-gateway";
 
 test("It should wmit a bet made event after make the bet", async () => {
-  const betGateway = new BetGatewayMock();
+  const betGateway = new FakeBetGateway();
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
 
   const bet = BetBuilder.aBet().build();
@@ -20,7 +20,7 @@ test("It should wmit a bet made event after make the bet", async () => {
 
 test("It should throw an error if the bet was not made by the bet gateway", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
-  const betGateway = new BetGatewayMock();
+  const betGateway = new FakeBetGateway();
   betGateway.mockMakeBetResponse(false);
 
   const bet = BetBuilder.aBet().build();

@@ -1,9 +1,11 @@
 import { BetGateway, BetStatus, Market, Match, Odd } from "../../../src/application/ports/gateways/bet";
 
-export class BetGatewayMock implements BetGateway {
+export class FakeBetGateway implements BetGateway {
   makeBetResponse: boolean = true;
   consultBetResponse: BetStatus;
   listMatchesForTodayResponse: Match[];
+  listMatchMarketsResponse: Market[];
+  listMarketOddsResponse: Odd;
 
   async makeBet(): Promise<{ success: boolean }> {
     return { success: this.makeBetResponse };
@@ -16,11 +18,13 @@ export class BetGatewayMock implements BetGateway {
   async listMatchesForToday(): Promise<Match[]> {
     return this.listMatchesForTodayResponse;
   }
-  listMatchMarkets(matchId: string): Promise<Market[]> {
-    throw new Error("Method not implemented.");
+
+  async listMatchMarkets(): Promise<Market[]> {
+    return this.listMatchMarketsResponse;
   }
-  listMarketOdds(marketId: string): Promise<Odd> {
-    throw new Error("Method not implemented.");
+
+  async listMarketOdds(): Promise<Odd> {
+    return this.listMarketOddsResponse;
   }
 
   mockMakeBetResponse(betWasMade: boolean) {
@@ -33,5 +37,13 @@ export class BetGatewayMock implements BetGateway {
 
   mockListMatchesForTodayResponse(matches: Match[]) {
     this.listMatchesForTodayResponse = matches;
+  }
+
+  mocklistMatchMarketsResponse(markets: Market[]) {
+    this.listMatchMarketsResponse = markets;
+  }
+
+  mockListMarketOddsResponse(odds: Odd) {
+    this.listMarketOddsResponse = odds;
   }
 }

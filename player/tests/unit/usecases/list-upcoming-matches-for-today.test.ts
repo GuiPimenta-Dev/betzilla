@@ -1,9 +1,9 @@
 import moment from "moment";
 import { ListUpcomingMatchesForToday } from "../../../src/application/usecases/list-upcoming-matches-for-today";
-import { BetGatewayMock } from "../../utils/mocks/bet-gateway-mock";
+import { FakeBetGateway } from "../../utils/mocks/fake-bet-gateway";
 
 test("It should list only upcoming matches for today", async () => {
-  const betGateway = new BetGatewayMock();
+  const betGateway = new FakeBetGateway();
   betGateway.mockListMatchesForTodayResponse([
     {
       id: "1",

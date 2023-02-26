@@ -1,3 +1,5 @@
+import { VerifyOdds } from "../../domain/commands/verify-odds";
+import { OddsVerified } from "../../domain/events/odds-verified";
 import { Broker } from "../ports/brokers/broker";
 import { BetGateway } from "../ports/gateways/bet";
 import { Handler } from "./handler";
@@ -17,5 +19,12 @@ export class VerifyOddsHandler implements Handler {
     this.broker = input.broker;
   }
 
-  async handle(input: any) {}
+  async handle(input: VerifyOdds) {
+    const { match, strategyId, marketName } = input.payload;
+    const markets = await this.betGateway.listMatchMarkets(match.id);
+    const market = markets.find((market) => market.name === marketName);
+    if (!market) return;
+    const odds = await this.betGateway.listMarketOdds(market.id);
+    await this.broker.publish(new OddsVerified({ match, strategyId, odds }));
+  }
 }

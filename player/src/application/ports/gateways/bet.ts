@@ -12,13 +12,9 @@ export type Market = {
 };
 
 export type Odd = {
-  status: string;
-  odds: {
-    id: string;
-    status: string;
-    back: number[];
-    lay: number[];
-  }[];
+  id: string;
+  back: number[];
+  lay: number[];
 };
 
 export interface BetGateway {
