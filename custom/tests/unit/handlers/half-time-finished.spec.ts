@@ -5,7 +5,7 @@ import { MatchBuilder } from "../../utils/builders/match";
 
 test("It should finish the half time and change the status to full-time", async () => {
   const matchRepository = new InMemoryMatchRepository();
-  const match = MatchBuilder.aHalfTime().build();
+  const match = MatchBuilder.aMatch().build();
   await matchRepository.create(match);
 
   const sut = new HalfTimeFinishedHandler({ matchRepository });

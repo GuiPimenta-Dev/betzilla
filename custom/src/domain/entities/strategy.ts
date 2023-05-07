@@ -1,4 +1,5 @@
 import { Odd } from "../events/odds-verified";
+import { Match } from "./match";
 
 export type ShouldBet = {
   shouldBet: boolean;
@@ -8,7 +9,21 @@ export type ShouldBet = {
   };
 };
 
-export interface Strategy {
-  market: string;
-  bet(odd: Odd[]): ShouldBet;
+type Input = {
+  rule: string;
+  match: Match;
+};
+
+export class Strategy {
+  rule: string;
+  match: Match;
+
+  constructor(input: Input) {
+    this.rule = input.rule;
+    this.match = input.match;
+  }
+
+  verify(odd: Odd[]): ShouldBet {
+    return { shouldBet: false };
+  }
 }

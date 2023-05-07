@@ -1,4 +1,3 @@
-import { StrategyInfo } from "../../application/ports/repositories/strategy";
 import { Command } from "./command";
 
 type Match = {
@@ -7,7 +6,7 @@ type Match = {
 };
 
 export class VerifyOdds extends Command {
-  constructor(strategy: StrategyInfo, match: Match) {
-    super("verify-odds", { strategy, match });
+  constructor(match: Match) {
+    super("verify-odds", { match });
   }
 }

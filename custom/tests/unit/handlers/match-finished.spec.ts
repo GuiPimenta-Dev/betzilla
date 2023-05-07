@@ -5,7 +5,7 @@ import { MatchBuilder } from "../../utils/builders/match";
 
 test("It should finish a match and change the status to finished", async () => {
   const matchRepository = new InMemoryMatchRepository();
-  const match = MatchBuilder.aFullTime().build();
+  const match = MatchBuilder.aFullTimeMatch().build();
   await matchRepository.create(match);
 
   const sut = new MatchFinishedHandler({ matchRepository });

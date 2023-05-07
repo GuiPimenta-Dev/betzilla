@@ -1,18 +1,17 @@
-import { StrategyName, StrategyRepository } from "../ports/repositories/strategy";
-
-import { Bet } from "../../domain/entities/bet";
-import { Broker } from "../ports/brokers/broker";
-import { Handler } from "./handler";
-import { MakeBet } from "../../domain/commands/make-bet";
-import { MatchRepository } from "../ports/repositories/match";
-import { MatchStatus } from "../../domain/entities/match";
-import { OddsVerified } from "../../domain/events/odds-verified";
-import { Over05HT } from "../../domain/entities/over-05-ht";
-import { VerifyOdds } from "../../domain/commands/verify-odds";
 import moment from "moment";
+import { MakeBet } from "../../domain/commands/make-bet";
+import { VerifyOdds } from "../../domain/commands/verify-odds";
+import { Bet } from "../../domain/entities/bet";
+import { MatchStatus } from "../../domain/entities/match";
+import { Strategy } from "../../domain/entities/strategy";
+import { OddsVerified } from "../../domain/events/odds-verified";
+import { Broker } from "../ports/brokers/broker";
+import { MatchRepository } from "../ports/repositories/match";
+import { RuleRepository } from "../ports/repositories/rule";
+import { Handler } from "./handler";
 
 type Dependencies = {
-  strategyRepository: StrategyRepository;
+  ruleRepository: RuleRepository;
   matchRepository: MatchRepository;
   broker: Broker;
 };
@@ -22,10 +21,10 @@ export class OddsVerifiedHandler implements Handler {
 
   private broker: Broker;
   private matchRepository: MatchRepository;
-  private strategyRepository: StrategyRepository;
+  private ruleRepository: RuleRepository;
 
   constructor(input: Dependencies) {
-    this.strategyRepository = input.strategyRepository;
+    this.ruleRepository = input.ruleRepository;
     this.matchRepository = input.matchRepository;
     this.broker = input.broker;
   }
@@ -34,31 +33,24 @@ export class OddsVerifiedHandler implements Handler {
     const { payload } = event;
     const match = await this.matchRepository.findById(payload.match.id);
     if (match.status === MatchStatus.FINISHED) return;
-    const strategy = await this.strategyRepository.findById(match.strategyId);
-    const strategyInstance = this.getStrategy(strategy.name);
-    const { shouldBet, bet } = strategyInstance.bet(payload.odds);
+    const rule = await this.ruleRepository.findById(match.ruleId);
+    const matchStrategy = new Strategy({ rule: rule.string, match });
+    const { shouldBet, bet } = matchStrategy.verify(payload.odds);
     if (shouldBet) {
       await this.broker.publish(
         new MakeBet(
           new Bet({
             id: bet.id,
-            strategy: { id: strategy.id, name: strategy.name },
-            value: strategy.value,
-            playerId: strategy.playerId,
+            strategy: { id: rule.id, name: rule.string },
+            value: rule.value,
+            playerId: rule.playerId,
             odd: bet.odd,
           })
         )
       );
     } else {
       const fiveMinutesLater = moment().add(5, "minutes").toDate();
-      await this.broker.schedule(new VerifyOdds(strategy, payload.match), fiveMinutesLater);
+      await this.broker.schedule(new VerifyOdds(payload.match), fiveMinutesLater);
     }
-  }
-
-  private getStrategy(strategy: string) {
-    const strategies = {
-      [StrategyName.OVER_05_HT]: () => new Over05HT(),
-    };
-    return strategies[strategy]();
   }
 }

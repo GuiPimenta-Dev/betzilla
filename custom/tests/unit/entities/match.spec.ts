@@ -1,30 +1,23 @@
-import { Match, MatchStatus } from "../../../src/domain/entities/match";
+import { MatchStatus } from "../../../src/domain/entities/match";
+import { MatchBuilder } from "../../utils/builders/match";
 
-test("It should create a Match with upcoming status", () => {
-  const match = new Match({ id: "1", name: "Liverpool X Manchester United", date: "today", strategyId: "1" });
-
-  expect(match.status).toBe(MatchStatus.UPCOMING);
-});
-
-test("It should parse correctly the home and away team", () => {
-  const match = new Match({ id: "1", name: "Liverpool X Manchester United", date: "today", strategyId: "1" });
-
-  expect(match.home.name).toBe("Liverpool");
-  expect(match.home.score).toBe(0);
-  expect(match.away.name).toBe("Manchester United");
-  expect(match.away.score).toBe(0);
-});
-
-test("It should start a game", () => {
-  const match = new Match({ id: "1", name: "Liverpool X Manchester United", date: "today", strategyId: "1" });
-
-  match.start();
+test("It should create a Match with half time status", () => {
+  const match = MatchBuilder.aMatch().build();
 
   expect(match.status).toBe(MatchStatus.HALF_TIME);
 });
 
+test("It should parse correctly the home and away team", () => {
+  const match = MatchBuilder.aMatch().build();
+
+  expect(match.home.name).toBe("A");
+  expect(match.home.score).toBe(0);
+  expect(match.away.name).toBe("B");
+  expect(match.away.score).toBe(0);
+});
+
 test("It should be half time", () => {
-  const match = new Match({ id: "1", name: "Liverpool X Manchester United", date: "today", strategyId: "1" });
+  const match = MatchBuilder.aMatch().build();
 
   match.finishHt();
 
@@ -32,7 +25,7 @@ test("It should be half time", () => {
 });
 
 test("It should finish a game", () => {
-  const match = new Match({ id: "1", name: "Liverpool X Manchester United", date: "today", strategyId: "1" });
+  const match = MatchBuilder.aMatch().build();
 
   match.finish();
 
@@ -40,7 +33,7 @@ test("It should finish a game", () => {
 });
 
 test("It should set the score", () => {
-  const match = new Match({ id: "1", name: "Liverpool X Manchester United", date: "today", strategyId: "1" });
+  const match = MatchBuilder.aMatch().build();
 
   match.setScore(1, 2);
 

@@ -1,37 +1,32 @@
-import { Match, MatchStatus } from "../../../src/domain/entities/match";
+import { Market, Match, MatchStatus } from "../../../src/domain/entities/match";
 
 export class MatchBuilder {
   matchStatus: MatchStatus;
+  markets: Market[] = [];
 
-  static aUpcoming(): MatchBuilder {
-    const match = new MatchBuilder();
-    match.matchStatus = MatchStatus.UPCOMING;
-    return match;
+  static aMatch(): MatchBuilder {
+    return new MatchBuilder();
   }
 
-  static aHalfTime(): MatchBuilder {
-    const match = new MatchBuilder();
-    match.matchStatus = MatchStatus.HALF_TIME;
-    return match;
-  }
-
-  static aFullTime(): MatchBuilder {
+  static aFullTimeMatch(): MatchBuilder {
     const match = new MatchBuilder();
     match.matchStatus = MatchStatus.FULL_TIME;
     return match;
   }
 
-  static aFinished(): MatchBuilder {
+  static aFinishedMatch(): MatchBuilder {
     const match = new MatchBuilder();
     match.matchStatus = MatchStatus.FINISHED;
     return match;
   }
 
+  withMarkets(markets: Market[]): MatchBuilder {
+    this.markets = markets;
+    return this;
+  }
+
   public build(): Match {
-    const match = new Match({ id: "matchId", name: "A X B", date: "today", strategyId: "strategyId" });
-    if (this.matchStatus === MatchStatus.HALF_TIME) {
-      match.start();
-    }
+    const match = Match.start({ id: "matchId", name: "A X B", date: "today", rule: "rule", markets: this.markets });
     if (this.matchStatus === MatchStatus.FULL_TIME) {
       match.finishHt();
     }

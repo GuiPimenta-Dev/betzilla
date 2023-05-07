@@ -18,7 +18,7 @@ type Output = {
   ruleId: string;
 };
 
-export class StartOver05HT {
+export class StartExecution {
   private ruleRepository: RuleRepository;
   private broker: Broker;
 
@@ -28,12 +28,7 @@ export class StartOver05HT {
   }
 
   async execute(input: Input): Promise<Output> {
-    const rule = {
-      id: uuid(),
-      playerId: input.playerId,
-      string: input.rule,
-      value: input.value,
-    };
+    const rule = { id: uuid(), playerId: input.playerId, string: input.rule, value: input.value };
     await this.ruleRepository.create(rule);
     await this.broker.publish(new ExecutionStarted(rule));
     return { ruleId: rule.id };

@@ -1,15 +1,17 @@
-type Teams = {
-  home: MatchTeam;
-  away: MatchTeam;
-};
+import { Odd } from "../events/odds-verified";
 
 type MatchTeam = {
   name: string;
   score: number;
 };
 
+export type Market = {
+  id: string;
+  name: string;
+  odds: Odd;
+};
+
 export enum MatchStatus {
-  UPCOMING = "upcoming",
   HALF_TIME = "half-time",
   FULL_TIME = "full-time",
   FINISHED = "finished",
@@ -19,7 +21,11 @@ type Input = {
   id: string;
   name: string;
   date: string;
-  strategyId: string;
+  rule: string;
+  markets: Market[];
+  home?: MatchTeam;
+  away?: MatchTeam;
+  status?: MatchStatus;
 };
 
 export class Match {
@@ -27,6 +33,8 @@ export class Match {
   readonly name: string;
   readonly date: string;
   readonly strategyId: string;
+  readonly ruleId: string;
+  readonly markets: Market[];
   private _status: MatchStatus;
   private _home: MatchTeam;
   private _away: MatchTeam;
@@ -34,11 +42,20 @@ export class Match {
   constructor(input: Input) {
     this.id = input.id;
     this.name = input.name;
-    this.strategyId = input.strategyId;
-    const { home, away } = this.getHomeAndAwayTeam(input.name);
-    this._home = home;
-    this._away = away;
-    this._status = MatchStatus.UPCOMING;
+    this.date = input.date;
+    this.ruleId = input.rule;
+    this.markets = input.markets;
+    this._home = input.home;
+    this._away = input.away;
+    this._status = input.status;
+  }
+
+  static start(input: Input): Match {
+    const [homeTeamName, awayTeamName] = input.name.split(" X ");
+    const home = { name: homeTeamName, score: 0 };
+    const away = { name: awayTeamName, score: 0 };
+    const status = MatchStatus.HALF_TIME;
+    return new Match({ ...input, home, away, status });
   }
 
   get status(): MatchStatus {
@@ -58,20 +75,11 @@ export class Match {
     this._away.score = awayScore;
   }
 
-  start(): void {
-    this._status = MatchStatus.HALF_TIME;
-  }
-
   finishHt(): void {
     this._status = MatchStatus.FULL_TIME;
   }
 
   finish(): void {
     this._status = MatchStatus.FINISHED;
-  }
-
-  private getHomeAndAwayTeam(matchName: string): Teams {
-    const [homeTeamName, awayTeamName] = matchName.split(" X ");
-    return { home: { name: homeTeamName, score: 0 }, away: { name: awayTeamName, score: 0 } };
   }
 }
