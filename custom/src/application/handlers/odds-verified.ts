@@ -1,15 +1,15 @@
 import { StrategyName, StrategyRepository } from "../ports/repositories/strategy";
 
-import moment from "moment";
-import { MakeBet } from "../../domain/commands/make-bet";
-import { VerifyOdds } from "../../domain/commands/verify-odds";
 import { Bet } from "../../domain/entities/bet";
-import { MatchStatus } from "../../domain/entities/match";
-import { Over05HT } from "../../domain/entities/over-05-ht";
-import { OddsVerified } from "../../domain/events/odds-verified";
 import { Broker } from "../ports/brokers/broker";
-import { MatchRepository } from "../ports/repositories/match";
 import { Handler } from "./handler";
+import { MakeBet } from "../../domain/commands/make-bet";
+import { MatchRepository } from "../ports/repositories/match";
+import { MatchStatus } from "../../domain/entities/match";
+import { OddsVerified } from "../../domain/events/odds-verified";
+import { Over05HT } from "../../domain/entities/over-05-ht";
+import { VerifyOdds } from "../../domain/commands/verify-odds";
+import moment from "moment";
 
 type Dependencies = {
   strategyRepository: StrategyRepository;

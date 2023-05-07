@@ -1,7 +1,8 @@
 import { StrategyName, StrategyRepository } from "../ports/repositories/strategy";
 
-import { StrategyStarted } from "../../domain/events/strategy-started";
 import { Broker } from "../ports/brokers/broker";
+import { StrategyStarted } from "../../domain/events/strategy-started";
+import { v4 as uuid } from "uuid";
 
 type Dependencies = {
   strategyRepository: StrategyRepository;
@@ -9,9 +10,12 @@ type Dependencies = {
 };
 
 type Input = {
-  id: string;
   playerId: string;
   value: number;
+};
+
+type Output = {
+  strategyId: string;
 };
 
 export class StartOver05HT {
@@ -23,14 +27,15 @@ export class StartOver05HT {
     this.broker = input.broker;
   }
 
-  async execute(input: Input): Promise<void> {
+  async execute(input: Input): Promise<Output> {
     const strategy = {
-      id: input.id,
+      id: uuid(),
       playerId: input.playerId,
       name: StrategyName.OVER_05_HT,
       value: input.value,
     };
     await this.strategyRepository.create(strategy);
     await this.broker.publish(new StrategyStarted(strategy));
+    return { strategyId: strategy.id };
   }
 }

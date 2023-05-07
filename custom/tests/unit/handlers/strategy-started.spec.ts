@@ -1,10 +1,10 @@
-import { StrategyStartedHandler } from "../../../src/application/handlers/strategy-started";
-import { StrategyName } from "../../../src/application/ports/repositories/strategy";
-import { StrategyStarted } from "../../../src/domain/events/strategy-started";
-import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
-import { InMemoryMatchRepository } from "../../../src/infra/repositories/in-memory-match";
 import { BrokerSpy } from "../../utils/mocks/broker-spy";
 import { FakeHttpClient } from "../../utils/mocks/fake-http-client";
+import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
+import { InMemoryMatchRepository } from "../../../src/infra/repositories/in-memory-match";
+import { StrategyName } from "../../../src/application/ports/repositories/strategy";
+import { StrategyStarted } from "../../../src/domain/events/strategy-started";
+import { StrategyStartedHandler } from "../../../src/application/handlers/strategy-started";
 
 test("It should start a custom strategy", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
@@ -24,8 +24,21 @@ test("It should start a custom strategy", async () => {
   const sut = new StrategyStartedHandler({ matchRepository, httpClient, broker: brokerSpy });
   await sut.handle(event);
 
-  expect(brokerSpy.scheduledCommands).toHaveLength(3);
-  expect(brokerSpy.history).toEqual(["verify-odds", "verify-odds", "verify-odds"]);
+  expect(brokerSpy.scheduledCommands).toHaveLength(12);
+  expect(brokerSpy.history).toEqual([
+    "verify-odds",
+    "match-started",
+    "half-time-finished",
+    "match-finished",
+    "verify-odds",
+    "match-started",
+    "half-time-finished",
+    "match-finished",
+    "verify-odds",
+    "match-started",
+    "half-time-finished",
+    "match-finished",
+  ]);
 });
 
 test("It should create the matches in match repository", async () => {

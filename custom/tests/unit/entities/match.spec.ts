@@ -18,15 +18,23 @@ test("It should parse correctly the home and away team", () => {
 test("It should start a game", () => {
   const match = new Match({ id: "1", name: "Liverpool X Manchester United", date: "today", strategyId: "1" });
 
-  match.startGame();
+  match.start();
 
-  expect(match.status).toBe(MatchStatus.IN_PROGRESS);
+  expect(match.status).toBe(MatchStatus.HALF_TIME);
+});
+
+test("It should be half time", () => {
+  const match = new Match({ id: "1", name: "Liverpool X Manchester United", date: "today", strategyId: "1" });
+
+  match.finishHt();
+
+  expect(match.status).toBe(MatchStatus.FULL_TIME);
 });
 
 test("It should finish a game", () => {
   const match = new Match({ id: "1", name: "Liverpool X Manchester United", date: "today", strategyId: "1" });
 
-  match.finishGame();
+  match.finish();
 
   expect(match.status).toBe(MatchStatus.FINISHED);
 });

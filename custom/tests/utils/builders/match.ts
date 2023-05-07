@@ -9,9 +9,15 @@ export class MatchBuilder {
     return match;
   }
 
-  static aInProgress(): MatchBuilder {
+  static aHalfTime(): MatchBuilder {
     const match = new MatchBuilder();
-    match.matchStatus = MatchStatus.IN_PROGRESS;
+    match.matchStatus = MatchStatus.HALF_TIME;
+    return match;
+  }
+
+  static aFullTime(): MatchBuilder {
+    const match = new MatchBuilder();
+    match.matchStatus = MatchStatus.FULL_TIME;
     return match;
   }
 
@@ -23,11 +29,14 @@ export class MatchBuilder {
 
   public build(): Match {
     const match = new Match({ id: "matchId", name: "A X B", date: "today", strategyId: "strategyId" });
-    if (this.matchStatus === MatchStatus.IN_PROGRESS) {
-      match.startGame();
+    if (this.matchStatus === MatchStatus.HALF_TIME) {
+      match.start();
+    }
+    if (this.matchStatus === MatchStatus.FULL_TIME) {
+      match.finishHt();
     }
     if (this.matchStatus === MatchStatus.FINISHED) {
-      match.finishGame();
+      match.finish();
     }
     return match;
   }

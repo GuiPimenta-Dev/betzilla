@@ -1,8 +1,9 @@
-import { Handler } from "./application/handlers/handler";
-import { StrategyStartedHandler } from "./application/handlers/strategy-started";
-import { RabbitMQAdapter } from "./infra/brokers/rabbitmq-adapter";
 import AxiosAdapter from "./infra/http/axios-adapter";
+import { Handler } from "./application/handlers/handler";
+import { InMemoryMatchRepository } from "./infra/repositories/in-memory-match";
 import { InMemoryStrategyRepository } from "./infra/repositories/in-memory-strategy";
+import { RabbitMQAdapter } from "./infra/brokers/rabbitmq-adapter";
+import { StrategyStartedHandler } from "./application/handlers/strategy-started";
 
 let config;
 async function init() {
@@ -10,6 +11,7 @@ async function init() {
     httpClient: new AxiosAdapter(),
     broker: new RabbitMQAdapter(),
     strategyRepository: new InMemoryStrategyRepository(),
+    matchRepository: new InMemoryMatchRepository(),
   };
   await config.broker.connect();
   const handlers: Handler[] = [new StrategyStartedHandler(config)];

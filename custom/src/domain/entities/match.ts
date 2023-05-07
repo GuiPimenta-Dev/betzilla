@@ -10,7 +10,8 @@ type MatchTeam = {
 
 export enum MatchStatus {
   UPCOMING = "upcoming",
-  IN_PROGRESS = "in-progress",
+  HALF_TIME = "half-time",
+  FULL_TIME = "full-time",
   FINISHED = "finished",
 }
 
@@ -57,11 +58,15 @@ export class Match {
     this._away.score = awayScore;
   }
 
-  startGame(): void {
-    this._status = MatchStatus.IN_PROGRESS;
+  start(): void {
+    this._status = MatchStatus.HALF_TIME;
   }
 
-  finishGame(): void {
+  finishHt(): void {
+    this._status = MatchStatus.FULL_TIME;
+  }
+
+  finish(): void {
     this._status = MatchStatus.FINISHED;
   }
 

@@ -1,7 +1,7 @@
-import { StartOver05HT } from "../../../src/application/usecases/start-over-05-ht";
+import { BrokerSpy } from "../../utils/mocks/broker-spy";
 import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
 import { InMemoryStrategyRepository } from "../../../src/infra/repositories/in-memory-strategy";
-import { BrokerSpy } from "../../utils/mocks/broker-spy";
+import { StartOver05HT } from "../../../src/application/usecases/start-over-05-ht";
 
 test("It should emit a over 0.5 HT started event", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
@@ -19,11 +19,11 @@ test("It should create a over 0.5 HT strategy", async () => {
   const strategyRepository = new InMemoryStrategyRepository();
   const sut = new StartOver05HT({ broker: brokerSpy, strategyRepository });
 
-  const input = { id: "id", playerId: "playerId", value: 10 };
-  await sut.execute(input);
+  const input = { playerId: "playerId", value: 10 };
+  const { strategyId } = await sut.execute(input);
 
-  expect(await strategyRepository.findById("id")).toEqual({
-    id: "id",
+  expect(await strategyRepository.findById(strategyId)).toEqual({
+    id: strategyId,
     playerId: "playerId",
     name: "over-05-ht",
     value: 10,
