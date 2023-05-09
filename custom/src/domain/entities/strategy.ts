@@ -1,29 +1,31 @@
-import { Odd } from "../events/odds-verified";
-import { Match } from "./match";
-
-export type ShouldBet = {
-  shouldBet: boolean;
-  bet?: {
-    id: string;
-    odd: number;
-  };
+export type Condition = {
+  name: string;
+  value?: number;
 };
 
 type Input = {
-  rule: string;
-  match: Match;
+  id: string;
+  playerId: string;
+  market: string;
+  type: string;
+  betValue: number;
+  conditions: Condition[];
 };
 
 export class Strategy {
-  rule: string;
-  match: Match;
+  id: string;
+  playerId: string;
+  market: string;
+  type: string;
+  betValue: number;
+  conditions: Condition[];
 
   constructor(input: Input) {
-    this.rule = input.rule;
-    this.match = input.match;
-  }
-
-  verify(odd: Odd[]): ShouldBet {
-    return { shouldBet: false };
+    this.id = input.id;
+    this.playerId = input.playerId;
+    this.market = input.market;
+    this.type = input.type;
+    this.conditions = input.conditions;
+    this.betValue = input.betValue;
   }
 }

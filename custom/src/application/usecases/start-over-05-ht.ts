@@ -1,10 +1,10 @@
 import { v4 as uuid } from "uuid";
 import { ExecutionStarted } from "../../domain/events/execution-started";
 import { Broker } from "../ports/brokers/broker";
-import { RuleRepository } from "../ports/repositories/rule";
+import { Strategy } from "../ports/repositories/strategy";
 
 type Dependencies = {
-  ruleRepository: RuleRepository;
+  strategyRepository: Strategy;
   broker: Broker;
 };
 
@@ -19,11 +19,11 @@ type Output = {
 };
 
 export class StartOver05HT {
-  private ruleRepository: RuleRepository;
+  private strategyRepository: Strategy;
   private broker: Broker;
 
   constructor(input: Dependencies) {
-    this.ruleRepository = input.ruleRepository;
+    this.strategyRepository = input.strategyRepository;
     this.broker = input.broker;
   }
 
@@ -34,7 +34,7 @@ export class StartOver05HT {
       string: input.rule,
       value: input.value,
     };
-    await this.ruleRepository.create(rule);
+    await this.strategyRepository.create(rule);
     await this.broker.publish(new ExecutionStarted(rule));
     return { ruleId: rule.id };
   }

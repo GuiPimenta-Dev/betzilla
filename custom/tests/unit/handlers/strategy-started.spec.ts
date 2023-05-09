@@ -1,10 +1,11 @@
 import { ExecutionStartedHandler } from "../../../src/application/handlers/execution-started";
 import { ExecutionStarted } from "../../../src/domain/events/execution-started";
 import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
+import { StrategyBuilder } from "../../utils/builders/strategy";
 import { BrokerSpy } from "../../utils/mocks/broker-spy";
 import { FakeHttpClient } from "../../utils/mocks/fake-http-client";
 
-test("It should start a custom strategy", async () => {
+test("It should start a execution with a strategy", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
   const httpClient = new FakeHttpClient();
   httpClient.mockGetResponse({
@@ -16,8 +17,8 @@ test("It should start a custom strategy", async () => {
     ],
   });
 
-  const input = { id: "id", playerId: "playerId", string: "over-05-ht", value: 10 };
-  const event = new ExecutionStarted(input);
+  const strategy = StrategyBuilder.aStrategy().build();
+  const event = new ExecutionStarted(strategy);
   const sut = new ExecutionStartedHandler({ httpClient, broker: brokerSpy });
   await sut.handle(event);
 

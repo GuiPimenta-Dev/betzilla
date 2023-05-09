@@ -3,6 +3,7 @@ import { Market, Match, MatchStatus } from "../../../src/domain/entities/match";
 export class MatchBuilder {
   matchStatus: MatchStatus;
   markets: Market[] = [];
+  date: string;
 
   static aMatch(): MatchBuilder {
     return new MatchBuilder();
@@ -25,10 +26,21 @@ export class MatchBuilder {
     return this;
   }
 
+  withDate(date: Date): MatchBuilder {
+    this.date = date.toISOString();
+    return this;
+  }
+
   public build(): Match {
-    const match = Match.start({ id: "matchId", name: "A X B", date: "today", rule: "rule", markets: this.markets });
+    const match = Match.start({
+      id: "matchId",
+      name: "A X B",
+      date: this.date,
+      strategyId: "strategyId",
+      markets: this.markets,
+    });
     if (this.matchStatus === MatchStatus.FULL_TIME) {
-      match.finishHt();
+      match.finishHalfTime();
     }
     if (this.matchStatus === MatchStatus.FINISHED) {
       match.finish();

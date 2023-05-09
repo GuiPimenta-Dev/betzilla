@@ -1,36 +1,47 @@
 import { v4 as uuid } from "uuid";
 import { ExecutionStarted } from "../../domain/events/execution-started";
 import { Broker } from "../ports/brokers/broker";
-import { RuleRepository } from "../ports/repositories/rule";
+import { StrategyRepository } from "../ports/repositories/strategy";
 
 type Dependencies = {
-  ruleRepository: RuleRepository;
+  strategyRepository: StrategyRepository;
   broker: Broker;
 };
 
+type Condition = {
+  name: string;
+  value?: number;
+};
+
+type Strategy = {
+  market: string;
+  type: string;
+  betValue: number;
+  conditions: Condition[];
+};
+
 type Input = {
+  strategy: Strategy;
   playerId: string;
-  rule: string;
-  value: number;
 };
 
 type Output = {
-  ruleId: string;
+  strategyId: string;
 };
 
 export class StartExecution {
-  private ruleRepository: RuleRepository;
+  private strategyRepository: StrategyRepository;
   private broker: Broker;
 
   constructor(input: Dependencies) {
-    this.ruleRepository = input.ruleRepository;
+    this.strategyRepository = input.strategyRepository;
     this.broker = input.broker;
   }
 
   async execute(input: Input): Promise<Output> {
-    const rule = { id: uuid(), playerId: input.playerId, string: input.rule, value: input.value };
-    await this.ruleRepository.create(rule);
-    await this.broker.publish(new ExecutionStarted(rule));
-    return { ruleId: rule.id };
+    const strategy = { id: uuid(), playerId: input.playerId, ...input.strategy };
+    await this.strategyRepository.create(strategy);
+    await this.broker.publish(new ExecutionStarted(strategy));
+    return { strategyId: strategy.id };
   }
 }

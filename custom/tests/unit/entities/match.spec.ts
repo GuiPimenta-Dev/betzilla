@@ -16,10 +16,10 @@ test("It should parse correctly the home and away team", () => {
   expect(match.away.score).toBe(0);
 });
 
-test("It should be half time", () => {
+test("It should be full time", () => {
   const match = MatchBuilder.aMatch().build();
 
-  match.finishHt();
+  match.finishHalfTime();
 
   expect(match.status).toBe(MatchStatus.FULL_TIME);
 });

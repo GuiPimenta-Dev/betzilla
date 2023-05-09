@@ -3,14 +3,14 @@ import { Handler } from "./application/handlers/handler";
 import { RabbitMQAdapter } from "./infra/brokers/rabbitmq-adapter";
 import AxiosAdapter from "./infra/http/axios-adapter";
 import { InMemoryMatchRepository } from "./infra/repositories/in-memory-match";
-import { InMemoryRuleRepository } from "./infra/repositories/in-memory-rule";
+import { InMemoryStrategyRepository } from "./infra/repositories/in-memory-strategy";
 
 let config;
 async function init() {
   config = {
     httpClient: new AxiosAdapter(),
     broker: new RabbitMQAdapter(),
-    ruleRepository: new InMemoryRuleRepository(),
+    strategyRepository: new InMemoryStrategyRepository(),
     matchRepository: new InMemoryMatchRepository(),
   };
   await config.broker.connect();

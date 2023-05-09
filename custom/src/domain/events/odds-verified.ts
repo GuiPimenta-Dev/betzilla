@@ -8,7 +8,6 @@ export type Odd = {
 
 type Match = {
   id: string;
-  rule: string;
 };
 
 type Payload = {

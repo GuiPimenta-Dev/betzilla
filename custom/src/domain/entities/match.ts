@@ -21,7 +21,7 @@ type Input = {
   id: string;
   name: string;
   date: string;
-  rule: string;
+  strategyId: string;
   markets: Market[];
   home?: MatchTeam;
   away?: MatchTeam;
@@ -33,7 +33,6 @@ export class Match {
   readonly name: string;
   readonly date: string;
   readonly strategyId: string;
-  readonly ruleId: string;
   readonly markets: Market[];
   private _status: MatchStatus;
   private _home: MatchTeam;
@@ -43,7 +42,7 @@ export class Match {
     this.id = input.id;
     this.name = input.name;
     this.date = input.date;
-    this.ruleId = input.rule;
+    this.strategyId = input.strategyId;
     this.markets = input.markets;
     this._home = input.home;
     this._away = input.away;
@@ -75,7 +74,7 @@ export class Match {
     this._away.score = awayScore;
   }
 
-  finishHt(): void {
+  finishHalfTime(): void {
     this._status = MatchStatus.FULL_TIME;
   }
 
