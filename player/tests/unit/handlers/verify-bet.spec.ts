@@ -8,7 +8,7 @@ import { FakeBetGateway } from "../../utils/mocks/fake-bet-gateway";
 test("It should emit a bet won event and a bet verified event if bet was won", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
   const betGateway = new FakeBetGateway();
-  betGateway.mockConsultBetResponse({ status: "won", outcome: 100 });
+  betGateway.mockConsultBet({ status: "won", outcome: 100 });
 
   const bet = BetBuilder.aBet().build();
   const verifyBet = new VerifyBet(bet);
@@ -25,7 +25,7 @@ test("It should emit a bet won event and a bet verified event if bet was won", a
 test("It should emit a bet lost event and a bet verified event if bet was lost", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
   const betGateway = new FakeBetGateway();
-  betGateway.mockConsultBetResponse({ status: "lost", outcome: 0 });
+  betGateway.mockConsultBet({ status: "lost", outcome: 0 });
 
   const bet = BetBuilder.aBet().build();
   const verifyBet = new VerifyBet(bet);
@@ -42,7 +42,7 @@ test("It should emit a bet lost event and a bet verified event if bet was lost",
 test("It should schedule a new verify bet command if bet is still pending", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
   const betGateway = new FakeBetGateway();
-  betGateway.mockConsultBetResponse({ status: "pending", outcome: 0 });
+  betGateway.mockConsultBet({ status: "pending", outcome: 0 });
 
   const bet = BetBuilder.aBet().build();
   const verifyBet = new VerifyBet(bet);
@@ -57,7 +57,7 @@ test("It should schedule a new verify bet command if bet is still pending", asyn
 test("It should not emit a bet verified event if bet is pending", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
   const betGateway = new FakeBetGateway();
-  betGateway.mockConsultBetResponse({ status: "pending", outcome: 0 });
+  betGateway.mockConsultBet({ status: "pending", outcome: 0 });
 
   const bet = BetBuilder.aBet().build();
   const verifyBet = new VerifyBet(bet);
@@ -70,12 +70,12 @@ test("It should not emit a bet verified event if bet is pending", async () => {
 test("It should update de bet oucome when bet is won", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
   const betGateway = new FakeBetGateway();
-  betGateway.mockConsultBetResponse({ status: "won", outcome: 100 });
+  betGateway.mockConsultBet({ status: "won", outcome: 100 });
 
   const bet = BetBuilder.aBet().build();
   const verifyBet = new VerifyBet(bet);
   const sut = new VerifyBetHandler({ betGateway, broker: brokerSpy });
   await sut.handle(verifyBet);
 
-  expect(brokerSpy.events[0].payload.outcome).toBe(100)
-})
+  expect(brokerSpy.events[0].payload.outcome).toBe(100);
+});

@@ -7,8 +7,8 @@ import { FakeBetGateway } from "../../utils/mocks/fake-bet-gateway";
 test("It should emit a odds verified event after verifying a game odds", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
   const betGateway = new FakeBetGateway();
-  betGateway.mocklistMatchMarketsResponse([{ id: "1", name: "Over/Under 0.5 Goals" }]);
-  betGateway.mockListMarketOddsResponse({ id: "1", back: [2], lay: [3] });
+  betGateway.mockListMatchMarkets([{ id: "1", name: "Over/Under 0.5 Goals" }]);
+  betGateway.mockListMarketOdds([{ id: "1", back: [2], lay: [3] }]);
 
   const handler = new VerifyOddsHandler({ betGateway, broker: brokerSpy });
   const verifyOdds = new VerifyOdds({
@@ -36,8 +36,8 @@ test("It should emit a odds verified event after verifying a game odds", async (
 test("It should not emit a odds verified event if the market is not found", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
   const betGateway = new FakeBetGateway();
-  betGateway.mocklistMatchMarketsResponse([{ id: "1", name: "Over/Under 0.5 Goals" }]);
-  betGateway.mockListMarketOddsResponse({ id: "1", back: [2], lay: [3] });
+  betGateway.mockListMatchMarkets([{ id: "1", name: "Over/Under 0.5 Goals" }]);
+  betGateway.mockListMarketOdds({ id: "1", back: [2], lay: [3] });
 
   const handler = new VerifyOddsHandler({ betGateway, broker: brokerSpy });
   const verifyOdds = new VerifyOdds({

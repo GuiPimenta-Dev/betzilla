@@ -1,12 +1,13 @@
+import AxiosAdapter from "./infra/http/axios-adapter";
+import { BetFairAdapter } from "./infra/gateways/bet-fair-adapter";
 import { CreditAccountHandler } from "./application/handlers/credit-account";
 import { DebitAccountHandler } from "./application/handlers/debit-account";
+import { FakeBetGateway } from "./infra/gateways/bet-gateway";
+import { InMemoryPlayerRepository } from "./infra/repositories/in-memory-player";
 import { MakeBetHandler } from "./application/handlers/make-bet";
+import { RabbitMQAdapter } from "./infra/brokers/rabbitmq-adapter";
 import { VerifyBetHandler } from "./application/handlers/verify-bet";
 import { VerifyOddsHandler } from "./application/handlers/verify-odds";
-import { RabbitMQAdapter } from "./infra/brokers/rabbitmq-adapter";
-import { BetFairAdapter } from "./infra/gateways/bet-fair-adapter";
-import AxiosAdapter from "./infra/http/axios-adapter";
-import { InMemoryPlayerRepository } from "./infra/repositories/in-memory-player";
 
 let config;
 async function init() {

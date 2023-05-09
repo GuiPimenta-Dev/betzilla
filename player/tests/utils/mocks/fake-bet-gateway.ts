@@ -5,7 +5,8 @@ export class FakeBetGateway implements BetGateway {
   consultBetResponse: BetStatus;
   listMatchesForTodayResponse: Match[];
   listMatchMarketsResponse: Market[];
-  listMarketOddsResponse: Odd;
+  listMarketOddsResponse: Odd[];
+  marketOddsIndex: number = 0;
 
   async makeBet(): Promise<{ success: boolean }> {
     return { success: this.makeBetResponse };
@@ -24,26 +25,26 @@ export class FakeBetGateway implements BetGateway {
   }
 
   async listMarketOdds(): Promise<Odd> {
-    return this.listMarketOddsResponse;
+    return this.listMarketOddsResponse[this.marketOddsIndex++];
   }
 
-  mockMakeBetResponse(betWasMade: boolean) {
+  mockMakeBet(betWasMade: boolean) {
     this.makeBetResponse = betWasMade;
   }
 
-  mockConsultBetResponse(bet: BetStatus) {
+  mockConsultBet(bet: BetStatus) {
     this.consultBetResponse = bet;
   }
 
-  mockListMatchesForTodayResponse(matches: Match[]) {
+  mockListMatchesForToday(matches: Match[]) {
     this.listMatchesForTodayResponse = matches;
   }
 
-  mocklistMatchMarketsResponse(markets: Market[]) {
+  mockListMatchMarkets(markets: Market[]) {
     this.listMatchMarketsResponse = markets;
   }
 
-  mockListMarketOddsResponse(odds: Odd) {
+  mockListMarketOdds(odds: any) {
     this.listMarketOddsResponse = odds;
   }
 }

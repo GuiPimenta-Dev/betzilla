@@ -4,7 +4,7 @@ import { FakeBetGateway } from "../../utils/mocks/fake-bet-gateway";
 
 test("It should list only upcoming matches for today", async () => {
   const betGateway = new FakeBetGateway();
-  betGateway.mockListMatchesForTodayResponse([
+  betGateway.mockListMatchesForToday([
     {
       id: "1",
       date: "2021-01-01T20:00:00.000Z",

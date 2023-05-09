@@ -21,7 +21,7 @@ test("It should wmit a bet made event after make the bet", async () => {
 test("It should throw an error if the bet was not made by the bet gateway", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
   const betGateway = new FakeBetGateway();
-  betGateway.mockMakeBetResponse(false);
+  betGateway.mockMakeBet(false);
 
   const bet = BetBuilder.aBet().build();
   const makeBet = new MakeBet(bet);
