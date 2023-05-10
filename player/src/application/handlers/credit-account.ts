@@ -1,8 +1,8 @@
 import { BetWon } from "../../domain/events/bet-won";
-import { CreditMade } from "../../domain/events/credit-made";
 import { Broker } from "../ports/brokers/broker";
-import { PlayerRepository } from "../ports/repositories/player";
+import { CreditMade } from "../../domain/events/credit-made";
 import { Handler } from "./handler";
+import { PlayerRepository } from "../ports/repositories/player";
 
 type Dependencies = {
   playerRepository: PlayerRepository;

@@ -1,15 +1,16 @@
-import moment from "moment";
 import { VerifyBet } from "../../domain/commands/verify-bet";
 import { MatchFinished } from "../../domain/events/match-finished";
 import { Broker } from "../ports/brokers/broker";
 import { MatchRepository } from "../ports/repositories/match";
 import { StrategyRepository } from "../ports/repositories/strategy";
+import { Scheduler } from "../ports/scheduler/scheduler";
 import { Handler } from "./handler";
 
 type Dependencies = {
   matchRepository: MatchRepository;
   strategyRepository: StrategyRepository;
   broker: Broker;
+  scheduler: Scheduler;
 };
 
 export class MatchFinishedHandler implements Handler {
@@ -17,11 +18,13 @@ export class MatchFinishedHandler implements Handler {
   matchRepository: MatchRepository;
   strategyRepository: StrategyRepository;
   broker: Broker;
+  scheduler: Scheduler;
 
   constructor(input: Dependencies) {
     this.matchRepository = input.matchRepository;
     this.strategyRepository = input.strategyRepository;
     this.broker = input.broker;
+    this.scheduler = input.scheduler;
   }
 
   async handle(event: MatchFinished): Promise<void> {
@@ -30,8 +33,8 @@ export class MatchFinishedHandler implements Handler {
     await this.matchRepository.update(match);
     if (match.betId) {
       const strategy = await this.strategyRepository.findById(match.strategyId);
-      const fifteenMinutesLater = moment().add(15, "minutes").toDate();
-      this.broker.schedule(new VerifyBet({ betId: match.betId, playerId: strategy.playerId }), fifteenMinutesLater);
+      const timeToVerifyBet = this.scheduler.timeToVerifyBet();
+      this.broker.schedule(new VerifyBet({ betId: match.betId, playerId: strategy.playerId }), timeToVerifyBet);
     }
   }
 }

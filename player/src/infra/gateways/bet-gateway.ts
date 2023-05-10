@@ -1,13 +1,14 @@
-import { BetGateway, BetStatus, Market, Match, Odd } from "../../../src/application/ports/gateways/bet";
+import { Bet, BetGateway, BetStatus, Market, Match, Odd } from "../../../src/application/ports/gateways/bet";
 
 import moment from "moment";
+import { v4 as uuid } from "uuid";
 
 export class FakeBetGateway implements BetGateway {
   bet: number;
 
-  async makeBet(bet: number): Promise<{ success: true }> {
-    this.bet = bet;
-    return { success: true };
+  async makeBet(bet: Bet): Promise<{ success: true; betId: string }> {
+    this.bet = bet.betValue;
+    return { success: true, betId: uuid() };
   }
 
   async consultBet(): Promise<BetStatus> {
@@ -17,7 +18,7 @@ export class FakeBetGateway implements BetGateway {
 
   async listMatchesForToday(): Promise<Match[]> {
     const twoSecondsLater = moment().add(2, "seconds").toISOString();
-    return [{ id: "32286072", name: "Real Madrid v Man City", date: twoSecondsLater }];
+    return [{ id: uuid(), name: "Real Madrid v Man City", date: twoSecondsLater }];
   }
 
   async listMatchMarkets(matchId: string): Promise<Market[]> {

@@ -60,7 +60,6 @@ export class RabbitMQAdapter implements Broker {
   }
 
   async schedule(input: Command, date: Date): Promise<void> {
-    // console.log(input);
     await this.channel.assertExchange(input.name, "x-delayed-message", {
       autoDelete: false,
       durable: true,
@@ -70,7 +69,7 @@ export class RabbitMQAdapter implements Broker {
       },
     });
     const delayInMilliSeconds = Math.abs(date.getTime() - new Date().getTime());
-    // console.log(delayInMilliSeconds, date);
+    // console.log(delayInMilliSeconds, input);
     this.channel.publish(input.name, "", Buffer.from(JSON.stringify(input)), {
       headers: {
         "x-delay": delayInMilliSeconds,

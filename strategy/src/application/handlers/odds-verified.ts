@@ -1,7 +1,6 @@
 import { Match, MatchStatus } from "../../domain/entities/match";
 import { Odd, OddsVerified } from "../../domain/events/odds-verified";
 
-import moment from "moment";
 import { MakeBet } from "../../domain/commands/make-bet";
 import { VerifyOdds } from "../../domain/commands/verify-odds";
 import { Strategy } from "../../domain/entities/strategy";
@@ -9,12 +8,14 @@ import { RuleFactory } from "../../domain/rules/factory";
 import { Broker } from "../ports/brokers/broker";
 import { MatchRepository } from "../ports/repositories/match";
 import { StrategyRepository } from "../ports/repositories/strategy";
+import { Scheduler } from "../ports/scheduler/scheduler";
 import { Handler } from "./handler";
 
 type Dependencies = {
   strategyRepository: StrategyRepository;
   matchRepository: MatchRepository;
   broker: Broker;
+  scheduler: Scheduler;
 };
 
 export class OddsVerifiedHandler implements Handler {
@@ -23,11 +24,13 @@ export class OddsVerifiedHandler implements Handler {
   private broker: Broker;
   private matchRepository: MatchRepository;
   private strategyRepository: StrategyRepository;
+  private scheduler: Scheduler;
 
   constructor(input: Dependencies) {
     this.strategyRepository = input.strategyRepository;
     this.matchRepository = input.matchRepository;
     this.broker = input.broker;
+    this.scheduler = input.scheduler;
   }
 
   async handle(event: OddsVerified): Promise<void> {
@@ -50,8 +53,8 @@ export class OddsVerifiedHandler implements Handler {
         })
       );
     } else {
-      const fiveMinutesLater = moment().add(5, "minutes").toDate();
-      await this.broker.schedule(new VerifyOdds({ matchId: match.id, market: strategy.market }), fiveMinutesLater);
+      const timeToVerifyOdds = this.scheduler.timeToVerifyOdds();
+      await this.broker.schedule(new VerifyOdds({ matchId: match.id, market: strategy.market }), timeToVerifyOdds);
     }
   }
 

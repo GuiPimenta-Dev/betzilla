@@ -9,6 +9,7 @@ import { RabbitMQAdapter } from "./infra/brokers/rabbitmq-adapter";
 import AxiosAdapter from "./infra/http/axios-adapter";
 import { InMemoryMatchRepository } from "./infra/repositories/in-memory-match";
 import { InMemoryStrategyRepository } from "./infra/repositories/in-memory-strategy";
+import { DevelopmentScheduler } from "./infra/scheduler/development";
 
 let config;
 async function init() {
@@ -17,13 +18,13 @@ async function init() {
     broker: new RabbitMQAdapter(),
     strategyRepository: new InMemoryStrategyRepository(),
     matchRepository: new InMemoryMatchRepository(),
+    scheduler: new DevelopmentScheduler(),
   };
   await config.broker.connect();
   const handlers: Handler[] = [
     new ExecutionStartedHandler(config),
     new OddsVerifiedHandler(config),
     new BetMadeHandler(config),
-    new MatchFinishedHandler(config),
   ];
   handlers.map((handler) => {
     config.broker.subscribe(handler, async function (msg: any) {
