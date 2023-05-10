@@ -17,10 +17,18 @@ export type Odd = {
   lay: number[];
 };
 
+export type Bet = {
+  marketId: string;
+  oddId: string;
+  type: string;
+  odd: number;
+  betValue: number;
+};
+
 export interface BetGateway {
-  makeBet(value: number): Promise<{ success: boolean }>;
+  makeBet(input: Bet): Promise<{ success: boolean; betId: string }>;
   consultBet(id: string): Promise<BetStatus>;
   listMatchesForToday(): Promise<Match[]>;
   listMatchMarkets(matchId: string): Promise<Market[]>;
-  listMarketOdds(marketId: string): Promise<Odd>;
+  listMarketOdds(marketId: string): Promise<Odd[]>;
 }

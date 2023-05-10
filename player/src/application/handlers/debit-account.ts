@@ -1,9 +1,9 @@
 import { BetMade } from "../../domain/events/bet-made";
+import { Broker } from "./../ports/brokers/broker";
 import { DebitFailed } from "../../domain/events/debit-failed";
 import { DebitMade } from "../../domain/events/debit-made";
-import { Broker } from "./../ports/brokers/broker";
-import { PlayerRepository } from "./../ports/repositories/player";
 import { Handler } from "./handler";
+import { PlayerRepository } from "./../ports/repositories/player";
 
 type Dependencies = {
   playerRepository: PlayerRepository;
@@ -24,7 +24,7 @@ export class DebitAccountHandler implements Handler {
     const { payload } = input;
     const player = await this.playerRepository.findById(payload.playerId);
     try {
-      player.account.debit(payload.value);
+      player.account.debit(payload.betValue);
       await this.playerRepository.update(player);
       await this.broker.publish(new DebitMade(payload));
     } catch (error) {

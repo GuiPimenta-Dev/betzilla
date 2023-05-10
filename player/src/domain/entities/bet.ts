@@ -1,26 +1,19 @@
-type Strategy = {
-  id: string;
-  name: string;
-};
-
 type Input = {
   id: string;
-  playerId: string;
-  strategy: Strategy;
   value: number;
+  matchId: string;
 };
 
 export class Bet {
   id: string;
-  playerId: string;
-  strategy: Strategy;
+  matchId: string;
   value: number;
   outcome: number;
 
   constructor(input: Input) {
     this.id = input.id;
-    this.playerId = input.playerId;
-    this.strategy = input.strategy;
     this.value = input.value;
+    this.matchId = input.matchId;
+    this.outcome = null;
   }
 }

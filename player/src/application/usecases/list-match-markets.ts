@@ -7,7 +7,7 @@ type Dependencies = {
 type Output = {
   id: string;
   name: string;
-  odds: Odd;
+  odds: Odd[];
 };
 
 export class ListMatchMarkets {

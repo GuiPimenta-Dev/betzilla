@@ -1,5 +1,7 @@
 import { BetGateway, BetStatus, Market, Match, Odd } from "../../../src/application/ports/gateways/bet";
 
+import { v4 as uuid } from "uuid";
+
 export class FakeBetGateway implements BetGateway {
   makeBetResponse: boolean = true;
   consultBetResponse: BetStatus;
@@ -8,8 +10,8 @@ export class FakeBetGateway implements BetGateway {
   listMarketOddsResponse: Odd[];
   marketOddsIndex: number = 0;
 
-  async makeBet(): Promise<{ success: boolean }> {
-    return { success: this.makeBetResponse };
+  async makeBet(): Promise<{ success: boolean; betId: string }> {
+    return { success: this.makeBetResponse, betId: uuid() };
   }
 
   async consultBet(): Promise<BetStatus> {
@@ -24,8 +26,8 @@ export class FakeBetGateway implements BetGateway {
     return this.listMatchMarketsResponse;
   }
 
-  async listMarketOdds(): Promise<Odd> {
-    return this.listMarketOddsResponse[this.marketOddsIndex++];
+  async listMarketOdds(): Promise<Odd[]> {
+    return this.listMarketOddsResponse;
   }
 
   mockMakeBet(betWasMade: boolean) {

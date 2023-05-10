@@ -1,7 +1,7 @@
-import { Handler } from "../../../src/application/handlers/handler";
 import { Broker } from "../../../src/application/ports/brokers/broker";
 import { Command } from "../../../src/domain/commands/command";
 import { Event } from "../../../src/domain/events/event";
+import { Handler } from "../../../src/application/handlers/handler";
 
 export class BrokerSpy implements Broker {
   handlers: Handler[] = [];
@@ -28,9 +28,9 @@ export class BrokerSpy implements Broker {
     await this.broker.publish(input);
   }
 
-  async schedule(input: Command): Promise<void> {
+  async schedule(input: Command, date: Date): Promise<void> {
     this.scheduledCommands.push(input);
     this.history.push(input.name);
-    await this.broker.schedule(input);
+    await this.broker.schedule(input, null);
   }
 }

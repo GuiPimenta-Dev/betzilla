@@ -1,7 +1,7 @@
 import { BetGateway, BetStatus, Market, Match, Odd } from "../../application/ports/gateways/bet";
 
-import moment from "moment";
 import { HttpClient } from "../../application/ports/http/http-client";
+import moment from "moment";
 
 export class BetFairAdapter implements BetGateway {
   BASE_URL = "https://api.betfair.com/exchange/betting/rest/v1.0";
@@ -90,7 +90,7 @@ export class BetFairAdapter implements BetGateway {
     return markets;
   }
 
-  async listMarketOdds(marketId: string): Promise<Odd> {
+  async listMarketOdds(marketId: string): Promise<Odd[]> {
     const { data } = await this.httpClient.post(
       `${this.BASE_URL}/listMarketBook/`,
       {

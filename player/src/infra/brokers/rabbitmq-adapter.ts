@@ -1,8 +1,8 @@
-import amqplib from "amqplib";
-import { Handler } from "../../application/handlers/handler";
 import { Broker } from "../../application/ports/brokers/broker";
 import { Command } from "../../domain/commands/command";
 import { Event } from "../../domain/events/event";
+import { Handler } from "../../application/handlers/handler";
+import amqplib from "amqplib";
 
 export class RabbitMQAdapter implements Broker {
   channel: any;
@@ -54,11 +54,12 @@ export class RabbitMQAdapter implements Broker {
   }
 
   async publish(input: Event | Command): Promise<void> {
+    console.log(input);
     await this.channel.assertExchange(input.name, "fanout", { durable: true });
     this.channel.publish(input.name, "", Buffer.from(JSON.stringify(input)));
   }
 
-  async schedule(input: Command): Promise<void> {
+  async schedule(input: Command, date: Date): Promise<void> {
     // await new Promise((resolve) => setTimeout(resolve, 1000));
     await this.publish(input);
   }

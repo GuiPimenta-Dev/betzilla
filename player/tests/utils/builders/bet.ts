@@ -1,7 +1,5 @@
-import { Bet } from "../../../src/domain/entities/bet";
-
 export class BetBuilder {
-  value: number = 10;
+  value: number = 100;
 
   static aBet() {
     return new BetBuilder();
@@ -12,7 +10,15 @@ export class BetBuilder {
     return this;
   }
 
-  build(): Bet {
-    return new Bet({ id: "id", playerId: "default", value: this.value, strategy: { id: "id", name: "name" } });
+  build() {
+    return {
+      matchId: "match-id",
+      playerId: "player-id",
+      betValue: this.value,
+      marketId: "market-id",
+      oddId: "odd-id",
+      type: "type",
+      odd: 1.5,
+    };
   }
 }

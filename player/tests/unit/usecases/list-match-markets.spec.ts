@@ -14,20 +14,16 @@ test("It should list all initial match odds for a match", async () => {
     },
   ]);
   betGateway.mockListMarketOdds([
-    [
-      {
-        id: 50788424,
-        back: [1.01],
-        lay: [0],
-      },
-    ],
-    [
-      {
-        id: 20530281,
-        back: [1.03, 1.02, 1.01],
-        lay: [1000, 0, 0],
-      },
-    ],
+    {
+      id: 50788424,
+      back: [1.01],
+      lay: [0],
+    },
+    {
+      id: 20530281,
+      back: [1.03, 1.02, 1.01],
+      lay: [1000, 0, 0],
+    },
   ]);
 
   const sut = new ListMatchMarkets({ betGateway });
@@ -43,12 +39,22 @@ test("It should list all initial match odds for a match", async () => {
           back: [1.01],
           lay: [0],
         },
+        {
+          id: 20530281,
+          back: [1.03, 1.02, 1.01],
+          lay: [1000, 0, 0],
+        },
       ],
     },
     {
       id: "1.213876105",
       name: "Over/Under 6.5 Goals",
       odds: [
+        {
+          id: 50788424,
+          back: [1.01],
+          lay: [0],
+        },
         {
           id: 20530281,
           back: [1.03, 1.02, 1.01],

@@ -1,10 +1,11 @@
-import { VerifyBet } from "../../domain/commands/verify-bet";
+import { BetGateway } from "../ports/gateways/bet";
 import { BetLost } from "../../domain/events/bet-lost";
 import { BetVerified } from "../../domain/events/bet-verified";
 import { BetWon } from "../../domain/events/bet-won";
 import { Broker } from "../ports/brokers/broker";
-import { BetGateway } from "../ports/gateways/bet";
 import { Handler } from "./handler";
+import { VerifyBet } from "../../domain/commands/verify-bet";
+import moment from "moment";
 
 type Dependencies = {
   betGateway: BetGateway;
@@ -23,17 +24,17 @@ export class VerifyBetHandler implements Handler {
 
   async handle(input: VerifyBet) {
     const { payload } = input;
-    const bet = await this.betGateway.consultBet(payload.strategy.id);
+    const bet = await this.betGateway.consultBet(payload.betId);
     if (bet.status === "won") {
-      payload.outcome = bet.outcome;
-      await this.broker.publish(new BetWon(payload));
+      await this.broker.publish(new BetWon({ ...payload, outcome: bet.outcome }));
     }
     if (bet.status === "lost") {
       await this.broker.publish(new BetLost(payload));
     }
     if (bet.status === "pending") {
-      await this.broker.schedule(new VerifyBet(payload));
-      return
+      const fiveMinutesLater = moment().add(5, "minutes").toDate();
+      await this.broker.schedule(new VerifyBet(payload), fiveMinutesLater);
+      return;
     }
     await this.broker.publish(new BetVerified(payload));
   }

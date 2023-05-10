@@ -1,8 +1,8 @@
-import { MakeBet } from "../../domain/commands/make-bet";
-import { BetMade } from "../../domain/events/bet-made";
 import { BadRequest } from "../../infra/http/status/bad-request";
-import { Broker } from "../ports/brokers/broker";
 import { BetGateway } from "../ports/gateways/bet";
+import { BetMade } from "../../domain/events/bet-made";
+import { Broker } from "../ports/brokers/broker";
+import { MakeBet } from "../../domain/commands/make-bet";
 
 type Dependencies = {
   betGateway: BetGateway;
@@ -20,9 +20,9 @@ export class MakeBetHandler {
   }
 
   async handle(input: MakeBet) {
-    const { payload } = input;
-    const { success } = await this.betGateway.makeBet(payload.value);
+    const { marketId, oddId, type, odd, betValue, playerId, matchId } = input.payload;
+    const { success, betId } = await this.betGateway.makeBet({ marketId, oddId, type, odd, betValue });
     if (!success) throw new BadRequest("Bet was not made");
-    await this.broker.publish(new BetMade(payload));
+    await this.broker.publish(new BetMade({ matchId, betId, playerId, betValue }));
   }
 }

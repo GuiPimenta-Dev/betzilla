@@ -1,14 +1,8 @@
 import { Command } from "./command";
 
-type Match = {
-  id: string;
-  name: string;
-};
-
 type Input = {
-  strategyId: string;
-  match: Match;
-  marketName: string;
+  matchId: string;
+  market: string;
 };
 
 export class VerifyOdds extends Command {
