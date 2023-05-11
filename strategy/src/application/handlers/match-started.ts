@@ -1,11 +1,11 @@
-import moment from "moment";
-import { VerifyOdds } from "../../domain/commands/verify-odds";
-import { Match } from "../../domain/entities/match";
-import { MatchStarted } from "../../domain/events/match-started";
 import { Broker } from "../ports/brokers/broker";
-import { HttpClient } from "../ports/http/http-client";
-import { MatchRepository } from "../ports/repositories/match";
 import { Handler } from "./handler";
+import { HttpClient } from "../ports/http/http-client";
+import { Match } from "../../domain/entities/match";
+import { MatchRepository } from "../ports/repositories/match";
+import { MatchStarted } from "../../domain/events/match-started";
+import { VerifyOdds } from "../../domain/commands/verify-odds";
+import moment from "moment";
 
 type Dependencies = {
   matchRepository: MatchRepository;
@@ -27,7 +27,7 @@ export class MatchStartedHandler implements Handler {
 
   async handle(event: MatchStarted): Promise<void> {
     const { matchId, strategyId, name, market, date } = event.payload;
-    const { data } = await this.httpClient.get("http://player:3000/matches/markets", { matchId });
+    const { data } = await this.httpClient.get("http://bet:3001/matches/markets", { matchId });
     const match = Match.start({ id: matchId, name, strategyId, date, markets: data });
     await this.matchRepository.create(match);
     const now = moment().toDate();

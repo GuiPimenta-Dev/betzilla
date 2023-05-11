@@ -1,5 +1,5 @@
-import moment from "moment";
 import { Scheduler } from "../../application/ports/scheduler/scheduler";
+import moment from "moment";
 
 export class DevelopmentScheduler implements Scheduler {
   timeToFirstHalfFinish(date: string): Date {

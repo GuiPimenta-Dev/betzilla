@@ -14,19 +14,19 @@ services:
       rabbitmq:
         condition: service_healthy
 
-  # martingale:
-  #   build: ./martingale
-  #   container_name: "martingale"
-  #   volumes:
-  #     - ./martingale/:/usr/src/app/
-  #   ports:
-  #     - 3001:3001
-  #   networks:
-  #     - rabbitmq_nodejs
-  #   restart: always
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
+  bet:
+    build: ./bet
+    container_name: "bet"
+    volumes:
+      - ./bet/:/usr/src/app/
+    ports:
+      - 3001:3001
+    networks:
+      - rabbitmq_nodejs
+    restart: always
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
 
   strategy:
     build: ./strategy

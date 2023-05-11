@@ -1,12 +1,12 @@
-import moment from "moment";
+import { Broker } from "../ports/brokers/broker";
 import { ExecutionStarted } from "../../domain/events/execution-started";
 import { HalfTimeFinished } from "../../domain/events/half-time-finished";
+import { Handler } from "./handler";
+import { HttpClient } from "../ports/http/http-client";
 import { MatchFinished } from "../../domain/events/match-finished";
 import { MatchStarted } from "../../domain/events/match-started";
-import { Broker } from "../ports/brokers/broker";
-import { HttpClient } from "../ports/http/http-client";
 import { Scheduler } from "../ports/scheduler/scheduler";
-import { Handler } from "./handler";
+import moment from "moment";
 
 type Dependencies = {
   httpClient: HttpClient;
@@ -34,7 +34,7 @@ export class ExecutionStartedHandler implements Handler {
 
   async handle(event: ExecutionStarted): Promise<void> {
     const { payload } = event;
-    const { data } = await this.httpClient.get(`http://player:3000/matches/today/upcoming`);
+    const { data } = await this.httpClient.get(`http://bet:3001/matches/today/upcoming`);
     const matches = data as Matches[];
     for (const data of matches) {
       const { id, name, date } = data;
