@@ -1,6 +1,7 @@
 import { Event } from "./event";
 
 type Input = {
+  matchId: string;
   betId: string;
   playerId: string;
   outcome: number;

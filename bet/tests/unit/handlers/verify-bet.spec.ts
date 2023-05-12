@@ -1,10 +1,10 @@
+import { VerifyBetHandler } from "../../../src/application/handlers/verify-bet";
+import { VerifyBet } from "../../../src/domain/commands/verify-bet";
+import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
 import { BrokerSpy } from "../../utils/mocks/broker-spy";
 import { FakeBetGateway } from "../../utils/mocks/fake-bet-gateway";
-import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
-import { VerifyBet } from "../../../src/domain/commands/verify-bet";
-import { VerifyBetHandler } from "../../../src/application/handlers/verify-bet";
 
-const bet = { playerId: "playerId", betId: "betId" };
+const bet = { playerId: "playerId", matchId: "matchId", betId: "betId" };
 
 test("It should emit a bet won event and a bet verified event if bet was won", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
@@ -17,7 +17,12 @@ test("It should emit a bet won event and a bet verified event if bet was won", a
 
   expect(brokerSpy.events.length).toBe(2);
   expect(brokerSpy.events[0].name).toBe("bet-won");
-  expect(brokerSpy.events[0].payload).toEqual({ playerId: "playerId", betId: "betId", outcome: 100 });
+  expect(brokerSpy.events[0].payload).toEqual({
+    playerId: "playerId",
+    matchId: "matchId",
+    betId: "betId",
+    outcome: 100,
+  });
   expect(brokerSpy.events[1].name).toBe("bet-verified");
   expect(brokerSpy.events[1].payload).toEqual(bet);
 });

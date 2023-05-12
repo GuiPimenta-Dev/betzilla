@@ -1,11 +1,11 @@
-import { BetGateway } from "../ports/gateways/bet";
+import moment from "moment";
+import { VerifyBet } from "../../domain/commands/verify-bet";
 import { BetLost } from "../../domain/events/bet-lost";
 import { BetVerified } from "../../domain/events/bet-verified";
 import { BetWon } from "../../domain/events/bet-won";
 import { Broker } from "../ports/brokers/broker";
+import { BetGateway } from "../ports/gateways/bet";
 import { Handler } from "./handler";
-import { VerifyBet } from "../../domain/commands/verify-bet";
-import moment from "moment";
 
 type Dependencies = {
   betGateway: BetGateway;
