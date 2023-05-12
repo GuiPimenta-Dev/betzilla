@@ -9,7 +9,7 @@ test("It should publish a message to verify odds after match started", async () 
   const matchRepository = new InMemoryMatchRepository();
   const httpClient = new FakeHttpClient();
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
-  httpClient.mockGetResponse({ statusCode: 200, data: [] });
+  httpClient.mockGet({ statusCode: 200, data: [] });
 
   const sut = new MatchStartedHandler({ matchRepository, httpClient, broker: brokerSpy });
   const event = new MatchStarted({
@@ -29,7 +29,7 @@ test("It should start a match and change the status to half-time", async () => {
   const matchRepository = new InMemoryMatchRepository();
   const httpClient = new FakeHttpClient();
   const broker = new InMemoryBroker();
-  httpClient.mockGetResponse({
+  httpClient.mockGet({
     statusCode: 200,
     data: [
       {

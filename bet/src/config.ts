@@ -1,8 +1,9 @@
+import { AxiosAdapter } from "./infra/http/axios-adapter";
+import { FakeBetGateway } from "./infra/gateways/bet-gateway";
 import { MakeBetHandler } from "./application/handlers/make-bet";
+import { RabbitMQAdapter } from "./infra/brokers/rabbitmq-adapter";
 import { VerifyBetHandler } from "./application/handlers/verify-bet";
 import { VerifyOddsHandler } from "./application/handlers/verify-odds";
-import { RabbitMQAdapter } from "./infra/brokers/rabbitmq-adapter";
-import { FakeBetGateway } from "./infra/gateways/bet-gateway";
 
 let config;
 async function init() {
@@ -13,6 +14,7 @@ async function init() {
   config = {
     broker: new RabbitMQAdapter(),
     betGateway,
+    httpClient: new AxiosAdapter(),
   };
   await config.broker.connect();
   const handlers = [new MakeBetHandler(config)];

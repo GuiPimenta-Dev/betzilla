@@ -7,7 +7,7 @@ import { FakeHttpClient } from "../../utils/mocks/fake-http-client";
 test("It should start a execution with a strategy", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
   const httpClient = new FakeHttpClient();
-  httpClient.mockGetResponse({
+  httpClient.mockGet({
     statusCode: 200,
     data: [
       { id: "1", name: "Real Madrid vs Barcelona", date: "2021-01-01T23:59:00.000Z" },
