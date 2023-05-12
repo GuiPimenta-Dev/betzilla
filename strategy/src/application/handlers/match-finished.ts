@@ -34,7 +34,10 @@ export class MatchFinishedHandler implements Handler {
     if (match.betId) {
       const strategy = await this.strategyRepository.findById(match.strategyId);
       const timeToVerifyBet = this.scheduler.timeToVerifyBet();
-      this.broker.schedule(new VerifyBet({ betId: match.betId, playerId: strategy.playerId }), timeToVerifyBet);
+      this.broker.schedule(
+        new VerifyBet({ betId: match.betId, matchId: match.id, playerId: strategy.playerId }),
+        timeToVerifyBet
+      );
     }
   }
 }

@@ -15,8 +15,8 @@ export class RabbitMQAdapter implements Broker {
   async subscribe(handler: Handler, callback: Function): Promise<void> {
     await this.channel.assertExchange(handler.name, "fanout", { durable: true });
     const queue = await this.channel.assertQueue("", { exclusive: true });
-    this.channel.bindQueue(queue.queue, handler.name, "");
-    this.channel.consume(
+    await this.channel.bindQueue(queue.queue, handler.name, "");
+    await this.channel.consume(
       queue.queue,
       async function (msg: any) {
         if (msg.content) {

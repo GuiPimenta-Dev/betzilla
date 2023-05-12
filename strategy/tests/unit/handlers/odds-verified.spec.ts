@@ -6,18 +6,20 @@ import { InMemoryStrategyRepository } from "../../../src/infra/repositories/in-m
 import { MatchBuilder } from "../../utils/builders/match";
 import { StrategyBuilder } from "../../utils/builders/strategy";
 import { BrokerSpy } from "../../utils/mocks/broker-spy";
+import { TestScheduler } from "../../utils/mocks/test-scheduler";
 
 test("It should bet if the odds are verified and match the criterion", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
   const strategyRepository = new InMemoryStrategyRepository();
   const matchRepository = new InMemoryMatchRepository();
+  const scheduler = new TestScheduler();
   const conditions = [{ name: "IS_HALF_TIME" }];
   const strategy = StrategyBuilder.aStrategy().withConditions(conditions).build();
   const match = MatchBuilder.aMatch().build();
   await strategyRepository.create(strategy);
   await matchRepository.create(match);
 
-  const sut = new OddsVerifiedHandler({ strategyRepository, matchRepository, broker: brokerSpy });
+  const sut = new OddsVerifiedHandler({ strategyRepository, matchRepository, broker: brokerSpy, scheduler });
   const event = new OddsVerified({
     matchId: "matchId",
     odds: [
@@ -51,10 +53,11 @@ test("It should bet if the odds are verified and match the criterion", async () 
 test("It should not schedule a new verifyOdds if game is already over", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
   const strategyRepository = new InMemoryStrategyRepository();
+  const scheduler = new TestScheduler();
   const matchRepository = new InMemoryMatchRepository();
   matchRepository.create(MatchBuilder.aFinishedMatch().build());
 
-  const sut = new OddsVerifiedHandler({ matchRepository, strategyRepository, broker: brokerSpy });
+  const sut = new OddsVerifiedHandler({ matchRepository, strategyRepository, broker: brokerSpy, scheduler });
   const event = new OddsVerified({
     matchId: "matchId",
     odds: [],
@@ -69,13 +72,14 @@ test("It should schedule a new verifyOdds if game is not over and if should not 
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
   const strategyRepository = new InMemoryStrategyRepository();
   const matchRepository = new InMemoryMatchRepository();
+  const scheduler = new TestScheduler();
   const conditions = [{ name: "IS_FULL_TIME" }];
   const strategy = StrategyBuilder.aStrategy().withConditions(conditions).build();
   const match = MatchBuilder.aMatch().build();
   await strategyRepository.create(strategy);
   await matchRepository.create(match);
 
-  const sut = new OddsVerifiedHandler({ matchRepository, strategyRepository, broker: brokerSpy });
+  const sut = new OddsVerifiedHandler({ matchRepository, strategyRepository, broker: brokerSpy, scheduler });
   const event = new OddsVerified({
     matchId: "matchId",
     odds: [

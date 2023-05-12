@@ -3,9 +3,11 @@ import { ExecutionStarted } from "../../../src/domain/events/execution-started";
 import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
 import { BrokerSpy } from "../../utils/mocks/broker-spy";
 import { FakeHttpClient } from "../../utils/mocks/fake-http-client";
+import { TestScheduler } from "../../utils/mocks/test-scheduler";
 
 test("It should start a execution with a strategy", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
+  const scheduler = new TestScheduler();
   const httpClient = new FakeHttpClient();
   httpClient.mockGet({
     statusCode: 200,
@@ -17,7 +19,7 @@ test("It should start a execution with a strategy", async () => {
   });
 
   const event = new ExecutionStarted({ strategyId: "strategyId", market: "Over/Under 0.5 Goals" });
-  const sut = new ExecutionStartedHandler({ httpClient, broker: brokerSpy });
+  const sut = new ExecutionStartedHandler({ httpClient, broker: brokerSpy, scheduler });
   await sut.handle(event);
 
   expect(brokerSpy.scheduledCommands).toHaveLength(9);

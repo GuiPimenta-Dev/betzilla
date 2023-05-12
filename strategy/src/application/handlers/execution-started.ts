@@ -1,12 +1,12 @@
-import { Broker } from "../ports/brokers/broker";
+import moment from "moment";
 import { ExecutionStarted } from "../../domain/events/execution-started";
 import { HalfTimeFinished } from "../../domain/events/half-time-finished";
-import { Handler } from "./handler";
-import { HttpClient } from "../ports/http/http-client";
 import { MatchFinished } from "../../domain/events/match-finished";
 import { MatchStarted } from "../../domain/events/match-started";
+import { Broker } from "../ports/brokers/broker";
+import { HttpClient } from "../ports/http/http-client";
 import { Scheduler } from "../ports/scheduler/scheduler";
-import moment from "moment";
+import { Handler } from "./handler";
 
 type Dependencies = {
   httpClient: HttpClient;

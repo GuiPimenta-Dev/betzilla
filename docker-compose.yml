@@ -42,6 +42,20 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  analytics:
+    build: ./analytics
+    container_name: "analytics"
+    volumes:
+      - ./analytics/:/usr/src/app/
+    ports:
+      - 3003:3003
+    networks:
+      - rabbitmq_nodejs
+    restart: always
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
   rabbitmq:
     build: .
     container_name: "rabbitmq"
