@@ -1,7 +1,7 @@
-import { BetGateway, BetStatus, Market, Match, Odd } from "../../application/ports/gateways/bet";
+import { Bet, BetGateway, BetStatus, Market, Match, Odd } from "../../application/ports/gateways/bet";
 
-import { HttpClient } from "../../application/ports/http/http-client";
 import moment from "moment";
+import { HttpClient } from "../../application/ports/http/http-client";
 
 export class BetFairAdapter implements BetGateway {
   BASE_URL = "https://api.betfair.com/exchange/betting/rest/v1.0";
@@ -26,8 +26,8 @@ export class BetFairAdapter implements BetGateway {
     this.TOKEN = data.token;
   }
 
-  async makeBet(value: number): Promise<{ success: boolean }> {
-    return { success: true };
+  async makeBet(input: Bet): Promise<{ success: boolean; betId: string }> {
+    return { success: true, betId: "123" };
   }
 
   async consultBet(id: string): Promise<BetStatus> {

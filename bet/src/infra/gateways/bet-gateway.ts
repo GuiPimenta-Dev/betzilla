@@ -18,7 +18,57 @@ export class FakeBetGateway implements BetGateway {
 
   async listMatchesForToday(): Promise<Match[]> {
     const twoSecondsLater = moment().add(2, "seconds").toISOString();
-    return [{ id: uuid(), name: "Real Madrid v Man City", date: twoSecondsLater }];
+    const CHAMPIONS_LEAGUE_TEAMS = [
+      "Real Madrid",
+      "Manchester City",
+      "Bayern Munich",
+      "Chelsea",
+      "Liverpool",
+      "Paris Saint-Germain",
+      "Atletico Madrid",
+      "Borussia Dortmund",
+      "Juventus",
+      "Barcelona",
+      "Porto",
+      "Sevilla",
+      "Atalanta",
+      "Lazio",
+      "RB Leipzig",
+      "Borussia Monchengladbach",
+      "Ajax",
+      "Manchester United",
+      "Shakhtar Donetsk",
+      "Zenit Saint Petersburg",
+      "Club Brugge",
+      "Dynamo Kyiv",
+      "Olympiacos",
+      "Ferencvaros",
+      "Krasnodar",
+      "Istanbul Basaksehir",
+      "Rennes",
+      "Midtjylland",
+    ];
+
+    const matches = [];
+
+    while (CHAMPIONS_LEAGUE_TEAMS.length > 1) {
+      const homeIndex = Math.floor(Math.random() * CHAMPIONS_LEAGUE_TEAMS.length);
+      const homeTeam = CHAMPIONS_LEAGUE_TEAMS[homeIndex];
+      CHAMPIONS_LEAGUE_TEAMS.splice(homeIndex, 1);
+
+      const awayIndex = Math.floor(Math.random() * CHAMPIONS_LEAGUE_TEAMS.length);
+      const awayTeam = CHAMPIONS_LEAGUE_TEAMS[awayIndex];
+      CHAMPIONS_LEAGUE_TEAMS.splice(awayIndex, 1);
+
+      const match = `${homeTeam} X ${awayTeam}`;
+      matches.push(match);
+    }
+
+    if (CHAMPIONS_LEAGUE_TEAMS.length === 1) {
+      matches.push(`${CHAMPIONS_LEAGUE_TEAMS[0]} has a bye`);
+    }
+
+    return matches.map((match) => ({ id: uuid(), name: match, date: twoSecondsLater }));
   }
 
   async listMatchMarkets(matchId: string): Promise<Market[]> {
