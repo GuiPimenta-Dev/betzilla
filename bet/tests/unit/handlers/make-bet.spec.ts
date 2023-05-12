@@ -46,6 +46,7 @@ test("It should emit a bet not made event if the bet was not made by the bet gat
   await sut.handle(makeBet);
 
   expect(brokerSpy.events[0].name).toBe("bet-not-made");
+  expect(brokerSpy.events.length).toBe(1);
   expect(brokerSpy.events[0].payload).toEqual(
     expect.objectContaining({
       matchId: expect.any(String),
@@ -67,6 +68,7 @@ test("It should emit a bet node made event if user has no credits", async () => 
   await sut.handle(makeBet);
 
   expect(brokerSpy.events[0].name).toBe("bet-not-made");
+  expect(brokerSpy.events.length).toBe(1);
   expect(brokerSpy.events[0].payload).toEqual(
     expect.objectContaining({
       matchId: expect.any(String),
