@@ -1,6 +1,7 @@
 export type Condition = {
   name: string;
   value?: number;
+  params?: any;
 };
 
 type Input = {

@@ -7,6 +7,7 @@ import { IsBeforeMinute } from "./is-before-minute";
 import { IsBelowOdd } from "./is-below-odd";
 import { IsFullTime } from "./is-full-time";
 import { IsHalfTime } from "./is-half-time";
+import { IsPositiveEV } from "./is-positive-ev";
 import { Rule } from "./rule";
 
 export class RuleFactory {
@@ -43,6 +44,11 @@ export class RuleFactory {
 
         case "IS_AFTER_MINUTE": {
           rules.push(new IsAfterMinute(this.match, condition.value));
+          break;
+        }
+
+        case "IS_POSITIVE_EXPECTED_VALUE": {
+          rules.push(new IsPositiveEV(this.odds, condition.params.guess, condition.params.type, condition.value));
           break;
         }
 
