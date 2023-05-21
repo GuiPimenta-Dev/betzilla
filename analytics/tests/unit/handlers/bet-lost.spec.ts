@@ -9,7 +9,7 @@ test("It should change the status of a match to lost", async () => {
     playerId: "playerId",
     match: "matchName",
     market: "market",
-    strategyId: "strategyId",
+    botId: "botId",
     debit: 100,
     status: "pending",
     timestamp: new Date(),

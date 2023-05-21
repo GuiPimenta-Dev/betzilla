@@ -8,7 +8,7 @@ test("It should save in the database a bet was made with status pending", async 
   const httpClient = new FakeHttpClient();
   httpClient.mockGet({
     statusCode: 200,
-    data: { playerId: "playerId", strategyId: "strategyId", name: "A X B", market: "market" },
+    data: { playerId: "playerId", botId: "botId", name: "A X B", market: "market" },
   });
 
   const handler = new BetMadeHandler({ analyticsRepository, httpClient });
@@ -19,7 +19,7 @@ test("It should save in the database a bet was made with status pending", async 
   expect(match).toEqual({
     matchId: "matchId",
     playerId: "playerId",
-    strategyId: "strategyId",
+    botId: "botId",
     match: "A X B",
     debit: 100,
     credit: null,

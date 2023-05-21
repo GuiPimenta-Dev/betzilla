@@ -1,5 +1,5 @@
-import AxiosAdapter from "../../src/infra/http/axios-adapter";
 import { BetFairAdapter } from "../../src/infra/gateways/bet-fair-adapter";
+import { AxiosAdapter } from "../../src/infra/http/axios-adapter";
 
 test("It should be able to make a login", async () => {
   const httpClient = new AxiosAdapter();

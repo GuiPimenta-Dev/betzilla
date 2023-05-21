@@ -1,6 +1,6 @@
 import { Bet } from "../../../domain/entities/Bet";
 
-export type StrategyAnalytics = {
+export type BotAnalytics = {
   totalDebit: number;
   totalCredit: number;
   totalProfit: number;
@@ -14,7 +14,7 @@ export type StrategyAnalytics = {
 export interface AnalyticsRepository {
   create(match: Bet): Promise<void>;
   findByMatchId(matchId: string): Promise<Bet>;
-  listAllByStrategyId(strategyId: string): Promise<Bet[]>;
-  getAnalyticsByStrategyId(strategyId: string): Promise<StrategyAnalytics>;
+  listAllByBotId(botId: string): Promise<Bet[]>;
+  getAnalyticsByBotId(botId: string): Promise<BotAnalytics>;
   update(match: Bet): Promise<void>;
 }

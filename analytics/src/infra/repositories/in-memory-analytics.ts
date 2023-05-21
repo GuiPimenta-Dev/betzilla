@@ -1,4 +1,4 @@
-import { AnalyticsRepository, StrategyAnalytics } from "../../application/ports/repositories/analytics";
+import { AnalyticsRepository, BotAnalytics } from "../../application/ports/repositories/analytics";
 
 import { Bet } from "../../domain/entities/Bet";
 
@@ -9,12 +9,12 @@ export class InMemoryAnalyticsRepository implements AnalyticsRepository {
     this.matches.push(match);
   }
 
-  async listAllByStrategyId(strategyId: string): Promise<Bet[]> {
-    return this.matches.filter((match) => match.strategyId === strategyId);
+  async listAllByBotId(botId: string): Promise<Bet[]> {
+    return this.matches.filter((match) => match.botId === botId);
   }
 
-  async getAnalyticsByStrategyId(strategyId: string): Promise<StrategyAnalytics> {
-    const matches = await this.listAllByStrategyId(strategyId);
+  async getAnalyticsByBotId(botId: string): Promise<BotAnalytics> {
+    const matches = await this.listAllByBotId(botId);
     const totalDebit = matches.reduce((accumulator, match) => accumulator + match.debit, 0);
     const totalCredit = matches.reduce((accumulator, match) => accumulator + match.credit, 0);
     const totalProfit = totalCredit - totalDebit;

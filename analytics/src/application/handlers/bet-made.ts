@@ -21,10 +21,10 @@ export class BetMadeHandler implements Handler {
 
   async handle(event: BetMade): Promise<void> {
     const { matchId, betValue } = event.payload;
-    const { data } = await this.httpClient.get(`http://strategy:3002/matches/${matchId}`);
+    const { data } = await this.httpClient.get(`http://bot:3002/matches/${matchId}`);
     const match = new Bet({
       matchId,
-      strategyId: data.strategyId,
+      botId: data.botId,
       match: data.name,
       playerId: data.playerId,
       debit: betValue,

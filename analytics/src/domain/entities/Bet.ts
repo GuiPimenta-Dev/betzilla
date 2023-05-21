@@ -1,7 +1,7 @@
 type Input = {
   matchId: string;
   match: string;
-  strategyId: string;
+  botId: string;
   playerId: string;
   debit: number;
   status: string;
@@ -12,7 +12,7 @@ type Input = {
 
 export class Bet {
   matchId: string;
-  strategyId: string;
+  botId: string;
   match: string;
   playerId: string;
   debit: number;
@@ -23,7 +23,7 @@ export class Bet {
 
   constructor(input: Input) {
     this.matchId = input.matchId;
-    this.strategyId = input.strategyId;
+    this.botId = input.botId;
     this.match = input.match;
     this.playerId = input.playerId;
     this.timestamp = input.timestamp;

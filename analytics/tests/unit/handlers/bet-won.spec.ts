@@ -7,7 +7,7 @@ test("It should change the status of a match to won", async () => {
   const bet = {
     matchId: "matchId",
     playerId: "playerId",
-    strategyId: "strategyId",
+    botId: "botId",
     match: "matchName",
     market: "market",
     debit: 100,

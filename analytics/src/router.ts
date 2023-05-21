@@ -3,6 +3,6 @@ import { ExpressAdapter } from "./infra/http/express-adapter";
 
 const app = ExpressAdapter.create();
 
-app.get("/analytics/:strategyId", ExpressAdapter.route(AnalyticsController.get));
+app.get("/analytics/:botId", ExpressAdapter.route(AnalyticsController.get));
 
 export { app };
