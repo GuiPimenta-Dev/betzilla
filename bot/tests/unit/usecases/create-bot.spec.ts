@@ -1,7 +1,7 @@
-import { BrokerSpy } from "../../utils/mocks/broker-spy";
 import { CreateBot } from "../../../src/application/usecases/create-bot";
-import { InMemoryBotRepository } from "../../../src/infra/repositories/in-memory-bot";
 import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
+import { InMemoryBotRepository } from "../../../src/infra/repositories/in-memory-bot";
+import { BrokerSpy } from "../../utils/mocks/broker-spy";
 
 test("It should emit a over 0.5 HT started event", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
@@ -11,7 +11,7 @@ test("It should emit a over 0.5 HT started event", async () => {
   const bot = {
     name: "player-rules",
     market: "OVER_UNDER_05",
-    type: "back",
+    side: "back",
     betValue: 10,
     conditions: [
       {
@@ -41,7 +41,7 @@ test("It should create a bot", async () => {
   const bot = {
     name: "player-rules",
     market: "OVER_UNDER_05",
-    type: "back",
+    side: "back",
     betValue: 10,
     conditions: [
       {

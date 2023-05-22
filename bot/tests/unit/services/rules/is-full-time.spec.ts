@@ -1,5 +1,5 @@
-import { IsFullTime } from "../../../src/domain/services/rules/is-full-time";
-import { MatchBuilder } from "../../utils/builders/match";
+import { IsFullTime } from "../../../../src/domain/services/rules/is-full-time";
+import { MatchBuilder } from "../../../utils/builders/match";
 
 test("It should be true if match is in full time", () => {
   const match = MatchBuilder.aFullTimeMatch().build();

@@ -1,7 +1,7 @@
 import { v4 as uuid } from "uuid";
 import { Condition } from "../../domain/entities/bots/bot";
-import { PlayerRules } from "../../domain/entities/bots/player-rules";
 import { BotCreated } from "../../domain/events/bot-created";
+import { BotService } from "../../domain/services/bot";
 import { Broker } from "../ports/brokers/broker";
 import { BotRepository } from "../ports/repositories/bot";
 
@@ -34,8 +34,8 @@ export class CreateBot {
 
   async execute(input: Input): Promise<Output> {
     const bot = { id: uuid(), playerId: input.playerId, ...input.bot };
-    const newBot = new PlayerRules({ ...bot });
-    await this.botRepository.create(newBot);
+    const botInstance = BotService.getBot(bot);
+    await this.botRepository.create(botInstance);
     await this.broker.publish(new BotCreated({ botId: bot.id, market: bot.market }));
     return { botId: bot.id };
   }

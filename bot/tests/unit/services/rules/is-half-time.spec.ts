@@ -1,5 +1,5 @@
-import { IsHalfTime } from "../../../src/domain/services/rules/is-half-time";
-import { MatchBuilder } from "../../utils/builders/match";
+import { IsHalfTime } from "../../../../src/domain/services/rules/is-half-time";
+import { MatchBuilder } from "../../../utils/builders/match";
 
 test("It should be true if match is in half time", () => {
   const match = MatchBuilder.aMatch().build();

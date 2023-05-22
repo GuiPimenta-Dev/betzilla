@@ -1,6 +1,6 @@
 import moment from "moment";
-import { IsBeforeMinute } from "../../../src/domain/services/rules/is-before-minute";
-import { MatchBuilder } from "../../utils/builders/match";
+import { IsBeforeMinute } from "../../../../src/domain/services/rules/is-before-minute";
+import { MatchBuilder } from "../../../utils/builders/match";
 
 test("It should make the bet if match is before minute 15", () => {
   const fiveMinutesAgo = moment().subtract(5, "minutes").toDate();

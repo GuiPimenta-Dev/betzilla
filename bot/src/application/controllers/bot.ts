@@ -5,12 +5,12 @@ import { HttpInput } from "../ports/http/http-input";
 import { CreateBot } from "../usecases/create-bot";
 import { GetBot } from "../usecases/get-bot";
 
-const AVAILABLE_NAMES = ["player-rules"];
+const AVAILABLE_BOT_NAMES = ["player-rules"];
 
 export class BotController {
   static async create(input: HttpInput): Promise<Success> {
     const { body, path } = input;
-    if (!AVAILABLE_NAMES.includes(path.name)) throw new BadRequest("Invalid bot name");
+    if (!AVAILABLE_BOT_NAMES.includes(path.name)) throw new BadRequest("Invalid bot name");
     body.name = path.name;
     const usecase = new CreateBot(config);
     const response = await usecase.execute(body);

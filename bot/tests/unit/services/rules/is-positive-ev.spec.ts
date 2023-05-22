@@ -1,4 +1,4 @@
-import { IsPositiveEV } from "../../../src/domain/services/rules/is-positive-ev";
+import { IsPositiveEV } from "../../../../src/domain/services/rules/is-positive-ev";
 
 test("It should return false if expected ev is negative", () => {
   const odds = [

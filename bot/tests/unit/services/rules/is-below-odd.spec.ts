@@ -1,4 +1,4 @@
-import { IsBelowOdd } from "../../../src/domain/services/rules/is-below-odd";
+import { IsBelowOdd } from "../../../../src/domain/services/rules/is-below-odd";
 
 test("It should return true if back odd is equal to max odd", () => {
   const odds = [
