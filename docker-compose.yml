@@ -28,11 +28,11 @@ services:
       rabbitmq:
         condition: service_healthy
 
-  strategy:
-    build: ./strategy
-    container_name: "strategy"
+  bot:
+    build: ./bot
+    container_name: "bot"
     volumes:
-      - ./strategy/:/usr/src/app/
+      - ./bot/:/usr/src/app/
     ports:
       - 3002:3002
     networks:

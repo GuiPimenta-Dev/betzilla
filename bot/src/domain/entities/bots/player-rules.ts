@@ -40,7 +40,7 @@ export class PlayerRules implements Bot {
       if (!rule.shouldBet()) {
         return false;
       }
-      return true;
     }
+    return true;
   }
 }

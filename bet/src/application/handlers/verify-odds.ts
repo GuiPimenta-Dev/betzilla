@@ -1,8 +1,8 @@
-import { BetGateway } from "../ports/gateways/bet";
-import { Broker } from "../ports/brokers/broker";
-import { Handler } from "./handler";
-import { OddsVerified } from "../../domain/events/odds-verified";
 import { VerifyOdds } from "../../domain/commands/verify-odds";
+import { OddsVerified } from "../../domain/events/odds-verified";
+import { Broker } from "../ports/brokers/broker";
+import { BetGateway } from "../ports/gateways/bet";
+import { Handler } from "./handler";
 
 type Dependencies = {
   betGateway: BetGateway;

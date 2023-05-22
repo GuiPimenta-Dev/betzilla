@@ -6,7 +6,6 @@ import { ListMatchMarkets } from "../usecases/list-match-markets";
 import { ListUpcomingMatchesForToday } from "../usecases/list-upcoming-matches-for-today";
 
 export class BetController {
-
   static async listUpcomingMatchesForToday(): Promise<Success> {
     const usecase = new ListUpcomingMatchesForToday(config);
     const now = moment();

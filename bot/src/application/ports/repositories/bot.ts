@@ -1,4 +1,4 @@
-import { Bot } from "../../../domain/entities/bot";
+import { Bot } from "../../../domain/entities/bots/bot";
 
 export interface BotRepository {
   create(input: Bot): Promise<void>;
