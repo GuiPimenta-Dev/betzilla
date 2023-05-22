@@ -1,5 +1,5 @@
-import { Scheduler } from "../../application/ports/scheduler/scheduler";
 import moment from "moment";
+import { Scheduler } from "../../application/ports/scheduler/scheduler";
 
 export class DevelopmentScheduler implements Scheduler {
   timeToFirstHalfFinish(date: string): Date {
@@ -15,6 +15,11 @@ export class DevelopmentScheduler implements Scheduler {
   timeToVerifyOdds(): Date {
     const oneSecondLater = moment().add(1, "seconds").toDate();
     return oneSecondLater;
+  }
+
+  timeToVerifyEV(): Date {
+    const fourSecondsLater = moment().add(4, "seconds").toDate();
+    return fourSecondsLater;
   }
 
   timeToVerifyBet(): Date {

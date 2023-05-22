@@ -17,6 +17,11 @@ export class ProductionScheduler implements Scheduler {
     return fiveMinutesLater;
   }
 
+  timeToVerifyEV(): Date {
+    const fifteenMinutesLater = moment().add(15, "minutes").toDate();
+    return fifteenMinutesLater;
+  }
+
   timeToVerifyBet(): Date {
     const fifteenMinutesLater = moment().add(15, "minutes").toDate();
     return fifteenMinutesLater;

@@ -17,6 +17,11 @@ export class TestScheduler implements Scheduler {
     return now;
   }
 
+  timeToVerifyEV(): Date {
+    const now = moment().toDate();
+    return now;
+  }
+
   timeToVerifyBet(): Date {
     const now = moment().toDate();
     return now;

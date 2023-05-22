@@ -1,7 +1,7 @@
+import { Bot, Condition } from "../../domain/entities/bot";
+
 import { v4 as uuid } from "uuid";
-import { Condition } from "../../domain/entities/bots/bot";
 import { BotCreated } from "../../domain/events/bot-created";
-import { BotService } from "../../domain/services/bot";
 import { Broker } from "../ports/brokers/broker";
 import { BotRepository } from "../ports/repositories/bot";
 
@@ -10,16 +10,16 @@ type Dependencies = {
   broker: Broker;
 };
 
-type Bot = {
+type BotProps = {
   name: string;
-  market: string;
-  side: string;
+  market?: string;
+  side?: string;
   betValue: number;
-  conditions: Condition[];
+  conditions?: Condition[];
 };
 
 type Input = {
-  bot: Bot;
+  bot: BotProps;
   playerId: string;
 };
 
@@ -34,7 +34,7 @@ export class CreateBot {
 
   async execute(input: Input): Promise<Output> {
     const bot = { id: uuid(), playerId: input.playerId, ...input.bot };
-    const botInstance = BotService.getBot(bot);
+    const botInstance = new Bot(bot);
     await this.botRepository.create(botInstance);
     await this.broker.publish(new BotCreated({ botId: bot.id, market: bot.market }));
     return { botId: bot.id };

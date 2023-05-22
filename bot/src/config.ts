@@ -4,7 +4,8 @@ import { HalfTimeFinishedHandler } from "./application/handlers/half-time-finish
 import { Handler } from "./application/handlers/handler";
 import { MatchFinishedHandler } from "./application/handlers/match-finished";
 import { MatchStartedHandler } from "./application/handlers/match-started";
-import { OddsVerifiedHandler } from "./application/handlers/odds-verified";
+import { PEVOddsVerifiedHandler } from "./application/handlers/pev-odds-verified";
+import { PlayerRulesOddsVerifiedHandler } from "./application/handlers/player-rules-odds-verified";
 import { RabbitMQAdapter } from "./infra/brokers/rabbitmq-adapter";
 import AxiosAdapter from "./infra/http/axios-adapter";
 import { InMemoryBotRepository } from "./infra/repositories/in-memory-bot";
@@ -23,7 +24,8 @@ async function init() {
   await config.broker.connect();
   const handlers: Handler[] = [
     new BotCreatedHandler(config),
-    new OddsVerifiedHandler(config),
+    new PlayerRulesOddsVerifiedHandler(config),
+    new PEVOddsVerifiedHandler(config),
     new BetMadeHandler(config),
   ];
   handlers.map((handler) => {

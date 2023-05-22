@@ -23,7 +23,7 @@ export class VerifyOddsHandler implements Handler {
     const { matchId, market: marketName } = input.payload;
     const markets = await this.betGateway.listMatchMarkets(matchId);
     const market = markets.find((market) => market.name === marketName);
-    if (!market) return;
+    if (!market) return await this.broker.publish(new OddsVerified({ matchId, odds: null }));
     const odds = await this.betGateway.listMarketOdds(market.id);
     await this.broker.publish(new OddsVerified({ matchId, odds }));
   }

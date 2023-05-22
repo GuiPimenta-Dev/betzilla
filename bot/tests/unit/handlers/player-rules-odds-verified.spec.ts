@@ -1,4 +1,4 @@
-import { OddsVerifiedHandler } from "../../../src/application/handlers/odds-verified";
+import { PlayerRulesOddsVerifiedHandler } from "../../../src/application/handlers/player-rules-odds-verified";
 import { OddsVerified } from "../../../src/domain/events/odds-verified";
 import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
 import { InMemoryBotRepository } from "../../../src/infra/repositories/in-memory-bot";
@@ -19,7 +19,7 @@ test("It should bet if the odds are verified and match the criterion", async () 
   await botRepository.create(bot);
   await matchRepository.create(match);
 
-  const sut = new OddsVerifiedHandler({ botRepository, matchRepository, broker: brokerSpy, scheduler });
+  const sut = new PlayerRulesOddsVerifiedHandler({ botRepository, matchRepository, broker: brokerSpy, scheduler });
   const event = new OddsVerified({
     matchId: "matchId",
     odds: [
@@ -57,11 +57,26 @@ test("It should not schedule a new verifyOdds if game is already over", async ()
   const matchRepository = new InMemoryMatchRepository();
   matchRepository.create(MatchBuilder.aFinishedMatch().build());
 
-  const sut = new OddsVerifiedHandler({ matchRepository, botRepository, broker: brokerSpy, scheduler });
-  const event = new OddsVerified({
-    matchId: "matchId",
-    odds: [],
-  });
+  const sut = new PlayerRulesOddsVerifiedHandler({ matchRepository, botRepository, broker: brokerSpy, scheduler });
+  const event = new OddsVerified({ matchId: "matchId", odds: [] });
+  await sut.handle(event);
+
+  expect(brokerSpy.commands).toHaveLength(0);
+  expect(brokerSpy.history).toEqual([]);
+});
+
+test("It should not emit any event if bot is not a player rules", async () => {
+  const brokerSpy = new BrokerSpy(new InMemoryBroker());
+  const botRepository = new InMemoryBotRepository();
+  const scheduler = new TestScheduler();
+  const matchRepository = new InMemoryMatchRepository();
+  const bot = BotBuilder.aBot().build();
+  const match = MatchBuilder.aMatch().build();
+  await matchRepository.create(match);
+  await botRepository.create(bot);
+
+  const sut = new PlayerRulesOddsVerifiedHandler({ matchRepository, botRepository, broker: brokerSpy, scheduler });
+  const event = new OddsVerified({ matchId: "matchId", odds: [] });
   await sut.handle(event);
 
   expect(brokerSpy.commands).toHaveLength(0);
@@ -79,7 +94,7 @@ test("It should schedule a new verifyOdds if game is not over and if should not 
   await botRepository.create(bot);
   await matchRepository.create(match);
 
-  const sut = new OddsVerifiedHandler({ botRepository, matchRepository, broker: brokerSpy, scheduler });
+  const sut = new PlayerRulesOddsVerifiedHandler({ botRepository, matchRepository, broker: brokerSpy, scheduler });
   const event = new OddsVerified({
     matchId: "matchId",
     odds: [

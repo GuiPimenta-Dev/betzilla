@@ -1,4 +1,4 @@
-import { Condition } from "../../entities/bots/bot";
+import { Condition } from "../../entities/bot";
 import { Match } from "../../entities/match";
 import { Odd } from "../../events/odds-verified";
 import { IsAboveOdd } from "./is-above-odd";

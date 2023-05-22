@@ -1,14 +1,22 @@
-import { Bot, Condition } from "../../../src/domain/entities/bots/bot";
-
-import { PlayerRules } from "../../../src/domain/entities/bots/player-rules";
+import { Bot, Condition } from "../../../src/domain/entities/bot";
 
 export class BotBuilder {
   conditions: Condition[] = [];
   name: string;
 
+  static aBot(): BotBuilder {
+    return new BotBuilder();
+  }
+
   static aPlayerRules(): BotBuilder {
     const bot = new BotBuilder();
     bot.name = "player-rules";
+    return bot;
+  }
+
+  static aPEV(): BotBuilder {
+    const bot = new BotBuilder();
+    bot.name = "pev";
     return bot;
   }
 
@@ -18,16 +26,14 @@ export class BotBuilder {
   }
 
   build(): Bot {
-    if (this.name === "player-rules") {
-      return new PlayerRules({
-        id: "botId",
-        name: "player-rules",
-        playerId: "playerId",
-        market: "market",
-        side: "back",
-        betValue: 10,
-        conditions: this.conditions,
-      });
-    }
+    return new Bot({
+      id: "botId",
+      name: this.name,
+      playerId: "playerId",
+      market: "market",
+      side: "back",
+      betValue: 10,
+      conditions: this.conditions,
+    });
   }
 }
