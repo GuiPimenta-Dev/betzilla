@@ -1,5 +1,5 @@
-import { FakeBetGateway } from "../../utils/mocks/fake-bet-gateway";
 import { ListMatchMarkets } from "../../../src/application/usecases/list-match-markets";
+import { FakeBetGateway } from "../../utils/mocks/fake-bet-gateway";
 
 test("It should list all initial match odds for a match", async () => {
   const betGateway = new FakeBetGateway();

@@ -17,7 +17,12 @@ test("It should start a execution with a bot", async () => {
       { id: "3", name: "Bayern de Munique vs Liverpool", date: "2021-01-01T23:59:00.000Z" },
     ],
   });
-  httpClient.mockURL("http://bet:3001/matches/markets", { statusCode: 200, data: [{ name: "Over/Under 0.5 Goals" }] });
+  for (const matchId of ["1", "2", "3"]) {
+    httpClient.mockURL(`http://bet:3001/matches/${matchId}/markets`, {
+      statusCode: 200,
+      data: [{ name: "Over/Under 0.5 Goals" }],
+    });
+  }
 
   const event = new BotCreated({ botId: "botId", market: "Over/Under 0.5 Goals" });
   const sut = new BotCreatedHandler({ httpClient, broker: brokerSpy, scheduler });
@@ -49,7 +54,12 @@ test("It should not schedule a execution if match does not have the market", asy
       { id: "3", name: "Bayern de Munique vs Liverpool", date: "2021-01-01T23:59:00.000Z" },
     ],
   });
-  httpClient.mockURL("http://bet:3001/matches/markets", { statusCode: 200, data: [] });
+  for (const matchId of ["1", "2", "3"]) {
+    httpClient.mockURL(`http://bet:3001/matches/${matchId}/markets`, {
+      statusCode: 200,
+      data: [],
+    });
+  }
 
   const event = new BotCreated({ botId: "botId", market: "Over/Under 0.5 Goals" });
   const sut = new BotCreatedHandler({ httpClient, broker: brokerSpy, scheduler });

@@ -38,7 +38,7 @@ export class BotCreatedHandler implements Handler {
     const matches = data as Matches[];
     for (const data of matches) {
       const { id: matchId, name, date } = data;
-      const { data: markets } = await this.httpClient.get("http://bet:3001/matches/markets", { matchId });
+      const { data: markets } = await this.httpClient.get(`http://bet:3001/matches/${matchId}/markets`);
       const hasMarket = markets.some((market) => market.name === payload.market);
       if (!hasMarket) continue;
       const timeToMatchStart = moment(date).toDate();
