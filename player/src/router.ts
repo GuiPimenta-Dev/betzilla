@@ -13,5 +13,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/player/:playerId/balance", ExpressAdapter.route(PlayerController.getBalance));
+app.post("/player/signup", ExpressAdapter.route(PlayerController.signup));
+app.post("/player/login", ExpressAdapter.route(PlayerController.login));
 
 export { app };
