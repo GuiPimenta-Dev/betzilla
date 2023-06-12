@@ -5,6 +5,7 @@ export class ExpressAdapter {
   static create() {
     const app = express();
     app.use(express.json());
+
     return app;
   }
 
