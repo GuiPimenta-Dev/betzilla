@@ -12,7 +12,7 @@ type Dependencies = {
 
 type BotProps = {
   name: string;
-  market?: string;
+  marketId?: number;
   side?: string;
   betValue: number;
   conditions?: Condition[];
@@ -36,7 +36,7 @@ export class CreateBot {
     const bot = { id: uuid(), playerId: input.playerId, ...input.bot };
     const botInstance = new Bot(bot);
     await this.botRepository.create(botInstance);
-    await this.broker.publish(new BotCreated({ botId: bot.id, market: bot.market }));
+    await this.broker.publish(new BotCreated({ botId: bot.id, marketId: bot.marketId }));
     return { botId: bot.id };
   }
 }

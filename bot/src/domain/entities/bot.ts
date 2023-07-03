@@ -8,7 +8,7 @@ type Input = {
   id: string;
   name: string;
   playerId: string;
-  market?: string;
+  marketId?: number;
   side?: string;
   betValue: number;
   conditions?: Condition[];
@@ -18,7 +18,7 @@ export class Bot {
   id: string;
   name: string;
   playerId: string;
-  market: string;
+  marketId: number;
   side: string;
   betValue: number;
   conditions?: Condition[];
@@ -27,7 +27,7 @@ export class Bot {
     this.id = input.id;
     this.name = input.name;
     this.playerId = input.playerId;
-    this.market = input.market;
+    this.marketId = input.marketId;
     this.side = input.side;
     this.betValue = input.betValue;
     this.conditions = input.conditions;

@@ -42,7 +42,7 @@ export class BotCreatedHandler implements Handler {
       const timeToFirstHalfFinish = this.scheduler.timeToFirstHalfFinish(date);
       const timeToMatchFinish = this.scheduler.timeToMatchFinish(date);
       await this.broker.schedule(
-        new MatchStarted({ matchId, name, date, botId: payload.botId, market: payload.market }),
+        new MatchStarted({ matchId, name, date, botId: payload.botId, marketId: payload.marketId }),
         timeToMatchStart
       );
       await this.broker.schedule(new HalfTimeFinished(matchId), timeToFirstHalfFinish);

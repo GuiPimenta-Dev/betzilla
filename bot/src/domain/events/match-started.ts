@@ -5,7 +5,7 @@ type Payload = {
   name: string;
   date: string;
   botId: string;
-  market: string;
+  marketId: number;
 };
 
 export class MatchStarted extends Event {

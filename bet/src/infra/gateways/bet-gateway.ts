@@ -9,8 +9,6 @@ export class FakeBetGateway implements BetGateway {
 
   async makeBet(bet: Bet): Promise<{ success: boolean; betId: string }> {
     this.bet = bet.betValue;
-    if (this.betMades.includes(bet.marketId)) return { success: false, betId: "" };
-    this.betMades.push(bet.marketId);
     return { success: true, betId: uuid() };
   }
 
@@ -25,32 +23,32 @@ export class FakeBetGateway implements BetGateway {
     const CHAMPIONS_LEAGUE_TEAMS = [
       "Real Madrid",
       "Manchester City",
-      // "Bayern Munich",
-      // "Chelsea",
-      // "Liverpool",
-      // "Paris Saint-Germain",
-      // "Atletico Madrid",
-      // "Borussia Dortmund",
-      // "Juventus",
-      // "Barcelona",
-      // "Porto",
-      // "Sevilla",
-      // "Atalanta",
-      // "Lazio",
-      // "RB Leipzig",
-      // "Borussia Monchengladbach",
-      // "Ajax",
-      // "Manchester United",
-      // "Shakhtar Donetsk",
-      // "Zenit Saint Petersburg",
-      // "Club Brugge",
-      // "Dynamo Kyiv",
-      // "Olympiacos",
-      // "Ferencvaros",
-      // "Krasnodar",
-      // "Istanbul Basaksehir",
-      // "Rennes",
-      // "Midtjylland",
+      "Bayern Munich",
+      "Chelsea",
+      "Liverpool",
+      "Paris Saint-Germain",
+      "Atletico Madrid",
+      "Borussia Dortmund",
+      "Juventus",
+      "Barcelona",
+      "Porto",
+      "Sevilla",
+      "Atalanta",
+      "Lazio",
+      "RB Leipzig",
+      "Borussia Monchengladbach",
+      "Ajax",
+      "Manchester United",
+      "Shakhtar Donetsk",
+      "Zenit Saint Petersburg",
+      "Club Brugge",
+      "Dynamo Kyiv",
+      "Olympiacos",
+      "Ferencvaros",
+      "Krasnodar",
+      "Istanbul Basaksehir",
+      "Rennes",
+      "Midtjylland",
     ];
 
     const matches = [];
@@ -72,7 +70,7 @@ export class FakeBetGateway implements BetGateway {
       matches.push(`${CHAMPIONS_LEAGUE_TEAMS[0]} has a bye`);
     }
 
-    return matches.map((match) => ({ id: uuid(), name: match, date: twoSecondsLater }));
+    return matches.map((match) => ({ id: uuid(), leagueId: "1", name: match, date: twoSecondsLater }));
   }
 
   async listMatchMarkets(matchId: string): Promise<Market[]> {

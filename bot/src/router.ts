@@ -6,7 +6,7 @@ const app = ExpressAdapter.create();
 
 app.post("/bots/:name", ExpressAdapter.route(BotController.create));
 app.get("/bots/:botId", ExpressAdapter.route(BotController.get));
-
 app.get("/matches/:matchId", ExpressAdapter.route(MatchController.get));
+app.get("/matches", ExpressAdapter.route(MatchController.list));
 
 export { app };

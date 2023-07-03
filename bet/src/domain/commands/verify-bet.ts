@@ -4,6 +4,7 @@ type Input = {
   betId: string;
   playerId: string;
   matchId: string;
+  marketId: number;
 };
 
 export class VerifyBet extends Command {

@@ -2,7 +2,7 @@ import { Command } from "./command";
 
 type Input = {
   matchId: string;
-  market: string;
+  marketId: number;
 };
 
 export class VerifyOdds extends Command {

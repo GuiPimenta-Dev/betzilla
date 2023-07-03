@@ -10,4 +10,9 @@ export class MatchController {
     const response = await usecase.execute(path.matchId);
     return new Success(response);
   }
+
+  static async list(): Promise<Success> {
+    const response = await config.matchRepository.list();
+    return new Success(response);
+  }
 }

@@ -45,7 +45,7 @@ export class PlayerRulesOddsVerifiedHandler implements Handler {
       await this.broker.publish(
         new MakeBet({
           matchId: match.id,
-          marketId: bot.market,
+          marketId: bot.marketId,
           side: bot.side,
           betValue: bot.betValue,
           playerId: bot.playerId,
@@ -55,7 +55,7 @@ export class PlayerRulesOddsVerifiedHandler implements Handler {
       );
     } else {
       const timeToVerifyOdds = this.scheduler.timeToVerifyOdds();
-      await this.broker.schedule(new VerifyOdds({ matchId: match.id, market: bot.market }), timeToVerifyOdds);
+      await this.broker.schedule(new VerifyOdds({ matchId: match.id, marketId: bot.marketId }), timeToVerifyOdds);
     }
   }
 

@@ -25,4 +25,9 @@ export class ACLController {
     const response = await config.betGateway.listMarketOdds(path.marketId);
     return new Success(response);
   }
+
+  static async listMarkets(): Promise<Success> {
+    const response = await config.betGateway.listMatchMarkets();
+    return new Success({ markets: response });
+  }
 }

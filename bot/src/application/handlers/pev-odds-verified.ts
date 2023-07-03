@@ -21,7 +21,7 @@ type Dependencies = {
 
 type BiggestEV = {
   expectedValue: number;
-  marketId?: string;
+  marketId?: number;
   side?: string;
   oddId?: string;
   odd?: number;
@@ -66,7 +66,7 @@ export class PEVOddsVerifiedHandler implements Handler {
       );
     }
     const timeToVerifyOdds = this.scheduler.timeToVerifyEV();
-    await this.broker.schedule(new VerifyOdds({ matchId: match.id, market: bot.market }), timeToVerifyOdds);
+    await this.broker.schedule(new VerifyOdds({ matchId: match.id, marketId: bot.marketId }), timeToVerifyOdds);
   }
 
   private async calculateBiggestEV(markets: any, bot: Bot): Promise<BiggestEV> {

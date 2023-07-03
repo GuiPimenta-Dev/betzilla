@@ -6,5 +6,6 @@ const app = ExpressAdapter.create();
 app.get("/matches/today/upcoming", ExpressAdapter.route(ACLController.listUpcomingMatchesForToday));
 app.get("/matches/:matchId/markets", ExpressAdapter.route(ACLController.listMatchMarkets));
 app.get("/markets/:marketId/odds", ExpressAdapter.route(ACLController.listMarketOdds));
+app.get("/markets", ExpressAdapter.route(ACLController.listMarkets));
 
 export { app };

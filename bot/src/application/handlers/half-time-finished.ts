@@ -16,6 +16,7 @@ export class HalfTimeFinishedHandler implements Handler {
 
   async handle(event: MatchStarted): Promise<void> {
     const match = await this.matchRepository.findById(event.payload.matchId);
+    if (!match) return;
     match.finishHalfTime();
     await this.matchRepository.update(match);
   }

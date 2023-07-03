@@ -10,7 +10,7 @@ import { RabbitMQAdapter } from "./infra/brokers/rabbitmq-adapter";
 import AxiosAdapter from "./infra/http/axios-adapter";
 import { InMemoryBotRepository } from "./infra/repositories/in-memory-bot";
 import { InMemoryMatchRepository } from "./infra/repositories/in-memory-match";
-import { DevelopmentScheduler } from "./infra/scheduler/development";
+import { ProductionScheduler } from "./infra/scheduler/production";
 
 let config;
 async function init() {
@@ -19,7 +19,7 @@ async function init() {
     broker: new RabbitMQAdapter(),
     botRepository: new InMemoryBotRepository(),
     matchRepository: new InMemoryMatchRepository(),
-    scheduler: new DevelopmentScheduler(),
+    scheduler: new ProductionScheduler(),
   };
   await config.broker.connect();
   const handlers: Handler[] = [

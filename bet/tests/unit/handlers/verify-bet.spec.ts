@@ -4,7 +4,7 @@ import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
 import { BrokerSpy } from "../../utils/mocks/broker-spy";
 import { FakeBetGateway } from "../../utils/mocks/fake-bet-gateway";
 
-const bet = { playerId: "playerId", matchId: "matchId", betId: "betId" };
+const bet = { playerId: "playerId", matchId: "matchId", betId: "betId", marketId: 1 };
 
 test("It should emit a bet won event and a bet verified event if bet was won", async () => {
   const brokerSpy = new BrokerSpy(new InMemoryBroker());
@@ -22,6 +22,7 @@ test("It should emit a bet won event and a bet verified event if bet was won", a
     matchId: "matchId",
     betId: "betId",
     outcome: 100,
+    marketId: 1,
   });
   expect(brokerSpy.events[1].name).toBe("bet-verified");
   expect(brokerSpy.events[1].payload).toEqual(bet);

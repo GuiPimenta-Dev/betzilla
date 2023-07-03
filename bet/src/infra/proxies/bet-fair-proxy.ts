@@ -1,5 +1,6 @@
-import { BetGateway, BetStatus, Market, Match, Odd } from "../../application/ports/gateways/bet";
+import { Bet, BetGateway, BetStatus, Market, Match, Odd } from "../../application/ports/gateways/bet";
 
+import { v4 as uuidv4 } from "uuid";
 import { BetFairAdapter } from "../gateways/bet-fair-adapter";
 import { HttpError } from "../http/status/http-error";
 
@@ -10,15 +11,8 @@ export class BetFairProxy implements BetGateway {
     await this.betFairAdapter.login();
   }
 
-  async makeBet(value: number): Promise<{ success: boolean }> {
-    let response: any;
-    try {
-      response = await this.betFairAdapter.makeBet(value);
-    } catch (error) {
-      await this.verifyError(error);
-      response = await this.betFairAdapter.makeBet(value);
-    }
-    return response;
+  async makeBet(input: Bet): Promise<{ success: boolean; betId: string }> {
+    return { success: true, betId: uuidv4() };
   }
 
   async consultBet(id: string): Promise<BetStatus> {
@@ -54,7 +48,7 @@ export class BetFairProxy implements BetGateway {
     return response;
   }
 
-  async listMarketOdds(marketId: string): Promise<Odd> {
+  async listMarketOdds(marketId: string): Promise<Odd[]> {
     let response: any;
     try {
       response = await this.betFairAdapter.listMarketOdds(marketId);

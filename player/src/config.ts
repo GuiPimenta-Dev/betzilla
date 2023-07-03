@@ -19,4 +19,5 @@ async function init() {
   });
 }
 init();
+
 export { config };

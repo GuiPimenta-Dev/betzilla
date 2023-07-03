@@ -7,11 +7,13 @@ test("It should list only upcoming matches for today", async () => {
   betGateway.mockListMatchesForToday([
     {
       id: "1",
+      leagueId: "1",
       date: "2021-01-01T20:00:00.000Z",
       name: "Flamengo vs Vasco",
     },
     {
       id: "2",
+      leagueId: "1",
       date: "2021-01-01T10:00:00.000Z",
       name: "Cruzeiro vs Palmeiras",
     },
@@ -22,5 +24,5 @@ test("It should list only upcoming matches for today", async () => {
   const matches = await sut.execute(date);
 
   expect(matches.length).toBe(1);
-  expect(matches[0]).toEqual({ id: "1", date: "2021-01-01T20:00:00.000Z", name: "Flamengo vs Vasco" });
+  expect(matches[0]).toEqual({ id: "1", leagueId: "1", date: "2021-01-01T20:00:00.000Z", name: "Flamengo vs Vasco" });
 });

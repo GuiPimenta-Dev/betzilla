@@ -2,7 +2,7 @@ import { Command } from "./command";
 
 type Input = {
   matchId: string;
-  marketId: string;
+  marketId: number;
   oddId: string;
   side: string;
   odd: number;

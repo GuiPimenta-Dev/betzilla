@@ -22,10 +22,10 @@ export class MatchStartedHandler implements Handler {
   }
 
   async handle(event: MatchStarted): Promise<void> {
-    const { matchId, botId, name, market, date } = event.payload;
+    const { matchId, botId, name, marketId, date } = event.payload;
     const match = Match.start({ id: matchId, name, botId: botId, date });
     await this.matchRepository.create(match);
     const now = moment().toDate();
-    await this.broker.schedule(new VerifyOdds({ matchId, market }), now);
+    await this.broker.schedule(new VerifyOdds({ matchId, marketId }), now);
   }
 }
