@@ -1,5 +1,4 @@
 import { faker } from "@faker-js/faker";
-import { config as playerConfig } from "../player/src/config";
 import AxiosAdapter from "../player/src/infra/http/axios-adapter";
 const PLAYER = "http://localhost:3000/player";
 const BET = "http://localhost:3001";
@@ -44,9 +43,4 @@ test("It should list all available matches", async () => {
       }),
     ])
   );
-});
-
-test("It should create a bot", async () => {
-  playerConfig.playerRepository.createDefaultPlayer();
-  console.log("oi");
 });

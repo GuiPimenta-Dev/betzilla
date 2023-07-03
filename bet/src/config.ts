@@ -9,7 +9,6 @@ let config;
 async function init() {
   const httpClient = new AxiosAdapter();
   const betGateway = new FotMobAdapter(httpClient);
-  // const betGateway = new FakeBetGateway();
   config = {
     broker: new RabbitMQAdapter(),
     betGateway,
