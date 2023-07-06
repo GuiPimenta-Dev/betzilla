@@ -9,9 +9,10 @@ const AVAILABLE_BOT_NAMES = ["player-rules", "pev"];
 
 export class BotController {
   static async create(input: HttpInput): Promise<Success> {
-    const { body, path } = input;
+    const { body, path, headers } = input;
     if (!AVAILABLE_BOT_NAMES.includes(path.name)) throw new BadRequest("Invalid bot name");
     body.bot.name = path.name;
+    body.bot.playerId = headers.playerId;
     const usecase = new CreateBot(config);
     const response = await usecase.execute(body);
     return new Success(response);

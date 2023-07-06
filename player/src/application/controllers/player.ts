@@ -22,9 +22,9 @@ export class PlayerController {
   }
 
   static async getBalance(input: HttpInput): Promise<Success> {
-    const { path } = input;
+    const { headers } = input;
     const usecase = new GetBalance(config);
-    const response = await usecase.execute(path.playerId);
+    const response = await usecase.execute(headers.playerId);
     return new Success(response);
   }
 }
