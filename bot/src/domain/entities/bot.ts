@@ -4,11 +4,14 @@ export type Condition = {
   params?: any;
 };
 
+export type Status = "running" | "paused";
+
 type Input = {
   id: string;
   name: string;
   playerId: string;
   marketId?: number;
+  running?: boolean;
   side?: string;
   betValue: number;
   conditions?: Condition[];
@@ -22,6 +25,7 @@ export class Bot {
   side: string;
   betValue: number;
   conditions?: Condition[];
+  running: boolean;
 
   constructor(input: Input) {
     this.id = input.id;
@@ -31,5 +35,14 @@ export class Bot {
     this.side = input.side;
     this.betValue = input.betValue;
     this.conditions = input.conditions;
+    this.running = input.running;
+  }
+
+  pause(): void {
+    this.running = false;
+  }
+
+  resume(): void {
+    this.running = true;
   }
 }

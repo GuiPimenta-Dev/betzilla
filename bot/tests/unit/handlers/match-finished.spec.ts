@@ -1,11 +1,11 @@
-import { BotBuilder } from "../../utils/builders/bot";
-import { BrokerSpy } from "../../utils/mocks/broker-spy";
-import { InMemoryBotRepository } from "../../../src/infra/repositories/in-memory-bot";
-import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
-import { InMemoryMatchRepository } from "../../../src/infra/repositories/in-memory-match";
-import { MatchBuilder } from "../../utils/builders/match";
-import { MatchFinished } from "../../../src/domain/events/match-finished";
 import { MatchFinishedHandler } from "../../../src/application/handlers/match-finished";
+import { MatchFinished } from "../../../src/domain/events/match-finished";
+import { InMemoryBroker } from "../../../src/infra/brokers/in-memory";
+import { InMemoryBotRepository } from "../../../src/infra/repositories/in-memory-bot";
+import { InMemoryMatchRepository } from "../../../src/infra/repositories/in-memory-match";
+import { BotBuilder } from "../../utils/builders/bot";
+import { MatchBuilder } from "../../utils/builders/match";
+import { BrokerSpy } from "../../utils/mocks/broker-spy";
 import { TestScheduler } from "../../utils/mocks/test-scheduler";
 
 test("It should schedule a verifyBet if bet was made in this match", async () => {
@@ -28,7 +28,12 @@ test("It should schedule a verifyBet if bet was made in this match", async () =>
   await sut.handle(event);
 
   expect(brokerSpy.scheduledCommands).toHaveLength(1);
-  expect(brokerSpy.scheduledCommands[0].payload).toEqual({ betId: "betId", playerId: "playerId", matchId: match.id });
+  expect(brokerSpy.scheduledCommands[0].payload).toEqual({
+    betId: "betId",
+    playerId: "playerId",
+    matchId: match.id,
+    marketId: 1,
+  });
   expect(brokerSpy.history).toEqual(["verify-bet"]);
 });
 

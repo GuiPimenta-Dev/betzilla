@@ -44,7 +44,7 @@ test("It should bet if the odds are verified and match the criterion", async () 
     betValue: 10,
     odd: 2.03,
     side: "back",
-    marketId: "market",
+    marketId: 1,
     matchId: "matchId",
   });
   expect(brokerSpy.history).toEqual(["make-bet"]);

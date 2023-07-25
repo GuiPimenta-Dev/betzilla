@@ -14,7 +14,7 @@ test("It should publish a message to verify odds after match started", async () 
     name: "Real Madrid X Barcelona",
     date: "2021-01-01T00:00:00.000Z",
     botId: "botId",
-    market: "Over/Under 0.5 Goals",
+    marketId: 1,
   });
   await sut.handle(event);
 
@@ -32,7 +32,7 @@ test("It should start a match and change the status to half-time", async () => {
     name: "Real Madrid X Barcelona",
     date: "2021-01-01T00:00:00.000Z",
     botId: "botId",
-    market: "Over/Under 0.5 Goals",
+    marketId: 1,
   });
   await sut.handle(event);
 
