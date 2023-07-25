@@ -18,9 +18,8 @@ export class BotController {
     const { body, path, headers } = input;
     if (!AVAILABLE_BOT_NAMES.includes(path.name)) throw new BadRequest("Invalid bot name");
     body.bot.name = path.name;
-    body.bot.playerId = headers.playerId;
     const usecase = new CreateBot(config);
-    const response = await usecase.execute(body);
+    const response = await usecase.execute({ bot: body.bot, playerId: headers.playerId });
     return new Created(response);
   }
 
@@ -32,14 +31,15 @@ export class BotController {
   }
 
   static async list(input: HttpInput): Promise<Success> {
-    const { path } = input;
+    const { headers } = input;
     const usecase = new ListBots(config);
-    const response = await usecase.execute(path.playerId);
+    const response = await usecase.execute(headers.playerId);
     return new Success(response);
   }
 
   static async update(input: HttpInput): Promise<Success> {
-    const { body, headers } = input;
+    const { body, path, headers } = input;
+    body.id = path.botId;
     const usecase = new UpdateBot(config);
     const response = await usecase.execute({ bot: body, playerId: headers.playerId });
     return new Success(response);

@@ -5,7 +5,7 @@ import { ExpressAdapter } from "./infra/http/express-adapter";
 
 const app = ExpressAdapter.create();
 
-app.post("/bots/:name", ExpressAdapter.route(BotController.create));
+app.post("/bots/:name", verifyToken, ExpressAdapter.route(BotController.create));
 app.get("/bots/:botId", ExpressAdapter.route(BotController.get));
 app.get("/matches/:matchId", ExpressAdapter.route(MatchController.get));
 app.get("/matches", ExpressAdapter.route(MatchController.list));
